@@ -1,0 +1,15 @@
+{
+  "name": "dakshina-dev",
+  "private": true,
+  "packageManager": "pnpm@10.8.1",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck"
+  },
+  "devDependencies": {
+    "turbo": "2.0.0",
+    "typescript": "5.8.3"
+  }
+}
