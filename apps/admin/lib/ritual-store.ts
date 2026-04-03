@@ -17,10 +17,21 @@ export type RitualTier = {
   pricingMode: PricingMode;
 };
 
+export type RitualCategory = {
+  id: string;
+  parentId: string | null;
+  tierId: string;
+  name: string;
+  slug: string;
+  description: string;
+  displayOrder: number;
+};
+
 export type RitualRecord = {
   id: string;
   name: string;
   tierId: string;
+  categoryId: string;
   status: RitualStatus;
   deliveryMode: DeliveryMode;
   pricingMode: PricingMode;
@@ -30,6 +41,7 @@ export type RitualRecord = {
 export type RitualStore = {
   fardRules: string[];
   tiers: RitualTier[];
+  categories: RitualCategory[];
   rituals: RitualRecord[];
 };
 
@@ -75,11 +87,86 @@ const fallbackStore: RitualStore = {
       pricingMode: "contract"
     }
   ],
+  categories: [
+    {
+      id: "cat_001",
+      parentId: null,
+      tierId: "tier_1",
+      name: "Home Puja",
+      slug: "home-puja",
+      description: "Recurring household puja categories.",
+      displayOrder: 1
+    },
+    {
+      id: "cat_002",
+      parentId: "cat_001",
+      tierId: "tier_1",
+      name: "Prosperity Puja",
+      slug: "prosperity-puja",
+      description: "Lakshmi and wealth-related puja services.",
+      displayOrder: 1
+    },
+    {
+      id: "cat_003",
+      parentId: "cat_001",
+      tierId: "tier_1",
+      name: "Household Rituals",
+      slug: "household-rituals",
+      description: "Routine family ritual services.",
+      displayOrder: 2
+    },
+    {
+      id: "cat_004",
+      parentId: null,
+      tierId: "tier_2",
+      name: "Family Milestones",
+      slug: "family-milestones",
+      description: "Large family event categories.",
+      displayOrder: 1
+    },
+    {
+      id: "cat_005",
+      parentId: "cat_004",
+      tierId: "tier_2",
+      name: "Marriage Ceremonies",
+      slug: "marriage-ceremonies",
+      description: "Wedding and marriage-related rituals.",
+      displayOrder: 1
+    },
+    {
+      id: "cat_006",
+      parentId: "cat_004",
+      tierId: "tier_2",
+      name: "Life-cycle Events",
+      slug: "life-cycle-events",
+      description: "Thread ceremony, annaprashan, and family milestones.",
+      displayOrder: 2
+    },
+    {
+      id: "cat_007",
+      parentId: null,
+      tierId: "tier_3",
+      name: "Community Puja",
+      slug: "community-puja",
+      description: "Public and barwari puja operations.",
+      displayOrder: 1
+    },
+    {
+      id: "cat_008",
+      parentId: "cat_007",
+      tierId: "tier_3",
+      name: "Festival Committees",
+      slug: "festival-committees",
+      description: "Large committee-managed festival rituals.",
+      displayOrder: 1
+    }
+  ],
   rituals: [
     {
       id: "ritual_001",
       name: "Lakshmi Puja",
       tierId: "tier_1",
+      categoryId: "cat_002",
       status: "active",
       deliveryMode: "ui_and_pdf",
       pricingMode: "admin-guided",
@@ -95,6 +182,7 @@ const fallbackStore: RitualStore = {
       id: "ritual_002",
       name: "Wedding Ritual",
       tierId: "tier_2",
+      categoryId: "cat_005",
       status: "active",
       deliveryMode: "ui_and_pdf",
       pricingMode: "hybrid",
@@ -110,6 +198,7 @@ const fallbackStore: RitualStore = {
       id: "ritual_003",
       name: "Durga Puja",
       tierId: "tier_3",
+      categoryId: "cat_008",
       status: "draft",
       deliveryMode: "ui_only",
       pricingMode: "admin-guided",
@@ -153,6 +242,36 @@ export async function updateTier(input: RitualTier) {
   return next;
 }
 
+export async function updateCategory(input: RitualCategory) {
+  const current = await getRitualStore();
+  const next: RitualStore = {
+    ...current,
+    categories: current.categories.map((category) => (category.id === input.id ? input : category)),
+    rituals: current.rituals.map((ritual) =>
+      ritual.categoryId === input.id ? { ...ritual, tierId: input.tierId } : ritual
+    )
+  };
+  await writeStore(next);
+  return next;
+}
+
+export async function addCategory(input: Omit<RitualCategory, "id">) {
+  const current = await getRitualStore();
+  const nextId = `cat_${String(current.categories.length + 1).padStart(3, "0")}`;
+  const next: RitualStore = {
+    ...current,
+    categories: [
+      ...current.categories,
+      {
+        id: nextId,
+        ...input
+      }
+    ]
+  };
+  await writeStore(next);
+  return next;
+}
+
 export async function updateRitual(input: RitualRecord) {
   const current = await getRitualStore();
   const next: RitualStore = {
@@ -185,10 +304,54 @@ export function getFardItemCount(template: Record<string, unknown>) {
   return Array.isArray(items) ? items.length : 0;
 }
 
+export function buildCategoryLabel(categoryId: string, categories: RitualCategory[]) {
+  const categoryMap = new Map(categories.map((category) => [category.id, category]));
+  const parts: string[] = [];
+  let current = categoryMap.get(categoryId);
+
+  while (current) {
+    parts.unshift(current.name);
+    current = current.parentId ? categoryMap.get(current.parentId) : undefined;
+  }
+
+  return parts.join(" / ");
+}
+
+export function getCategoryDepth(categoryId: string, categories: RitualCategory[]) {
+  const categoryMap = new Map(categories.map((category) => [category.id, category]));
+  let depth = 0;
+  let current = categoryMap.get(categoryId);
+
+  while (current?.parentId) {
+    depth += 1;
+    current = categoryMap.get(current.parentId);
+  }
+
+  return depth;
+}
+
+export function getChildCategories(parentId: string | null, categories: RitualCategory[]) {
+  return categories
+    .filter((category) => category.parentId === parentId)
+    .sort((a, b) => a.displayOrder - b.displayOrder || a.name.localeCompare(b.name));
+}
+
+export function getLeafCategoryOptions(categories: RitualCategory[]) {
+  const parentIds = new Set(categories.filter((category) => category.parentId).map((category) => category.parentId));
+  return categories
+    .filter((category) => !parentIds.has(category.id))
+    .sort((a, b) => a.displayOrder - b.displayOrder || a.name.localeCompare(b.name))
+    .map((category) => ({
+      value: category.id,
+      label: buildCategoryLabel(category.id, categories)
+    }));
+}
+
 export function getRitualMetrics(store: RitualStore) {
   return {
     serviceTiers: store.tiers.length,
-    featuredRituals: store.rituals.length,
+    categoryCount: store.categories.length,
+    ritualCount: store.rituals.length,
     fardTemplates: store.rituals.filter((ritual) => getFardItemCount(ritual.fardTemplate) > 0).length
   };
 }

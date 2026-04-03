@@ -1,12 +1,14 @@
 import { BadgeCheck, FileCheck2, MapPinned, Users } from "lucide-react";
 import { savePriestReview } from "../../actions/priests";
 import { AdminShell } from "../../../components/admin-shell";
+import { PriestServiceSelector } from "../../../components/priest-service-selector";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { requireAdminUser } from "../../../lib/auth";
 import { getPriestMetrics, getPriestStore } from "../../../lib/priest-store";
+import { buildCategoryLabel, getRitualStore } from "../../../lib/ritual-store";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +31,7 @@ function readParam(
 export default async function PriestsPage({ searchParams }: PriestsPageProps) {
   const user = await requireAdminUser();
   const store = await getPriestStore();
+  const ritualStore = await getRitualStore();
   const metricsSnapshot = getPriestMetrics(store);
   const resolvedSearchParams = (await searchParams) ?? {};
   const messageKey = readParam(resolvedSearchParams, "message");
@@ -44,7 +47,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
   return (
     <AdminShell
       active="priests"
-      subtitle="Module 2 now handles real onboarding review, manual KYC decisions, and verification controls with persisted local state."
+      subtitle="Module 2 now handles real onboarding review, manual KYC decisions, verification controls, and cascading ritual selection with persisted local state."
       title="Priest Management"
       userEmail={user.email}
     >
@@ -100,6 +103,12 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
                       </Badge>
                     </div>
                     <p className="text-sm leading-6 text-muted-foreground">Services: {priest.services.join(", ")}</p>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      Category path:{" "}
+                      {priest.serviceCategoryId
+                        ? buildCategoryLabel(priest.serviceCategoryId, ritualStore.categories)
+                        : "Not assigned"}
+                    </p>
                     <p className="text-sm leading-6 text-muted-foreground">Documents: {priest.documents.join(", ")}</p>
                     <p className="text-sm leading-6 text-muted-foreground">Contact: {priest.phone}</p>
                     <p className="text-sm leading-6 text-muted-foreground">Submitted {priest.submittedAt}</p>
@@ -135,6 +144,26 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
                       <span>Travel radius (km)</span>
                       <Input defaultValue={priest.radiusKm} min={0} name="radiusKm" type="number" />
                     </label>
+                    <div className="sm:col-span-2">
+                      <div className="grid gap-2 text-sm font-semibold text-foreground">
+                        <span>Priest service mapping</span>
+                        <PriestServiceSelector
+                          categories={ritualStore.categories.map((category) => ({
+                            id: category.id,
+                            name: category.name,
+                            parentId: category.parentId
+                          }))}
+                          defaultMainCategoryId={priest.mainCategoryId}
+                          defaultRitualIds={priest.ritualIds}
+                          defaultServiceCategoryId={priest.serviceCategoryId}
+                          rituals={ritualStore.rituals.map((ritual) => ({
+                            id: ritual.id,
+                            name: ritual.name,
+                            categoryId: ritual.categoryId
+                          }))}
+                        />
+                      </div>
+                    </div>
                     <div className="sm:col-span-2">
                       <label className="grid gap-2 text-sm font-semibold text-foreground">
                         <span>Admin notes</span>

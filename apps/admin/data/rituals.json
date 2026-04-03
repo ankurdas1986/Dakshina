@@ -38,11 +38,86 @@
       "pricingMode": "contract"
     }
   ],
+  "categories": [
+    {
+      "id": "cat_001",
+      "parentId": null,
+      "tierId": "tier_1",
+      "name": "Home Puja",
+      "slug": "home-puja",
+      "description": "Recurring household puja categories.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_002",
+      "parentId": "cat_001",
+      "tierId": "tier_1",
+      "name": "Prosperity Puja",
+      "slug": "prosperity-puja",
+      "description": "Lakshmi and wealth-related puja services.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_003",
+      "parentId": "cat_001",
+      "tierId": "tier_1",
+      "name": "Household Rituals",
+      "slug": "household-rituals",
+      "description": "Routine family ritual services.",
+      "displayOrder": 2
+    },
+    {
+      "id": "cat_004",
+      "parentId": null,
+      "tierId": "tier_2",
+      "name": "Family Milestones",
+      "slug": "family-milestones",
+      "description": "Large family event categories.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_005",
+      "parentId": "cat_004",
+      "tierId": "tier_2",
+      "name": "Marriage Ceremonies",
+      "slug": "marriage-ceremonies",
+      "description": "Wedding and marriage-related rituals.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_006",
+      "parentId": "cat_004",
+      "tierId": "tier_2",
+      "name": "Life-cycle Events",
+      "slug": "life-cycle-events",
+      "description": "Thread ceremony, annaprashan, and family milestones.",
+      "displayOrder": 2
+    },
+    {
+      "id": "cat_007",
+      "parentId": null,
+      "tierId": "tier_3",
+      "name": "Community Puja",
+      "slug": "community-puja",
+      "description": "Public and barwari puja operations.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_008",
+      "parentId": "cat_007",
+      "tierId": "tier_3",
+      "name": "Festival Committees",
+      "slug": "festival-committees",
+      "description": "Large committee-managed festival rituals.",
+      "displayOrder": 1
+    }
+  ],
   "rituals": [
     {
       "id": "ritual_001",
       "name": "Lakshmi Puja",
       "tierId": "tier_1",
+      "categoryId": "cat_002",
       "status": "active",
       "deliveryMode": "ui_and_pdf",
       "pricingMode": "admin-guided",
@@ -67,6 +142,7 @@
       "id": "ritual_002",
       "name": "Wedding Ritual",
       "tierId": "tier_2",
+      "categoryId": "cat_005",
       "status": "active",
       "deliveryMode": "ui_and_pdf",
       "pricingMode": "hybrid",
@@ -91,6 +167,7 @@
       "id": "ritual_003",
       "name": "Durga Puja",
       "tierId": "tier_3",
+      "categoryId": "cat_008",
       "status": "draft",
       "deliveryMode": "ui_only",
       "pricingMode": "admin-guided",

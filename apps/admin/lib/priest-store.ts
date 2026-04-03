@@ -11,6 +11,9 @@ export type PriestRecord = {
   name: string;
   district: string;
   locality: string;
+  mainCategoryId: string | null;
+  serviceCategoryId: string | null;
+  ritualIds: string[];
   services: string[];
   radiusKm: number;
   kycStatus: PriestKycStatus;
@@ -42,6 +45,9 @@ const fallbackPriests: PriestStore = {
       name: "Pandit Arindam Bhattacharya",
       district: "Howrah",
       locality: "Bally",
+      mainCategoryId: "cat_001",
+      serviceCategoryId: "cat_002",
+      ritualIds: ["ritual_001"],
       services: ["Lakshmi Puja", "Satyanarayan Puja", "Grihoprobesh"],
       radiusKm: 14,
       kycStatus: "pending",
@@ -56,6 +62,9 @@ const fallbackPriests: PriestStore = {
       name: "Pandit Subhajit Chakraborty",
       district: "Hooghly",
       locality: "Uttarpara",
+      mainCategoryId: "cat_004",
+      serviceCategoryId: "cat_005",
+      ritualIds: ["ritual_002"],
       services: ["Wedding", "Sacred Thread", "Annaprashan"],
       radiusKm: 18,
       kycStatus: "review",
@@ -70,6 +79,9 @@ const fallbackPriests: PriestStore = {
       name: "Pandit Debasish Goswami",
       district: "North 24 Parganas",
       locality: "Barasat",
+      mainCategoryId: "cat_007",
+      serviceCategoryId: "cat_008",
+      ritualIds: ["ritual_003"],
       services: ["Durga Puja", "Kali Puja", "Community Events"],
       radiusKm: 22,
       kycStatus: "approved",
@@ -107,6 +119,10 @@ export async function updatePriestReview(input: {
   verificationStatus: PriestVerificationStatus;
   radiusKm: number;
   notes: string;
+  mainCategoryId: string | null;
+  serviceCategoryId: string | null;
+  ritualIds: string[];
+  services: string[];
 }) {
   const current = await getPriestStore();
   const priests = current.priests.map((priest) => {
@@ -119,7 +135,11 @@ export async function updatePriestReview(input: {
       kycStatus: input.kycStatus,
       verificationStatus: input.verificationStatus,
       radiusKm: input.radiusKm,
-      notes: input.notes
+      notes: input.notes,
+      mainCategoryId: input.mainCategoryId,
+      serviceCategoryId: input.serviceCategoryId,
+      ritualIds: input.ritualIds,
+      services: input.services
     };
   });
 

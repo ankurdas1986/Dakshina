@@ -1,5 +1,6 @@
-import { FileJson2, Layers3, PlusCircle, ScrollText } from "lucide-react";
-import { createRitual, saveRitual, saveTier } from "../../actions/rituals";
+import type { ReactNode } from "react";
+import { FileJson2, FolderTree, Layers3, PlusCircle, ScrollText } from "lucide-react";
+import { createCategory, createRitual, saveCategory, saveRitual, saveTier } from "../../actions/rituals";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
@@ -7,7 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { Input } from "../../../components/ui/input";
 import { requireAdminUser } from "../../../lib/auth";
 import {
+  buildCategoryLabel,
+  getCategoryDepth,
+  getChildCategories,
   getFardItemCount,
+  getLeafCategoryOptions,
   getRitualMetrics,
   getRitualStore
 } from "../../../lib/ritual-store";
@@ -20,6 +25,8 @@ type RitualsPageProps = {
 
 const messageMap: Record<string, string> = {
   tier_saved: "Service tier updated and stored for local UAT.",
+  category_saved: "Category tree change saved and synced to linked rituals.",
+  category_created: "New category added to the hierarchical ritual tree.",
   ritual_saved: "Ritual details saved and stored for local UAT.",
   ritual_created: "New ritual created and stored for local UAT."
 };
@@ -28,6 +35,9 @@ const errorMap: Record<string, string> = {
   invalid_fard_json: "Fard JSON is invalid. Use a valid JSON object.",
   missing_tier_id: "Tier id is missing.",
   invalid_tier_id: "Tier id is invalid.",
+  missing_category_id: "Category id is missing.",
+  invalid_category_id: "Category id is invalid.",
+  invalid_parent_category: "Parent category is invalid.",
   missing_ritual_id: "Ritual id is missing.",
   invalid_ritual_id: "Ritual id is invalid."
 };
@@ -49,25 +59,28 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
   const errorKey = readParam(resolvedSearchParams, "error");
   const bannerMessage = messageKey ? messageMap[messageKey] ?? null : null;
   const bannerError = errorKey ? errorMap[errorKey] ?? errorKey : null;
+  const leafCategoryOptions = getLeafCategoryOptions(store.categories);
+  const topLevelCategories = getChildCategories(null, store.categories);
 
   const metricCards = [
     { label: "Service tiers", value: metrics.serviceTiers, icon: Layers3 },
-    { label: "Ritual templates", value: metrics.featuredRituals, icon: ScrollText },
+    { label: "Category tree nodes", value: metrics.categoryCount, icon: FolderTree },
+    { label: "Ritual templates", value: metrics.ritualCount, icon: ScrollText },
     { label: "Fard templates", value: metrics.fardTemplates, icon: FileJson2 }
   ];
 
   return (
     <AdminShell
       active="rituals"
-      subtitle="Admin controls the official 4-tier ritual catalog and JSON-based Fard templates used after booking confirmation."
+      subtitle="Admin controls the category tree, official ritual catalog, and JSON-based Fard templates used after booking confirmation."
       title="Rituals and Fard"
       userEmail={user.email}
       subnav={
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Tier controls</Badge>
+          <Badge variant="success">Category tree</Badge>
+          <Badge variant="outline">Tier controls</Badge>
           <Badge variant="outline">Ritual library</Badge>
           <Badge variant="outline">Fard JSON</Badge>
-          <Badge variant="outline">User delivery rules</Badge>
         </div>
       }
     >
@@ -82,7 +95,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((metric) => {
           const Icon = metric.icon;
           return (
@@ -101,7 +114,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
         })}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
+      <div className="grid gap-5 xl:grid-cols-[1fr_1fr]">
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
             <CardTitle className="text-lg">Official service structure</CardTitle>
@@ -150,13 +163,85 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
           </CardContent>
         </Card>
 
+        <Card className="rounded-[28px] border-border/80 bg-white">
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <CardTitle className="text-lg">Create category node</CardTitle>
+                <CardDescription>Add a root category or nest a sub-category under an existing branch.</CardDescription>
+              </div>
+              <PlusCircle className="h-5 w-5 text-primary" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <form action={createCategory} className="grid gap-3">
+              <Field label="Category name">
+                <Input name="name" placeholder="Example: Seasonal Puja" required />
+              </Field>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <SelectField
+                  defaultValue={store.tiers[0]?.id ?? "tier_1"}
+                  label="Tier"
+                  name="tierId"
+                  options={store.tiers.map((tier) => ({
+                    value: tier.id,
+                    label: `${tier.name}: ${tier.title}`
+                  }))}
+                />
+                <SelectField
+                  defaultValue=""
+                  label="Parent category"
+                  name="parentId"
+                  options={[
+                    { value: "", label: "No parent (root category)" },
+                    ...store.categories.map((category) => ({
+                      value: category.id,
+                      label: buildCategoryLabel(category.id, store.categories)
+                    }))
+                  ]}
+                />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-[1fr_140px]">
+                <Field label="Slug">
+                  <Input name="slug" placeholder="seasonal-puja" />
+                </Field>
+                <Field label="Order">
+                  <Input defaultValue={1} min={1} name="displayOrder" type="number" />
+                </Field>
+              </div>
+              <TextAreaField
+                defaultValue=""
+                label="Description"
+                name="description"
+              />
+              <div className="flex justify-end">
+                <Button type="submit">Create category</Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-[1fr_1fr]">
+        <Card className="rounded-[28px] border-border/80 bg-white">
+          <CardHeader>
+            <CardTitle className="text-lg">Category tree management</CardTitle>
+            <CardDescription>Manage nested ritual categories with parent-child relationships and tier ownership.</CardDescription>
+          </CardHeader>
+          <CardContent className="surface-scroll max-h-[920px] space-y-4 overflow-y-auto pr-2">
+            {topLevelCategories.map((category) => (
+              <CategoryBranch key={category.id} categoryId={category.id} store={store} />
+            ))}
+          </CardContent>
+        </Card>
+
         <div className="space-y-5">
           <Card className="rounded-[28px] border-border/80 bg-white">
             <CardHeader>
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <CardTitle className="text-lg">Create ritual template</CardTitle>
-                  <CardDescription>Add a ritual with delivery mode and Fard JSON from admin.</CardDescription>
+                  <CardDescription>Add a ritual under a leaf category with delivery mode and Fard JSON from admin.</CardDescription>
                 </div>
                 <PlusCircle className="h-5 w-5 text-primary" />
               </div>
@@ -168,13 +253,10 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                 </Field>
                 <div className="grid gap-3 sm:grid-cols-3">
                   <SelectField
-                    defaultValue={store.tiers[0]?.id ?? "tier_1"}
-                    label="Tier"
-                    name="tierId"
-                    options={store.tiers.map((tier) => ({
-                      value: tier.id,
-                      label: `${tier.name}: ${tier.title}`
-                    }))}
+                    defaultValue={leafCategoryOptions[0]?.value ?? ""}
+                    label="Leaf category"
+                    name="categoryId"
+                    options={leafCategoryOptions}
                   />
                   <SelectField
                     defaultValue="draft"
@@ -220,7 +302,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
           <Card className="rounded-[28px] border-border/80 bg-white">
             <CardHeader>
               <CardTitle className="text-lg">Fard operating rules</CardTitle>
-              <CardDescription>Booking confirmation triggers checklist delivery to the user.</CardDescription>
+              <CardDescription>Booking confirmation snapshots the ritual checklist before user delivery.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {store.fardRules.map((rule) => (
@@ -236,7 +318,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
           <CardTitle className="text-lg">Ritual template library</CardTitle>
-          <CardDescription>Edit tier mapping, delivery mode, and JSON-based Fard templates for each ritual.</CardDescription>
+          <CardDescription>Edit category mapping, delivery mode, and JSON-based Fard templates for each ritual.</CardDescription>
         </CardHeader>
         <CardContent className="surface-scroll max-h-[920px] space-y-4 overflow-y-auto pr-2">
           {store.rituals.map((ritual) => (
@@ -246,7 +328,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                 <div>
                   <p className="text-base font-semibold text-foreground">{ritual.name}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Fard items: {getFardItemCount(ritual.fardTemplate)}
+                    {buildCategoryLabel(ritual.categoryId, store.categories)} · Fard items: {getFardItemCount(ritual.fardTemplate)}
                   </p>
                 </div>
                 <Badge variant={ritual.status === "active" ? "success" : "secondary"}>{ritual.status}</Badge>
@@ -256,15 +338,12 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                 <Field label="Ritual name">
                   <Input defaultValue={ritual.name} name="name" required />
                 </Field>
-                <div className="grid gap-3 sm:grid-cols-4">
+                <div className="grid gap-3 sm:grid-cols-3">
                   <SelectField
-                    defaultValue={ritual.tierId}
-                    label="Tier"
-                    name="tierId"
-                    options={store.tiers.map((tier) => ({
-                      value: tier.id,
-                      label: `${tier.name}: ${tier.title}`
-                    }))}
+                    defaultValue={ritual.categoryId}
+                    label="Leaf category"
+                    name="categoryId"
+                    options={leafCategoryOptions}
                   />
                   <SelectField
                     defaultValue={ritual.status}
@@ -284,17 +363,17 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                       { value: "ui_only", label: "UI only" }
                     ]}
                   />
-                  <SelectField
-                    defaultValue={ritual.pricingMode}
-                    label="Pricing mode"
-                    name="pricingMode"
-                    options={[
-                      { value: "admin-guided", label: "admin-guided" },
-                      { value: "hybrid", label: "hybrid" },
-                      { value: "contract", label: "contract" }
-                    ]}
-                  />
                 </div>
+                <SelectField
+                  defaultValue={ritual.pricingMode}
+                  label="Pricing mode"
+                  name="pricingMode"
+                  options={[
+                    { value: "admin-guided", label: "admin-guided" },
+                    { value: "hybrid", label: "hybrid" },
+                    { value: "contract", label: "contract" }
+                  ]}
+                />
                 <TextAreaField
                   defaultValue={JSON.stringify(ritual.fardTemplate, null, 2)}
                   label="Fard JSON"
@@ -312,9 +391,99 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
   );
 }
 
+type CategoryBranchProps = {
+  categoryId: string;
+  store: Awaited<ReturnType<typeof getRitualStore>>;
+};
+
+function CategoryBranch({ categoryId, store }: CategoryBranchProps) {
+  const category = store.categories.find((item) => item.id === categoryId);
+
+  if (!category) {
+    return null;
+  }
+
+  const depth = getCategoryDepth(category.id, store.categories);
+  const children = getChildCategories(category.id, store.categories);
+  const tier = store.tiers.find((item) => item.id === category.tierId);
+  const linkedRituals = store.rituals.filter((ritual) => ritual.categoryId === category.id);
+
+  return (
+    <div className="space-y-3">
+      <form action={saveCategory} className="rounded-[24px] border border-border bg-white p-4">
+        <input name="id" type="hidden" value={category.id} />
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">{buildCategoryLabel(category.id, store.categories)}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Depth {depth + 1} · Tier {tier?.name ?? category.tierId}</p>
+          </div>
+          <Badge variant={children.length > 0 ? "outline" : "secondary"}>
+            {children.length > 0 ? `${children.length} sub-categories` : "leaf category"}
+          </Badge>
+        </div>
+        <div className="grid gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Category name">
+              <Input defaultValue={category.name} name="name" required />
+            </Field>
+            <Field label="Slug">
+              <Input defaultValue={category.slug} name="slug" />
+            </Field>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-[1fr_1fr_140px]">
+            <SelectField
+              defaultValue={category.parentId ?? ""}
+              label="Parent category"
+              name="parentId"
+              options={[
+                { value: "", label: "No parent (root category)" },
+                ...store.categories
+                  .filter((item) => item.id !== category.id)
+                  .map((item) => ({
+                    value: item.id,
+                    label: buildCategoryLabel(item.id, store.categories)
+                  }))
+              ]}
+            />
+            <SelectField
+              defaultValue={category.tierId}
+              label="Tier"
+              name="tierId"
+              options={store.tiers.map((tierItem) => ({
+                value: tierItem.id,
+                label: `${tierItem.name}: ${tierItem.title}`
+              }))}
+            />
+            <Field label="Order">
+              <Input defaultValue={category.displayOrder} min={1} name="displayOrder" type="number" />
+            </Field>
+          </div>
+          <TextAreaField defaultValue={category.description} label="Description" name="description" />
+          {linkedRituals.length > 0 ? (
+            <div className="rounded-[20px] border border-dashed border-border bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+              Linked rituals: {linkedRituals.map((ritual) => ritual.name).join(", ")}
+            </div>
+          ) : null}
+          <div className="flex justify-end">
+            <Button type="submit" variant="secondary">Save category</Button>
+          </div>
+        </div>
+      </form>
+
+      {children.length > 0 ? (
+        <div className="space-y-3 border-l border-border/80 pl-4">
+          {children.map((child) => (
+            <CategoryBranch categoryId={child.id} key={child.id} store={store} />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 type FieldProps = {
   label: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 function Field({ label, children }: FieldProps) {
@@ -337,7 +506,7 @@ function TextAreaField({ label, name, defaultValue }: TextAreaFieldProps) {
     <label className="grid gap-2 text-sm font-semibold text-foreground">
       <span>{label}</span>
       <textarea
-        className="min-h-40 rounded-[22px] border border-border bg-white px-4 py-3 font-mono text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+        className="min-h-28 rounded-[22px] border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
         defaultValue={defaultValue}
         name={name}
       />
@@ -362,7 +531,7 @@ function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
         name={name}
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value || "__empty"} value={option.value}>
             {option.label}
           </option>
         ))}

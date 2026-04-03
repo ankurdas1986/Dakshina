@@ -12,6 +12,11 @@
       "name": "Pandit Arindam Bhattacharya",
       "district": "Howrah",
       "locality": "Bally",
+      "mainCategoryId": "cat_001",
+      "serviceCategoryId": "cat_002",
+      "ritualIds": [
+        "ritual_001"
+      ],
       "services": [
         "Lakshmi Puja",
         "Satyanarayan Puja",
@@ -34,6 +39,11 @@
       "name": "Pandit Subhajit Chakraborty",
       "district": "Hooghly",
       "locality": "Uttarpara",
+      "mainCategoryId": "cat_004",
+      "serviceCategoryId": "cat_005",
+      "ritualIds": [
+        "ritual_002"
+      ],
       "services": [
         "Wedding",
         "Sacred Thread",
@@ -57,6 +67,11 @@
       "name": "Pandit Debasish Goswami",
       "district": "North 24 Parganas",
       "locality": "Barasat",
+      "mainCategoryId": "cat_007",
+      "serviceCategoryId": "cat_008",
+      "ritualIds": [
+        "ritual_003"
+      ],
       "services": [
         "Durga Puja",
         "Kali Puja",

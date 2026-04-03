@@ -26,6 +26,7 @@ Legend:
 
 - `[~]` Priest listing renders from persisted data
 - `[~]` KYC review actions update status, verification, radius, and notes
+- `[~]` Cascading category selection maps priests to leaf categories and ritual checklists
 - `[~]` Changes persist in `apps/admin/data/priests.json`
 - `[ ]` Search and filter workflow added
 - `[x]` Typecheck passes in a runtime-enabled shell
@@ -39,6 +40,7 @@ Legend:
 ## Module 3: Rituals and Fard
 
 - `[x]` Ritual CRUD works
+- `[x]` Hierarchical category tree CRUD works
 - `[x]` Fard JSON editor validates correctly
 - `[ ]` Booking Fard snapshot rules hold after ritual edits
 - `[x]` Typecheck passes in a runtime-enabled shell

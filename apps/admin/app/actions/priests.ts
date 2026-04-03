@@ -7,6 +7,7 @@ import {
   type PriestVerificationStatus,
   updatePriestReview
 } from "../../lib/priest-store";
+import { getRitualStore } from "../../lib/ritual-store";
 
 function normalizeText(value: FormDataEntryValue | null, fallback = "") {
   return typeof value === "string" ? value.trim() : fallback;
@@ -24,6 +25,17 @@ export async function savePriestReview(formData: FormData) {
     redirect("/dashboard/priests?error=missing_priest_id");
   }
 
+  const currentRitualStore = await getRitualStore();
+  const ritualIds = normalizeText(formData.get("ritualIds"))
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const mainCategoryId = normalizeText(formData.get("mainCategoryId")) || null;
+  const serviceCategoryId = normalizeText(formData.get("serviceCategoryId")) || null;
+  const services = currentRitualStore.rituals
+    .filter((ritual) => ritualIds.includes(ritual.id))
+    .map((ritual) => ritual.name);
+
   await updatePriestReview({
     id,
     kycStatus: normalizeText(formData.get("kycStatus"), "pending") as PriestKycStatus,
@@ -32,7 +44,11 @@ export async function savePriestReview(formData: FormData) {
       "unverified"
     ) as PriestVerificationStatus,
     radiusKm: normalizeNumber(formData.get("radiusKm"), 0),
-    notes: normalizeText(formData.get("notes"))
+    notes: normalizeText(formData.get("notes")),
+    mainCategoryId,
+    serviceCategoryId,
+    ritualIds,
+    services
   });
 
   revalidatePath("/dashboard/priests");

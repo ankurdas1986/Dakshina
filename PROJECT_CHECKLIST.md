@@ -52,6 +52,7 @@ Legend:
 - `[x]` module route and responsive shell page
 - `[x]` editable KYC review workflow with local persistence
 - `[x]` verified/unverified status control and admin notes
+- `[x]` cascading category and ritual selection flow
 - `[~]` priest list/detail operating view
 - `[ ]` priest table with search/filter
 - `[ ]` district/radius management beyond per-priest editing
@@ -59,7 +60,7 @@ Legend:
 ### 3.4 Rituals and Fard
 
 - `[x]` module route and responsive shell page
-- `[~]` ritual category CRUD
+- `[x]` hierarchical ritual category CRUD
 - `[x]` ritual CRUD
 - `[x]` 4-tier service model management
 - `[x]` JSON-based Fard editor
@@ -125,6 +126,6 @@ Legend:
 
 - `[x]` Module 1: Global Settings editable super-admin workflow
 - `[~]` Module 2: Priest Management with manual KYC workflow
-- `[~]` Module 3: Rituals and Fard management
+- `[x]` Module 3: Rituals and Fard management
 - `[~]` Module 4: Booking operations and replacement controls
 - `[x]` Module 5: Trust and Referral admin workflows
