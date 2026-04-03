@@ -12,9 +12,9 @@ This repository is scaffolded as an admin-first Turborepo workspace with these t
 
 ## Current Constraints
 
-- Node.js and package managers are not available in the current environment, so this scaffold is file-based and not install-verified yet.
 - Package manifests intentionally stay conservative and use stable release lines rather than canary or experimental channels.
 - Supabase Email OTP or Magic Link auth is the only MVP authentication direction reflected in the scaffold.
+- MVP admin persistence still uses local JSON stores for rapid iteration before Supabase-backed data flows are wired.
 
 ## Current Auth Baseline
 
@@ -31,3 +31,23 @@ This repository is scaffolded as an admin-first Turborepo workspace with these t
 4. priest and KYC management
 5. ritual and Fard management
 6. booking oversight and replacement workflow
+
+## Admin Information Architecture
+
+The admin now follows a route-based operating model instead of packing review forms into one page:
+
+- module index pages are queue/table views for scanning and filtering
+- record detail pages are dedicated workspaces for one priest or one booking at a time
+- breadcrumbs and back links keep navigation explicit
+- this pattern is now active for:
+  - `Priests`
+  - `Bookings`
+
+Current route pattern:
+
+- `/dashboard/priests` -> searchable queue
+- `/dashboard/priests/[id]` -> priest review workspace
+- `/dashboard/bookings` -> searchable queue
+- `/dashboard/bookings/[id]` -> booking case workspace
+
+This is the default pattern to extend into future admin modules such as payouts and trust operations.

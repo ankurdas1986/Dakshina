@@ -25,12 +25,12 @@ Legend:
 ## Module 2: Priest Management
 
 - `[~]` Priest listing renders from persisted data
-- `[~]` Priest queue supports list-first review with dedicated detail workspace
+- `[~]` Priest queue supports list-first review with dedicated detail page
 - `[~]` KYC review actions update status, verification, radius, and notes
 - `[~]` KYC document previews render for each uploaded proof
 - `[~]` Cascading category selection maps priests to leaf categories and ritual checklists
 - `[~]` Changes persist in `apps/admin/data/priests.json`
-- `[ ]` Search and filter workflow added
+- `[x]` Search and filter workflow added
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
@@ -51,7 +51,7 @@ Legend:
 
 ## Module 4: Bookings
 
-- `[x]` Booking queue supports list-first review with dedicated detail workspace
+- `[x]` Booking queue supports list-first review with dedicated detail page
 - `[x]` Booking status changes follow allowed transitions
 - `[x]` Replacement flow is auditable
 - `[x]` Contact reveal timing follows configured window

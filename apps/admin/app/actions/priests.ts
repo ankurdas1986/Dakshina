@@ -20,6 +20,7 @@ function normalizeNumber(value: FormDataEntryValue | null, fallback: number) {
 
 export async function savePriestReview(formData: FormData) {
   const id = normalizeText(formData.get("id"));
+  const returnTo = normalizeText(formData.get("returnTo"), "/dashboard/priests");
 
   if (!id) {
     redirect("/dashboard/priests?error=missing_priest_id");
@@ -52,5 +53,6 @@ export async function savePriestReview(formData: FormData) {
   });
 
   revalidatePath("/dashboard/priests");
-  redirect("/dashboard/priests?message=priest_review_saved");
+  revalidatePath(`/dashboard/priests/${id}`);
+  redirect(`${returnTo}?message=priest_review_saved` as never);
 }

@@ -55,8 +55,8 @@ Legend:
 - `[x]` verified/unverified status control and admin notes
 - `[x]` KYC document preview cards for admin review
 - `[x]` cascading category and ritual selection flow
-- `[x]` priest list/detail operating view
-- `[ ]` priest table with search/filter
+- `[x]` priest list index and dedicated detail route
+- `[x]` priest table with search/filter
 - `[ ]` district/radius management beyond per-priest editing
 
 ### 3.4 Rituals and Fard
@@ -72,8 +72,8 @@ Legend:
 
 - `[x]` module route and responsive shell page
 - `[x]` booking list with status filters
-- `[x]` booking detail workspace
-- `[x]` booking queue with list/detail operating view
+- `[x]` booking detail route with dedicated workspace
+- `[x]` booking queue with table-first operating view
 - `[x]` reassignment and replacement controls
 - `[x]` contact reveal timing enforcement UI
 - `[x]` OTP completion oversight
@@ -128,7 +128,7 @@ Legend:
 ## Current Focus
 
 - `[x]` Module 1: Global Settings editable super-admin workflow
-- `[~]` Module 2: Priest Management with manual KYC workflow
+- `[~]` Module 2: Priest Management with search-driven queue and detail route
 - `[x]` Module 3: Rituals and Fard management
-- `[~]` Module 4: Booking operations and replacement controls
+- `[~]` Module 4: Booking operations with queue and case detail routes
 - `[x]` Module 5: Trust and Referral admin workflows

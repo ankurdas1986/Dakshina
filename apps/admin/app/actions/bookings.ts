@@ -20,13 +20,9 @@ function normalizeNumber(value: FormDataEntryValue | null, fallback: number) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-function redirectSuccess(message: string) {
-  revalidatePath("/dashboard/bookings");
-  redirect(`/dashboard/bookings?message=${message}`);
-}
-
 export async function saveBookingCase(formData: FormData) {
   const id = normalizeText(formData.get("id"));
+  const returnTo = normalizeText(formData.get("returnTo"), "/dashboard/bookings");
 
   if (!id) {
     redirect("/dashboard/bookings?error=missing_booking_id");
@@ -70,5 +66,7 @@ export async function saveBookingCase(formData: FormData) {
     )
   });
 
-  redirectSuccess("booking_saved");
+  revalidatePath("/dashboard/bookings");
+  revalidatePath(`/dashboard/bookings/${id}`);
+  redirect(`${returnTo}?message=booking_saved` as never);
 }

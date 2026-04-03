@@ -32,6 +32,7 @@ type AdminShellProps = {
   subtitle: string;
   notificationCount?: number;
   notificationEnabled?: boolean;
+  breadcrumbs?: ReactNode;
   subnav?: ReactNode;
 };
 
@@ -67,6 +68,7 @@ export function AdminShell({
   subtitle,
   notificationCount = 0,
   notificationEnabled = true,
+  breadcrumbs,
   subnav
 }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -260,6 +262,10 @@ export function AdminShell({
               </div>
             </div>
           </div>
+
+          {breadcrumbs ? (
+            <div className="rounded-[20px] border border-border bg-white px-4 py-3 shadow-soft">{breadcrumbs}</div>
+          ) : null}
 
           {subnav ? (
             <div className="rounded-[20px] border border-border bg-white px-4 py-3 shadow-soft">{subnav}</div>
