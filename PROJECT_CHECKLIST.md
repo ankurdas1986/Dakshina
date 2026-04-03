@@ -34,6 +34,7 @@ Legend:
 - `[x]` dev fallback login flow implemented for local review
 - `[x]` direct login on `/`
 - `[x]` responsive admin shell with fixed header and left navigation
+- `[x]` sidebar toggle and header controls cleaned up for real interaction
 - `[x]` left panel vertical scroll behavior implemented
 - `[x]` long cards constrained with internal scroll
 - `[x]` top-right notification entry added to the admin header

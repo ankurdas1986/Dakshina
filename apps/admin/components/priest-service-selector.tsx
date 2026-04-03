@@ -132,14 +132,14 @@ export function PriestServiceSelector({
       <input name="serviceCategoryId" type="hidden" value={serviceCategoryId} />
       <input name="ritualIds" type="hidden" value={selectedRitualIds.join(",")} />
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-3">
         {categoryLevels.map((level, index) => {
           const selectedValue = categoryPath[index] ?? "";
           const label = index === 0 ? "Main category" : `Sub-category ${index}`;
 
           return (
             <label className="grid gap-2 text-sm font-semibold text-foreground" key={`level-${index}`}>
-              <span>{label}</span>
+              <span className="block leading-5">{label}</span>
               <select
                 className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                 onChange={(event) => updateLevel(index, event.target.value)}
@@ -158,6 +158,17 @@ export function PriestServiceSelector({
       </div>
 
       <div className="rounded-[18px] border border-border bg-white p-4">
+        {serviceCategoryId ? (
+          <div className="mb-3 rounded-[16px] border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground">
+            Selected category path:{" "}
+            <span className="font-semibold">
+              {categoryPath
+                .map((id) => categories.find((category) => category.id === id)?.name)
+                .filter(Boolean)
+                .join(" / ")}
+            </span>
+          </div>
+        ) : null}
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Ritual selection</p>
         {availableRituals.length > 0 ? (
           <div className="mt-3 grid gap-2">

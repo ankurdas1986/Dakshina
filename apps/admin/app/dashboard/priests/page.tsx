@@ -86,8 +86,8 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
             {store.priests.map((priest) => (
               <form action={savePriestReview} className="rounded-[24px] border border-border bg-white p-4" key={priest.id}>
                 <input name="id" type="hidden" value={priest.id} />
-                <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                  <div className="space-y-3 xl:max-w-[320px]">
+                <div className="grid gap-5 2xl:grid-cols-[300px_minmax(0,1fr)]">
+                  <div className="space-y-3">
                     <div>
                       <p className="text-base font-semibold text-foreground">{priest.name}</p>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -114,7 +114,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
                     <p className="text-sm leading-6 text-muted-foreground">Submitted {priest.submittedAt}</p>
                   </div>
 
-                  <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                  <div className="grid gap-3 md:grid-cols-2">
                     <label className="grid gap-2 text-sm font-semibold text-foreground">
                       <span>KYC status</span>
                       <select
