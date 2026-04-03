@@ -16,14 +16,10 @@ import {
   UserCircle2,
   X
 } from "lucide-react";
-import { signOut } from "../app/actions/auth";
 import { moduleStatus } from "../lib/admin-data";
 import { cn } from "../lib/utils";
-import { DakshinaLogo } from "./dakshina-logo";
-import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
-import { Separator } from "./ui/separator";
 
 type AdminShellProps = {
   active: "settings" | "priests" | "rituals" | "bookings" | "trust";
@@ -105,12 +101,6 @@ export function AdminShell({
                 </button>
               </div>
 
-              <DakshinaLogo compact />
-
-              <div className="rounded-2xl border border-border bg-secondary/35 px-3 py-3 text-xs leading-5 text-muted-foreground">
-                Every module reads from platform policy, district rules, and booking controls.
-              </div>
-
               <div className="flex min-h-0 flex-1 flex-col space-y-2">
                 <p className="px-1 text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
                   Navigation
@@ -148,26 +138,6 @@ export function AdminShell({
                     );
                   })}
                 </nav>
-              </div>
-
-              <div className="mt-auto space-y-4">
-                <Separator />
-                <div className="rounded-2xl border border-border bg-white p-3.5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-sm font-bold text-foreground">
-                      {initials}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-foreground">{userEmail ?? "admin@dakshina.local"}</p>
-                      <p className="text-xs text-muted-foreground">Super admin operator</p>
-                    </div>
-                  </div>
-                </div>
-                <form action={signOut}>
-                  <Button className="h-10 w-full rounded-xl" type="submit" variant="secondary">
-                    Sign out
-                  </Button>
-                </form>
               </div>
             </CardContent>
           </Card>
@@ -209,6 +179,12 @@ export function AdminShell({
                     </span>
                   ) : null}
                 </Link>
+                <div className="hidden items-center gap-1 rounded-2xl border border-border bg-secondary/35 px-3 py-2 text-xs text-muted-foreground lg:flex">
+                  <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Policy</span>
+                  <p className="max-w-[220px] text-[13px] font-semibold text-foreground">
+                    Every module reads from platform policy, district rules, and booking controls.
+                  </p>
+                </div>
                 <div className="hidden items-center gap-2 rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground sm:flex">
                   <UserCircle2 className="h-4 w-4 text-primary" />
                   <span className="max-w-[180px] truncate">{userEmail ?? "admin@dakshina.local"}</span>
