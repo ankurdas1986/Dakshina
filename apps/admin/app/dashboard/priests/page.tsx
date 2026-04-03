@@ -1,5 +1,15 @@
 import Image from "next/image";
-import { BadgeCheck, FileCheck2, FileImage, FolderOpenDot, MapPinned, PhoneCall, ScrollText, Users } from "lucide-react";
+import Link from "next/link";
+import {
+  BadgeCheck,
+  FileCheck2,
+  FileImage,
+  FolderOpenDot,
+  MapPinned,
+  PhoneCall,
+  ScrollText,
+  Users
+} from "lucide-react";
 import { savePriestReview } from "../../actions/priests";
 import { AdminShell } from "../../../components/admin-shell";
 import { PriestServiceSelector } from "../../../components/priest-service-selector";
@@ -8,7 +18,7 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { requireAdminUser } from "../../../lib/auth";
-import { getPriestMetrics, getPriestStore } from "../../../lib/priest-store";
+import { type PriestRecord, getPriestMetrics, getPriestStore } from "../../../lib/priest-store";
 import { buildCategoryLabel, getRitualStore } from "../../../lib/ritual-store";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +47,18 @@ function readParam(
   return Array.isArray(value) ? value[0] : value;
 }
 
+function getStatusVariant(status: string) {
+  if (status === "approved" || status === "verified") {
+    return "success" as const;
+  }
+
+  if (status === "review") {
+    return "outline" as const;
+  }
+
+  return "secondary" as const;
+}
+
 export default async function PriestsPage({ searchParams }: PriestsPageProps) {
   const user = await requireAdminUser();
   const store = await getPriestStore();
@@ -44,7 +66,10 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
   const metricsSnapshot = getPriestMetrics(store);
   const resolvedSearchParams = (await searchParams) ?? {};
   const messageKey = readParam(resolvedSearchParams, "message");
+  const selectedPriestId = readParam(resolvedSearchParams, "priest");
   const bannerMessage = messageKey ? messageMap[messageKey] ?? null : null;
+  const activePriest =
+    store.priests.find((priest) => priest.id === selectedPriestId) ?? store.priests[0] ?? null;
 
   const metrics = [
     { label: "Total priests", value: metricsSnapshot.totalPriests, icon: Users },
@@ -56,9 +81,17 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
   return (
     <AdminShell
       active="priests"
-      subtitle="Module 2 now handles real onboarding review, manual KYC decisions, verification controls, and cascading ritual selection with persisted local state."
+      subtitle="Module 2 now runs as a list-first operating desk. Review priests in a compact queue, then handle KYC and service mapping in the focused detail workspace."
       title="Priest Management"
       userEmail={user.email}
+      subnav={
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="success">Queue view</Badge>
+          <Badge variant="outline">KYC review</Badge>
+          <Badge variant="outline">Service mapping</Badge>
+          <Badge variant="outline">Document previews</Badge>
+        </div>
+      }
     >
       {bannerMessage ? (
         <div className="rounded-[24px] border border-success/20 bg-success/10 px-4 py-3 text-sm font-medium text-success">
@@ -85,182 +118,222 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
         })}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Onboarding and KYC queue</CardTitle>
-            <CardDescription>Admin can review each priest, update KYC state, and manage verification readiness.</CardDescription>
+            <CardTitle className="text-lg">Onboarding queue</CardTitle>
+            <CardDescription>Use the list as the operational inbox. Open a priest to review details and take action.</CardDescription>
           </CardHeader>
-          <CardContent className="max-h-[720px] space-y-4 overflow-y-auto pr-2 surface-scroll">
-            {store.priests.map((priest) => (
-              <form action={savePriestReview} className="rounded-[24px] border border-border bg-white p-4" key={priest.id}>
-                <input name="id" type="hidden" value={priest.id} />
-                <div className="grid gap-5 2xl:grid-cols-[300px_minmax(0,1fr)]">
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-base font-semibold text-foreground">{priest.name}</p>
+          <CardContent className="surface-scroll max-h-[780px] overflow-y-auto p-0">
+            <div className="min-w-[760px]">
+              <div className="grid grid-cols-[1.5fr_1.1fr_0.8fr_0.9fr_0.8fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+                <span>Priest</span>
+                <span>Service path</span>
+                <span>KYC</span>
+                <span>Verification</span>
+                <span>Submitted</span>
+                <span className="text-right">Action</span>
+              </div>
+              {store.priests.map((priest) => {
+                const isActive = activePriest?.id === priest.id;
+
+                return (
+                  <Link
+                    className={`grid grid-cols-[1.5fr_1.1fr_0.8fr_0.9fr_0.8fr_0.7fr] gap-3 border-b border-border px-5 py-4 transition-colors hover:bg-secondary/35 ${
+                      isActive ? "bg-primary/5" : "bg-white"
+                    }`}
+                    href={`/dashboard/priests?priest=${priest.id}`}
+                    key={priest.id}
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-foreground">{priest.name}</p>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {priest.locality}, {priest.district}
                       </p>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant={priest.kycStatus === "approved" ? "success" : priest.kycStatus === "review" ? "outline" : "secondary"}>
-                        KYC {priest.kycStatus}
-                      </Badge>
-                      <Badge variant={priest.verificationStatus === "verified" ? "success" : priest.verificationStatus === "review" ? "outline" : "secondary"}>
-                        {priest.verificationStatus}
-                      </Badge>
+                    <div className="min-w-0">
+                      <p className="line-clamp-2 text-sm text-foreground">
+                        {priest.serviceCategoryId
+                          ? buildCategoryLabel(priest.serviceCategoryId, ritualStore.categories)
+                          : "Not assigned"}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">{priest.ritualIds.length} rituals</p>
                     </div>
-                    <div className="grid gap-2">
-                      <InfoRow
-                        icon={ScrollText}
-                        label="Services"
-                        value={priest.services.join(", ")}
-                      />
-                      <InfoRow
-                        icon={FolderOpenDot}
-                        label="Category path"
-                        value={
-                          priest.serviceCategoryId
-                            ? buildCategoryLabel(priest.serviceCategoryId, ritualStore.categories)
-                            : "Not assigned"
-                        }
-                      />
-                      <InfoRow
-                        icon={PhoneCall}
-                        label="Contact"
-                        value={priest.phone}
-                      />
-                      <InfoRow
-                        icon={MapPinned}
-                        label="Submitted"
-                        value={priest.submittedAt}
-                      />
+                    <div className="flex items-start">
+                      <Badge variant={getStatusVariant(priest.kycStatus)}>{priest.kycStatus}</Badge>
                     </div>
-                    <div className="rounded-[20px] border border-border bg-secondary/35 p-3">
-                      <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-                        <FileImage className="h-4 w-4 text-primary" />
-                        <span>KYC documents</span>
-                      </div>
-                      <div className="grid gap-3">
-                        {priest.documents.map((documentKey) => {
-                          const preview = documentPreviewMap[documentKey] ?? {
-                            title: documentKey,
-                            asset: "/kyc/govt-id.svg"
-                          };
-
-                          return (
-                            <div className="overflow-hidden rounded-[18px] border border-border bg-white" key={documentKey}>
-                              <div className="relative aspect-[16/10] bg-muted">
-                                <Image
-                                  alt={preview.title}
-                                  className="object-cover"
-                                  fill
-                                  sizes="(max-width: 1280px) 100vw, 240px"
-                                  src={preview.asset}
-                                />
-                              </div>
-                              <div className="flex items-center justify-between gap-3 px-3 py-2.5">
-                                <div>
-                                  <p className="text-sm font-semibold text-foreground">{preview.title}</p>
-                                  <p className="text-xs text-muted-foreground">Preview available for admin review</p>
-                                </div>
-                                <Button size="sm" type="button" variant="secondary">
-                                  View
-                                </Button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                    <div className="flex items-start">
+                      <Badge variant={getStatusVariant(priest.verificationStatus)}>{priest.verificationStatus}</Badge>
                     </div>
-                  </div>
-
-                  <div className="grid gap-3 md:grid-cols-2">
-                    <label className="grid gap-2 text-sm font-semibold text-foreground">
-                      <span>KYC status</span>
-                      <select
-                        className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                        defaultValue={priest.kycStatus}
-                        name="kycStatus"
-                      >
-                        <option value="pending">pending</option>
-                        <option value="review">review</option>
-                        <option value="approved">approved</option>
-                        <option value="rejected">rejected</option>
-                      </select>
-                    </label>
-                    <label className="grid gap-2 text-sm font-semibold text-foreground">
-                      <span>Verification status</span>
-                      <select
-                        className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                        defaultValue={priest.verificationStatus}
-                        name="verificationStatus"
-                      >
-                        <option value="unverified">unverified</option>
-                        <option value="review">review</option>
-                        <option value="verified">verified</option>
-                      </select>
-                    </label>
-                    <label className="grid gap-2 text-sm font-semibold text-foreground">
-                      <span>Travel radius (km)</span>
-                      <Input defaultValue={priest.radiusKm} min={0} name="radiusKm" type="number" />
-                    </label>
-                    <div className="sm:col-span-2">
-                      <div className="grid gap-2 text-sm font-semibold text-foreground">
-                        <span>Priest service mapping</span>
-                        <PriestServiceSelector
-                          categories={ritualStore.categories.map((category) => ({
-                            id: category.id,
-                            name: category.name,
-                            parentId: category.parentId
-                          }))}
-                          defaultMainCategoryId={priest.mainCategoryId}
-                          defaultRitualIds={priest.ritualIds}
-                          defaultServiceCategoryId={priest.serviceCategoryId}
-                          rituals={ritualStore.rituals.map((ritual) => ({
-                            id: ritual.id,
-                            name: ritual.name,
-                            categoryId: ritual.categoryId
-                          }))}
-                        />
-                      </div>
+                    <p className="text-sm text-foreground">{priest.submittedAt}</p>
+                    <div className="flex justify-end">
+                      <span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
+                        Review
+                      </span>
                     </div>
-                    <div className="sm:col-span-2">
-                      <label className="grid gap-2 text-sm font-semibold text-foreground">
-                        <span>Admin notes</span>
-                        <textarea
-                          className="min-h-28 rounded-[22px] border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                          defaultValue={priest.notes}
-                          name="notes"
-                        />
-                      </label>
-                    </div>
-                    <div className="sm:col-span-2 flex justify-end">
-                      <Button type="submit">Save priest review</Button>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            ))}
+                  </Link>
+                );
+              })}
+            </div>
           </CardContent>
         </Card>
 
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Mandatory onboarding fields</CardTitle>
-            <CardDescription>These remain required so verification is auditable and district coverage is reliable.</CardDescription>
+            <CardTitle className="text-lg">Priest detail workspace</CardTitle>
+            <CardDescription>Focused review area for KYC, category mapping, notes, and document validation.</CardDescription>
           </CardHeader>
-          <CardContent className="max-h-[720px] space-y-3 overflow-y-auto pr-2 surface-scroll">
-            {store.requirements.map((item) => (
-              <div className="rounded-[20px] border border-border bg-white p-4" key={item}>
-                <p className="text-sm font-semibold text-foreground">{item}</p>
+          <CardContent className="surface-scroll max-h-[780px] overflow-y-auto pr-2">
+            {activePriest ? (
+              <PriestDetailPanel priest={activePriest} ritualStore={ritualStore} />
+            ) : (
+              <div className="rounded-[24px] border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground">
+                No priest record is available.
               </div>
-            ))}
+            )}
           </CardContent>
         </Card>
       </div>
     </AdminShell>
+  );
+}
+
+type PriestDetailPanelProps = {
+  priest: PriestRecord;
+  ritualStore: Awaited<ReturnType<typeof getRitualStore>>;
+};
+
+function PriestDetailPanel({ priest, ritualStore }: PriestDetailPanelProps) {
+  return (
+    <form action={savePriestReview} className="space-y-5">
+      <input name="id" type="hidden" value={priest.id} />
+
+      <div className="space-y-3">
+        <div>
+          <p className="text-xl font-semibold text-foreground">{priest.name}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {priest.locality}, {priest.district}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Badge variant={getStatusVariant(priest.kycStatus)}>KYC {priest.kycStatus}</Badge>
+          <Badge variant={getStatusVariant(priest.verificationStatus)}>{priest.verificationStatus}</Badge>
+        </div>
+      </div>
+
+      <div className="grid gap-2">
+        <InfoRow icon={ScrollText} label="Services" value={priest.services.join(", ")} />
+        <InfoRow
+          icon={FolderOpenDot}
+          label="Category path"
+          value={
+            priest.serviceCategoryId
+              ? buildCategoryLabel(priest.serviceCategoryId, ritualStore.categories)
+              : "Not assigned"
+          }
+        />
+        <InfoRow icon={PhoneCall} label="Contact" value={priest.phone} />
+        <InfoRow icon={MapPinned} label="Submitted" value={priest.submittedAt} />
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className="grid gap-2 text-sm font-semibold text-foreground">
+          <span>KYC status</span>
+          <select
+            className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            defaultValue={priest.kycStatus}
+            name="kycStatus"
+          >
+            <option value="pending">pending</option>
+            <option value="review">review</option>
+            <option value="approved">approved</option>
+            <option value="rejected">rejected</option>
+          </select>
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-foreground">
+          <span>Verification status</span>
+          <select
+            className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            defaultValue={priest.verificationStatus}
+            name="verificationStatus"
+          >
+            <option value="unverified">unverified</option>
+            <option value="review">review</option>
+            <option value="verified">verified</option>
+          </select>
+        </label>
+      </div>
+
+      <label className="grid gap-2 text-sm font-semibold text-foreground">
+        <span>Travel radius (km)</span>
+        <Input defaultValue={priest.radiusKm} min={0} name="radiusKm" type="number" />
+      </label>
+
+      <div className="grid gap-2 text-sm font-semibold text-foreground">
+        <span>Priest service mapping</span>
+        <PriestServiceSelector
+          categories={ritualStore.categories.map((category) => ({
+            id: category.id,
+            name: category.name,
+            parentId: category.parentId
+          }))}
+          defaultMainCategoryId={priest.mainCategoryId}
+          defaultRitualIds={priest.ritualIds}
+          defaultServiceCategoryId={priest.serviceCategoryId}
+          rituals={ritualStore.rituals.map((ritual) => ({
+            id: ritual.id,
+            name: ritual.name,
+            categoryId: ritual.categoryId
+          }))}
+        />
+      </div>
+
+      <div className="rounded-[20px] border border-border bg-secondary/35 p-3">
+        <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+          <FileImage className="h-4 w-4 text-primary" />
+          <span>KYC documents</span>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          {priest.documents.map((documentKey) => {
+            const preview = documentPreviewMap[documentKey] ?? {
+              title: documentKey,
+              asset: "/kyc/govt-id.svg"
+            };
+
+            return (
+              <div className="overflow-hidden rounded-[18px] border border-border bg-white" key={documentKey}>
+                <div className="relative aspect-[16/10] bg-muted">
+                  <Image
+                    alt={preview.title}
+                    className="object-cover"
+                    fill
+                    sizes="(max-width: 1280px) 100vw, 240px"
+                    src={preview.asset}
+                  />
+                </div>
+                <div className="px-3 py-2.5">
+                  <p className="text-sm font-semibold text-foreground">{preview.title}</p>
+                  <p className="text-xs text-muted-foreground">Preview available for admin review</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <label className="grid gap-2 text-sm font-semibold text-foreground">
+        <span>Admin notes</span>
+        <textarea
+          className="min-h-28 rounded-[22px] border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+          defaultValue={priest.notes}
+          name="notes"
+        />
+      </label>
+
+      <div className="flex justify-end">
+        <Button type="submit">Save priest review</Button>
+      </div>
+    </form>
   );
 }
 

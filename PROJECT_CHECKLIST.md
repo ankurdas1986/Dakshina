@@ -55,7 +55,7 @@ Legend:
 - `[x]` verified/unverified status control and admin notes
 - `[x]` KYC document preview cards for admin review
 - `[x]` cascading category and ritual selection flow
-- `[~]` priest list/detail operating view
+- `[x]` priest list/detail operating view
 - `[ ]` priest table with search/filter
 - `[ ]` district/radius management beyond per-priest editing
 

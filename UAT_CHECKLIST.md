@@ -25,6 +25,7 @@ Legend:
 ## Module 2: Priest Management
 
 - `[~]` Priest listing renders from persisted data
+- `[~]` Priest queue supports list-first review with dedicated detail workspace
 - `[~]` KYC review actions update status, verification, radius, and notes
 - `[~]` KYC document previews render for each uploaded proof
 - `[~]` Cascading category selection maps priests to leaf categories and ritual checklists
