@@ -1,0 +1,123 @@
+# Dakshina Delivery Checklist
+
+This file is the execution checklist for the full marketplace build. It is the operational source of truth for what is done, what is under active development, and what remains pending.
+
+Legend:
+
+- `[x]` completed and verified
+- `[~]` in progress
+- `[ ]` pending
+
+## 1. Product Foundation
+
+- `[x]` PRD documented and aligned with the current marketplace scope
+- `[x]` project plan documented with admin-first execution strategy
+- `[x]` booking lifecycle and anti-leakage rules documented
+- `[x]` database schema drafted with PostGIS and Fard JSON support
+- `[~]` project-wide execution checklist maintained and updated per module
+- `[ ]` open product decisions resolved for payments, pricing ownership, trust score, and launch geo granularity
+
+## 2. Repository and Architecture
+
+- `[x]` monorepo scaffolded with `apps/admin`, `packages/config`, `packages/db`, and shared packages
+- `[x]` stable package versions pinned for the current admin build
+- `[x]` local git repository initialized and connected to the project GitHub remote
+- `[x]` branding asset added to the admin app
+- `[ ]` CI checks configured for lint, typecheck, and build
+- `[ ]` Supabase project configuration captured as reproducible setup
+
+## 3. Admin Platform
+
+### 3.1 Access and Shell
+
+- `[x]` admin auth baseline implemented
+- `[x]` dev fallback login flow implemented for local review
+- `[x]` direct login on `/`
+- `[x]` responsive admin shell with fixed header and left navigation
+- `[x]` left panel vertical scroll behavior implemented
+- `[x]` long cards constrained with internal scroll
+
+### 3.2 Global Settings
+
+- `[x]` read-only overview for commissions, privacy timing, service tiers, and controls
+- `[~]` editable settings forms with local persistence for UAT
+- `[ ]` Supabase-backed settings persistence
+- `[ ]` audit log for settings changes
+
+### 3.3 Priest Management
+
+- `[x]` module route and responsive shell page
+- `[ ]` priest table with search/filter
+- `[ ]` priest detail view
+- `[ ]` manual KYC approve/reject flow
+- `[ ]` verified toggle and trust metadata
+- `[ ]` district/radius management
+
+### 3.4 Rituals and Fard
+
+- `[x]` module route and responsive shell page
+- `[ ]` ritual category CRUD
+- `[ ]` ritual CRUD
+- `[ ]` 4-tier service model management
+- `[ ]` JSON-based Fard editor
+- `[ ]` Fard snapshot preview rules
+
+### 3.5 Booking Operations
+
+- `[x]` module route and responsive shell page
+- `[ ]` booking list with status filters
+- `[ ]` booking detail screen
+- `[ ]` reassignment and replacement controls
+- `[ ]` contact reveal timing enforcement UI
+- `[ ]` OTP completion oversight
+
+### 3.6 Trust and Referral
+
+- `[x]` module route and responsive shell page
+- `[ ]` review moderation UI
+- `[ ]` referral ledger actions
+- `[ ]` completion-gated reward release workflow
+- `[ ]` trust score operations panel
+
+## 4. Priest App
+
+- `[ ]` app scaffold
+- `[ ]` priest auth integration
+- `[ ]` priest onboarding form
+- `[ ]` KYC upload
+- `[ ]` service selection and radius setup
+- `[ ]` booking inbox
+- `[ ]` completion OTP flow
+
+## 5. User App
+
+- `[ ]` app scaffold
+- `[ ]` user auth integration
+- `[ ]` locality-aware discovery
+- `[ ]` ritual search and priest matching
+- `[ ]` booking creation
+- `[ ]` advance payment flow
+- `[ ]` delayed contact reveal logic
+- `[ ]` Fard view and PDF download
+- `[ ]` review submission
+
+## 6. Maps, Search, and Geography
+
+- `[ ]` district and locality data model finalized
+- `[ ]` PostGIS search wired to the application layer
+- `[ ]` priest home pin and service radius mapping
+- `[ ]` booking location capture
+- `[ ]` admin service coverage management
+
+## 7. Quality, UAT, and Release
+
+- `[~]` self-verification after each implemented task
+- `[ ]` formal UAT checklist per module
+- `[ ]` lint and typecheck run clean in CI and locally
+- `[ ]` staging deployment verification
+- `[ ]` MVP release checklist
+
+## Current Focus
+
+- `[~]` Module 1: Global Settings editable super-admin workflow
+- `[ ]` Module 2: Priest Management with manual KYC workflow
