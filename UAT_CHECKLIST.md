@@ -86,6 +86,8 @@ Legend:
 
 ## Remaining Non-Admin Work
 
+- `[ ]` Priest self-registration flow creates distinct priest records for multiple accounts
+- `[ ]` User self-registration flow creates distinct user records for multiple accounts
 - `[ ]` Production persistence moved from local files to Supabase
 - `[ ]` CI runs lint, typecheck, and build
 - `[ ]` Cross-module search experience replaces module-scoped filtering

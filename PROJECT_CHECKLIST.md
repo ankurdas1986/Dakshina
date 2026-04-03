@@ -14,6 +14,7 @@ Legend:
 - `[x]` project plan documented with admin-first execution strategy
 - `[x]` booking lifecycle and anti-leakage rules documented
 - `[x]` database schema drafted with PostGIS and Fard JSON support
+- `[x]` multi-user and multi-priest registration is supported at the schema level
 - `[x]` project-wide execution checklist maintained and updated per module
 - `[ ]` open product decisions resolved for payments, pricing ownership, trust score, and launch geo granularity
 
@@ -110,6 +111,7 @@ Legend:
 
 - `[ ]` app scaffold
 - `[ ]` priest auth integration
+- `[ ]` priest self-registration flow wired to Supabase and `app.profiles` / `app.priest_profiles`
 - `[ ]` priest onboarding form
 - `[ ]` KYC upload
 - `[ ]` service selection and radius setup
@@ -120,6 +122,7 @@ Legend:
 
 - `[ ]` app scaffold
 - `[ ]` user auth integration
+- `[ ]` user self-registration flow wired to Supabase and `app.profiles`
 - `[ ]` locality-aware discovery
 - `[ ]` ritual search and priest matching
 - `[ ]` booking creation
