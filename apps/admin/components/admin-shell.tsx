@@ -11,17 +11,16 @@ import {
   LayoutDashboard,
   MapPinned,
   Menu,
-  Moon,
-  Palette,
   Search,
   ShieldCheck,
-  Sparkles,
-  UserCircle2,
+  Settings2,
   X
 } from "lucide-react";
+import { signOut } from "../app/actions/auth";
 import { moduleStatus } from "../lib/admin-data";
 import { cn } from "../lib/utils";
 import { Card, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { DakshinaLogo } from "./dakshina-logo";
 
@@ -89,7 +88,7 @@ export function AdminShell({
 
         <aside
           className={cn(
-            "fixed inset-y-3 left-3 z-40 w-[260px] max-w-[calc(100vw-1.5rem)] transition-transform xl:static xl:inset-auto xl:w-auto xl:max-w-none xl:translate-x-0",
+            "fixed inset-y-3 left-3 z-40 w-[260px] max-w-[calc(100vw-1.5rem)] transition-transform xl:sticky xl:top-3 xl:self-start xl:w-auto xl:max-w-none xl:translate-x-0",
             sidebarOpen ? "translate-x-0" : "-translate-x-[110%]"
           )}
         >
@@ -186,65 +185,59 @@ export function AdminShell({
                     </span>
                   ) : null}
                 </Link>
-                <div className="hidden items-center gap-1 rounded-2xl border border-border bg-secondary/35 px-3 py-2 text-xs text-muted-foreground lg:flex">
-                  <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Policy</span>
-                  <p className="max-w-[220px] text-[13px] font-semibold text-foreground">
-                    Every module reads from platform policy, district rules, and booking controls.
-                  </p>
-                </div>
-                <div className="hidden items-center gap-2 rounded-full border border-border bg-white px-3 py-2 text-sm text-foreground sm:flex">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <Palette className="h-4 w-4 text-muted-foreground" />
-                  <Moon className="h-4 w-4 text-muted-foreground" />
-                  <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-sm font-bold text-foreground">
-                    {initials}
-                    <span className="absolute right-0 top-0 inline-flex h-2 w-2 rounded-full bg-success" />
-                  </span>
-                </div>
                 <div className="relative">
                   <button
                     className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-sm text-foreground"
                     onClick={() => setProfileMenuOpen((prev) => !prev)}
                     type="button"
                   >
-                    <UserCircle2 className="h-6 w-6" />
-                    <span className="absolute right-1 top-1 inline-flex h-2 w-2 rounded-full bg-destructive" />
+                    <span className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-bold text-foreground">
+                      {initials}
+                      <span className="absolute right-0 top-0 inline-flex h-2 w-2 rounded-full bg-success" />
+                    </span>
                   </button>
                   {profileMenuOpen ? (
-                    <div className="absolute right-0 top-full mt-2 w-[220px] rounded-[20px] border border-border bg-white shadow-lg">
+                    <div className="absolute right-0 top-full z-20 mt-2 w-[240px] rounded-[20px] border border-border bg-white shadow-lg">
                       <div className="rounded-t-[18px] bg-gradient-to-br from-primary/20 to-secondary/40 px-4 py-3 text-sm text-foreground">
                         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Operator</p>
                         <p className="text-base font-semibold">Dakshina Admin</p>
                         <p className="text-xs text-muted-foreground">{userEmail ?? "admin@dakshina.local"}</p>
                       </div>
                       <div className="space-y-2 px-4 py-3 text-sm text-foreground">
-                        <button className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50">
-                          <Sparkles className="h-4 w-4 text-primary" />
-                          Get Pro
-                        </button>
-                        <button className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50">
+                        <Link
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50"
+                          href="/dashboard"
+                          onClick={() => setProfileMenuOpen(false)}
+                        >
+                          <LayoutDashboard className="h-4 w-4 text-primary" />
+                          Dashboard
+                        </Link>
+                        <Link
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50"
+                          href="/dashboard#notifications"
+                          onClick={() => setProfileMenuOpen(false)}
+                        >
                           <Bell className="h-4 w-4 text-primary" />
                           Notifications
-                        </button>
-                        <button className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50">
-                          <Palette className="h-4 w-4 text-primary" />
-                          Account settings
-                        </button>
-                        <div className="rounded-xl border border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
-                          Credits: <span className="font-semibold text-foreground">5 left</span>
-                          <div className="mt-2 h-2 rounded-full bg-muted">
-                            <div className="h-2 w-full rounded-full bg-primary/70" />
-                          </div>
-                          <p className="text-[10px] text-muted-foreground">Daily credits used first</p>
-                        </div>
-                        <button
+                        </Link>
+                        <Link
                           className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50"
+                          href="/dashboard"
                           onClick={() => setProfileMenuOpen(false)}
-                          type="button"
                         >
-                          <ChevronRight className="h-4 w-4 text-primary" />
-                          Log out
-                        </button>
+                          <Settings2 className="h-4 w-4 text-primary" />
+                          Global settings
+                        </Link>
+                        <div className="rounded-xl border border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
+                          Signed in as
+                          <p className="mt-1 text-sm font-semibold text-foreground">{userEmail ?? "admin@dakshina.local"}</p>
+                        </div>
+                        <form action={signOut}>
+                          <Button className="w-full justify-start rounded-xl" type="submit" variant="secondary">
+                            <ChevronRight className="h-4 w-4 text-primary" />
+                            Log out
+                          </Button>
+                        </form>
                       </div>
                     </div>
                   ) : null}
@@ -273,6 +266,13 @@ export function AdminShell({
           ) : null}
 
           {children}
+
+          <footer className="rounded-[20px] border border-border bg-white/80 px-4 py-3 text-sm text-muted-foreground shadow-soft backdrop-blur">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p className="font-medium text-foreground">Dakshina Direct Admin</p>
+              <p>Copyright 2026 Dakshina Direct. Admin operations console.</p>
+            </div>
+          </footer>
         </section>
       </div>
     </main>
