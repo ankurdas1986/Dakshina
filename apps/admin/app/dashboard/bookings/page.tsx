@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AlertTriangle, Clock3, RefreshCcw, Wallet } from "lucide-react";
 import { saveBookingCase } from "../../actions/bookings";
 import { AdminShell } from "../../../components/admin-shell";
@@ -6,7 +7,7 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { requireAdminUser } from "../../../lib/auth";
-import { getBookingMetrics, getBookingStore } from "../../../lib/booking-store";
+import { type BookingCase, getBookingMetrics, getBookingStore } from "../../../lib/booking-store";
 
 export const dynamic = "force-dynamic";
 
@@ -23,12 +24,27 @@ const errorMap: Record<string, string> = {
   invalid_booking_id: "Booking id is invalid."
 };
 
+const checkboxClassName =
+  "mt-1 h-4 w-4 accent-[hsl(var(--primary))] rounded border-border focus:ring-primary";
+
 function readParam(
   params: Record<string, string | string[] | undefined>,
   key: string
 ) {
   const value = params[key];
   return Array.isArray(value) ? value[0] : value;
+}
+
+function getStatusVariant(status: string, replacementRequired: boolean) {
+  if (status === "completed") {
+    return "success" as const;
+  }
+
+  if (replacementRequired) {
+    return "secondary" as const;
+  }
+
+  return "outline" as const;
 }
 
 export default async function BookingsPage({ searchParams }: BookingsPageProps) {
@@ -38,8 +54,11 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
   const resolvedSearchParams = (await searchParams) ?? {};
   const messageKey = readParam(resolvedSearchParams, "message");
   const errorKey = readParam(resolvedSearchParams, "error");
+  const selectedBookingId = readParam(resolvedSearchParams, "booking");
   const bannerMessage = messageKey ? messageMap[messageKey] ?? null : null;
   const bannerError = errorKey ? errorMap[errorKey] ?? errorKey : null;
+  const activeBooking =
+    store.cases.find((booking) => booking.id === selectedBookingId) ?? store.cases[0] ?? null;
 
   const metrics = [
     { label: "Active bookings", value: metricsSnapshot.activeBookings, icon: Clock3 },
@@ -51,13 +70,13 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
   return (
     <AdminShell
       active="bookings"
-      subtitle="Admin manages payment checkpoints, delayed phone reveal, booking state transitions, and emergency priest replacement."
+      subtitle="Admin manages payment checkpoints, delayed phone reveal, booking state transitions, and emergency priest replacement through a queue-first operating desk."
       title="Bookings"
       userEmail={user.email}
       subnav={
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Status control</Badge>
-          <Badge variant="outline">Advance state</Badge>
+          <Badge variant="success">Booking queue</Badge>
+          <Badge variant="outline">Status control</Badge>
           <Badge variant="outline">Reveal timing</Badge>
           <Badge variant="outline">Replacement workflow</Badge>
         </div>
@@ -93,96 +112,75 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
         })}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Live booking cases</CardTitle>
-            <CardDescription>Each case remains editable for status, replacement, and contact reveal operations.</CardDescription>
+            <CardTitle className="text-lg">Live booking queue</CardTitle>
+            <CardDescription>Use the queue to scan risk, replacement state, and payment readiness before opening the case workspace.</CardDescription>
           </CardHeader>
-          <CardContent className="surface-scroll max-h-[860px] space-y-4 overflow-y-auto pr-2">
-            {store.cases.map((booking) => (
-              <form action={saveBookingCase} className="rounded-[24px] border border-border bg-white p-4" key={booking.id}>
-                <input name="id" type="hidden" value={booking.id} />
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="text-base font-semibold text-foreground">{booking.bookingCode} - {booking.ritual}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{booking.district} | Event date {booking.eventDate}</p>
-                  </div>
-                  <Badge variant={booking.status === "completed" ? "success" : booking.replacementRequired ? "secondary" : "outline"}>
-                    {booking.status}
-                  </Badge>
-                </div>
+          <CardContent className="surface-scroll overflow-y-auto p-0 xl:max-h-[860px]">
+            <div className="min-w-[760px]">
+              <div className="grid grid-cols-[1.4fr_0.9fr_0.9fr_0.8fr_0.9fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+                <span>Booking</span>
+                <span>Status</span>
+                <span>Advance</span>
+                <span>Risk</span>
+                <span>Contact</span>
+                <span className="text-right">Action</span>
+              </div>
+              {store.cases.map((booking) => {
+                const isActive = activeBooking?.id === booking.id;
 
-                <div className="grid gap-3">
-                  <Field label="Assigned priest">
-                    <Input defaultValue={booking.assignedPriest} name="assignedPriest" required />
-                  </Field>
-                  <div className="grid gap-3 sm:grid-cols-4">
-                    <SelectField
-                      defaultValue={booking.status}
-                      label="Status"
-                      name="status"
-                      options={store.statuses.map((status) => ({ value: status, label: status }))}
-                    />
-                    <SelectField
-                      defaultValue={booking.advanceState}
-                      label="Advance state"
-                      name="advanceState"
-                      options={[
-                        { value: "pending", label: "pending" },
-                        { value: "paid", label: "paid" },
-                        { value: "failed", label: "failed" },
-                        { value: "refunded", label: "refunded" }
-                      ]}
-                    />
-                    <SelectField
-                      defaultValue={booking.risk}
-                      label="Risk"
-                      name="risk"
-                      options={[
-                        { value: "low", label: "low" },
-                        { value: "medium", label: "medium" },
-                        { value: "high", label: "high" }
-                      ]}
-                    />
-                    <Field label="Contact reveal">
-                      <Input defaultValue={booking.contactReveal} name="contactReveal" required />
-                    </Field>
-                  </div>
-                  <label className="flex items-start gap-3 rounded-[20px] border border-border bg-white p-4">
-                    <input
-                      className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                      defaultChecked={booking.replacementRequired}
-                      name="replacementRequired"
-                      type="checkbox"
-                    />
-                    <span>
-                      <span className="block text-sm font-semibold text-foreground">Replacement required</span>
-                      <span className="block text-sm leading-6 text-muted-foreground">Keep this enabled while admin is actively handling a reassignment case.</span>
-                    </span>
-                  </label>
-                  <TextAreaField label="Replacement notes" defaultValue={booking.replacementNotes} name="replacementNotes" />
-                  <div className="flex justify-end">
-                    <Button type="submit">Save booking case</Button>
-                  </div>
-                </div>
-              </form>
-            ))}
+                return (
+                  <Link
+                    className={`grid grid-cols-[1.4fr_0.9fr_0.9fr_0.8fr_0.9fr_0.7fr] gap-3 border-b border-border px-5 py-4 transition-colors hover:bg-secondary/35 ${
+                      isActive ? "bg-primary/5" : "bg-white"
+                    }`}
+                    href={`/dashboard/bookings?booking=${booking.id}`}
+                    key={booking.id}
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-foreground">
+                        {booking.bookingCode} - {booking.ritual}
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {booking.district} | {booking.eventDate}
+                      </p>
+                    </div>
+                    <div className="flex items-start">
+                      <Badge variant={getStatusVariant(booking.status, booking.replacementRequired)}>
+                        {booking.status}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-foreground">{booking.advanceState}</p>
+                    <p className="text-sm text-foreground">{booking.risk}</p>
+                    <p className="text-sm text-foreground">{booking.contactReveal}</p>
+                    <div className="flex justify-end">
+                      <span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
+                        Review
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </CardContent>
         </Card>
 
         <div className="space-y-5">
           <Card className="rounded-[28px] border-border/80 bg-white">
             <CardHeader>
-              <CardTitle className="text-lg">Booking status model</CardTitle>
-              <CardDescription>This lifecycle comes from the booking rules document and PRD.</CardDescription>
+              <CardTitle className="text-lg">Booking detail workspace</CardTitle>
+              <CardDescription>Update the selected booking case without crowding the whole module with inline forms.</CardDescription>
             </CardHeader>
-            <CardContent className="surface-scroll max-h-[420px] space-y-3 overflow-y-auto pr-2">
-              {store.statuses.map((status) => (
-                <div className="rounded-[20px] border border-border bg-white p-4" key={status}>
-                  <p className="text-sm font-semibold text-foreground">{status}</p>
+            <CardContent className="surface-scroll overflow-y-auto pr-2 xl:max-h-[860px]">
+              {activeBooking ? (
+                <BookingDetailPanel booking={activeBooking} statuses={store.statuses} />
+              ) : (
+                <div className="rounded-[24px] border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground">
+                  No booking case is available.
                 </div>
-              ))}
+              )}
             </CardContent>
           </Card>
 
@@ -202,6 +200,91 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
         </div>
       </div>
     </AdminShell>
+  );
+}
+
+type BookingDetailPanelProps = {
+  booking: BookingCase;
+  statuses: string[];
+};
+
+function BookingDetailPanel({ booking, statuses }: BookingDetailPanelProps) {
+  return (
+    <form action={saveBookingCase} className="space-y-5">
+      <input name="id" type="hidden" value={booking.id} />
+
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xl font-semibold text-foreground">
+            {booking.bookingCode} - {booking.ritual}
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {booking.district} | Event date {booking.eventDate}
+          </p>
+        </div>
+        <Badge variant={getStatusVariant(booking.status, booking.replacementRequired)}>
+          {booking.status}
+        </Badge>
+      </div>
+
+      <Field label="Assigned priest">
+        <Input defaultValue={booking.assignedPriest} name="assignedPriest" required />
+      </Field>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <SelectField
+          defaultValue={booking.status}
+          label="Status"
+          name="status"
+          options={statuses.map((status) => ({ value: status, label: status }))}
+        />
+        <SelectField
+          defaultValue={booking.advanceState}
+          label="Advance state"
+          name="advanceState"
+          options={[
+            { value: "pending", label: "pending" },
+            { value: "paid", label: "paid" },
+            { value: "failed", label: "failed" },
+            { value: "refunded", label: "refunded" }
+          ]}
+        />
+        <SelectField
+          defaultValue={booking.risk}
+          label="Risk"
+          name="risk"
+          options={[
+            { value: "low", label: "low" },
+            { value: "medium", label: "medium" },
+            { value: "high", label: "high" }
+          ]}
+        />
+        <Field label="Contact reveal">
+          <Input defaultValue={booking.contactReveal} name="contactReveal" required />
+        </Field>
+      </div>
+
+      <label className="flex items-start gap-3 rounded-[20px] border border-border bg-white p-4">
+        <input
+          className={checkboxClassName}
+          defaultChecked={booking.replacementRequired}
+          name="replacementRequired"
+          type="checkbox"
+        />
+        <span>
+          <span className="block text-sm font-semibold text-foreground">Replacement required</span>
+          <span className="block text-sm leading-6 text-muted-foreground">
+            Keep this enabled while admin is actively handling a reassignment case.
+          </span>
+        </span>
+      </label>
+
+      <TextAreaField label="Replacement notes" defaultValue={booking.replacementNotes} name="replacementNotes" />
+
+      <div className="flex justify-end">
+        <Button type="submit">Save booking case</Button>
+      </div>
+    </form>
   );
 }
 

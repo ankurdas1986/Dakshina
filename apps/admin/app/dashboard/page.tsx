@@ -27,6 +27,9 @@ const messageMap: Record<string, string> = {
   notification_settings_saved: "Notification settings saved for local UAT."
 };
 
+const checkboxClassName =
+  "mt-1 h-4 w-4 rounded border-border accent-[hsl(var(--primary))] focus:ring-primary";
+
 function readParam(
   params: Record<string, string | string[] | undefined>,
   key: string
@@ -209,7 +212,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               {settings.controls.map((control, index) => (
                 <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4" key={control.label}>
                   <input
-                    className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                    className={checkboxClassName}
                     defaultChecked={control.enabled}
                     name={`controlEnabled-${index}`}
                     type="checkbox"
@@ -303,7 +306,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <form action={saveNotificationSettings} className="surface-scroll max-h-[460px] space-y-3 overflow-y-auto pr-2">
               <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
                 <input
-                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  className={checkboxClassName}
                   defaultChecked={settings.notificationSettings.adminInboxEnabled}
                   name="adminInboxEnabled"
                   type="checkbox"
@@ -315,7 +318,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </label>
               <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
                 <input
-                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  className={checkboxClassName}
                   defaultChecked={settings.notificationSettings.bookingAlertsEnabled}
                   name="bookingAlertsEnabled"
                   type="checkbox"
@@ -327,7 +330,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </label>
               <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
                 <input
-                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  className={checkboxClassName}
                   defaultChecked={settings.notificationSettings.kycAlertsEnabled}
                   name="kycAlertsEnabled"
                   type="checkbox"
@@ -339,7 +342,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </label>
               <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
                 <input
-                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  className={checkboxClassName}
                   defaultChecked={settings.notificationSettings.referralAlertsEnabled}
                   name="referralAlertsEnabled"
                   type="checkbox"
@@ -351,7 +354,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </label>
               <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
                 <input
-                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  className={checkboxClassName}
                   defaultChecked={settings.notificationSettings.dailyDigestEnabled}
                   name="dailyDigestEnabled"
                   type="checkbox"

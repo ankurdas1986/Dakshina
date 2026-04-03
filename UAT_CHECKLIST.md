@@ -51,6 +51,7 @@ Legend:
 
 ## Module 4: Bookings
 
+- `[x]` Booking queue supports list-first review with dedicated detail workspace
 - `[x]` Booking status changes follow allowed transitions
 - `[x]` Replacement flow is auditable
 - `[x]` Contact reveal timing follows configured window

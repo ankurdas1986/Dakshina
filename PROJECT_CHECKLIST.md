@@ -72,7 +72,8 @@ Legend:
 
 - `[x]` module route and responsive shell page
 - `[x]` booking list with status filters
-- `[x]` booking detail screen
+- `[x]` booking detail workspace
+- `[x]` booking queue with list/detail operating view
 - `[x]` reassignment and replacement controls
 - `[x]` contact reveal timing enforcement UI
 - `[ ]` OTP completion oversight
