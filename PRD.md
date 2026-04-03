@@ -145,11 +145,12 @@ Core value pillars:
 - priest listing and detail view,
 - manual KYC review,
 - verified status toggle,
-- service category management,
+- multilayer service category tree management,
 - ritual/service management,
 - dynamic JSON-based Fard management per ritual,
 - booking list and detail management,
 - booking status oversight,
+- payout management for manually released priest settlements,
 - trust and review visibility,
 - referral settings visibility,
 - replacement handling support.
@@ -168,7 +169,14 @@ Core value pillars:
 
 - Admin must be able to manage and attach a dynamic JSON-based Item List (Fard) for every ritual.
 - The ritual Fard should be stored as structured data so it can be rendered in the UI and exported to PDF.
+- The Fard template must be snapshotted into the booking record at confirmation time and remain immutable for that booking.
 - Users should be able to view or download the ritual checklist after a booking is confirmed.
+
+### Hierarchical Category Requirement
+
+- Ritual categories must support unlimited nesting through a parent-child tree model.
+- Admin must be able to add, edit, and move categories and sub-categories through a dedicated category tree interface.
+- Category management must remain smooth enough to support future expansion without flattening the catalog.
 
 ## 8.3 Priest Portal
 
@@ -179,9 +187,15 @@ Core value pillars:
 - KYC document upload,
 - home location pinning using OSM,
 - travel radius configuration,
-- service selection,
+- service selection through cascading category selection,
 - booking acceptance and status updates,
 - OTP completion input.
+
+### Cascading Service Selection
+
+- Priest service onboarding should not use a flat ritual list.
+- Priests must first select a main category, then drill down through sub-categories, then choose the rituals they perform.
+- The priest-facing category picker must be driven by the same admin-managed category tree used in the super admin module.
 
 ## 8.4 User Portal
 
@@ -233,6 +247,14 @@ These features are central to the business model and should be treated as core, 
 - The referrer receives reward credit only after the referee's ritual is marked as `completed` through the OTP-based completion flow.
 - Referral accounting must be auditable from admin.
 
+### Payout Workflow
+
+- All customer payments in MVP flow into the admin-controlled Razorpay individual account setup.
+- Marketplace split payout automation is out of scope for MVP to avoid registration and compliance complexity.
+- Priest payouts are handled manually by admin in MVP.
+- The architecture must still be ready for a future Razorpay Route-style automated payout migration.
+- Admin must have a payout management screen showing completed rituals, priest payout details, payout state, and manual mark-as-paid controls.
+
 ## 11. Booking Lifecycle
 
 Initial working lifecycle for MVP:
@@ -246,7 +268,7 @@ Initial working lifecycle for MVP:
 7. Ritual is performed
 8. Completion OTP is entered
 9. Final completion is recorded
-10. Review becomes available and referral reward logic can settle
+10. Review becomes available, payout becomes eligible, and referral reward logic can settle
 
 Admin needs full visibility across this lifecycle.
 
@@ -281,6 +303,9 @@ MVP approach:
 - Separate apps for admin, user, and priest experiences
 - Shared packages for UI, database types, config, and utilities
 - Authentication flow must rely on zero-cost email-based Supabase auth patterns, not paid SMS OTP providers
+- Payment collection uses a single admin-controlled Razorpay account in MVP
+- Priest payout release is manual in MVP but should map cleanly to future payout automation
+- Ritual taxonomy must support unlimited sub-category depth from day one
 
 ### UI
 
@@ -334,6 +359,14 @@ These items require product confirmation later:
 5. Mandatory KYC fields and documents
 6. Exact launch geographies within the first market
 7. Whether first release includes direct auto-matching or admin-assisted assignment
+
+Resolved architectural decisions:
+
+- authentication is Supabase Email OTP / Magic Link only for all roles in MVP,
+- payments route to admin in MVP using Razorpay individual account settings,
+- priest payouts are manual in MVP with future automation readiness,
+- ritual categories must support hierarchical nesting,
+- ritual Fard must snapshot into bookings on confirmation.
 
 ## 18. Delivery Plan
 

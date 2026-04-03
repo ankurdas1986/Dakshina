@@ -52,6 +52,8 @@ These rules govern execution for the project:
 - Frontend hosting: Vercel free tier
 - Backend, database, auth, storage: Supabase free tier
 - Authentication method: Supabase Email OTP or Magic Links only for MVP
+- Payments collection: Razorpay individual account to admin for MVP
+- Priest payout release: manual in MVP, automation-ready for later
 - Maps and location UI: OpenStreetMap + Leaflet
 - Nearby search: PostGIS in Supabase
 - Distribution: Progressive Web App
@@ -72,9 +74,10 @@ Primary goals:
 - define platform settings,
 - support global and district-based commission configuration,
 - manage priests and KYC verification,
-- manage service categories and rituals,
+- manage hierarchical service category tree and rituals,
 - manage ritual-specific Fard templates as structured JSON,
 - control bookings and status transitions,
+- manage priest payout operations,
 - manage trust and review oversight,
 - support referral and replacement operations.
 
@@ -109,11 +112,12 @@ Recommended implementation order:
 4. Priest management
 5. KYC review workflow
 6. Service catalog and Fard management
-7. Location, district, and service coverage setup
-8. Booking management and privacy timing controls
-9. Trust and feedback oversight
-10. Referral management
-11. Replacement guarantee operations
+7. Payout management
+8. Location, district, and service coverage setup
+9. Booking management and privacy timing controls
+10. Trust and feedback oversight
+11. Referral management
+12. Replacement guarantee operations
 
 ## Initial Business Features
 
@@ -130,6 +134,7 @@ Recommended implementation order:
 - priest onboarding,
 - manual KYC review via uploaded documents,
 - service radius control,
+- cascading ritual selection from admin-managed category tree,
 - base location pinning.
 
 ### Demand Experience
@@ -147,7 +152,9 @@ Recommended implementation order:
 - global commission percentage control,
 - district or region-specific commission overrides,
 - referral percentage control,
+- hierarchical category tree management,
 - ritual-level Fard management,
+- payout management for completed bookings and manual priest settlements,
 - verification toggle,
 - booking oversight,
 - escalation and replacement management.
@@ -162,6 +169,8 @@ The official 4-tier service model is:
 4. Tier 4: Monthly Trustee
 
 This tier structure should exist in the service catalog and remain admin-manageable.
+
+The service catalog must also support unlimited nested sub-categories through a parent-child category tree.
 
 ## Open Questions
 
@@ -182,11 +191,15 @@ Until confirmed otherwise, the working assumptions are:
 - admin panel is the first app to build,
 - one shared auth system will be used across all roles,
 - authentication will use Supabase Email OTP or Magic Links instead of paid SMS gateways,
+- all roles will use zero-cost Supabase email-based auth for MVP,
 - priest verification is manual in MVP,
 - nearby discovery will use latitude/longitude and PostGIS radius queries,
 - contact details stay hidden until advance payment is confirmed,
 - phone numbers are revealed only within a configurable 48 to 72 hour pre-ritual window,
 - ritual Fards are stored as JSON and snapshotted on confirmed bookings,
+- all payments go to admin in MVP using Razorpay individual account settings,
+- priest payouts are released manually in MVP and logged for future automation,
+- ritual categories support parent-child nesting and priest-side cascading selection,
 - global commission can be overridden at district level,
 - referrer reward credit is released only after OTP-based booking completion,
 - replacement flow may begin as admin-assisted before full automation,

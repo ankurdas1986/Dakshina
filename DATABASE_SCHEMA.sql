@@ -29,6 +29,7 @@ create type app.payment_status as enum ('pending', 'authorized', 'paid', 'failed
 create type app.referral_reward_status as enum ('pending', 'eligible', 'credited', 'cancelled');
 create type app.commission_scope as enum ('global', 'district');
 create type app.replacement_status as enum ('open', 'searching', 'assigned', 'resolved', 'cancelled');
+create type app.payout_status as enum ('pending', 'scheduled', 'paid', 'failed');
 
 create table if not exists app.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
@@ -121,6 +122,7 @@ create table if not exists app.priest_profiles (
   punctuality_score numeric(6,3) not null default 0,
   verification_status app.kyc_status not null default 'pending',
   is_verified boolean not null default false,
+  payout_details jsonb not null default '{}'::jsonb,
   verified_at timestamptz,
   verified_by uuid references app.profiles (id),
   created_at timestamptz not null default now(),
@@ -144,11 +146,19 @@ create table if not exists app.priest_kyc_documents (
 
 create table if not exists app.ritual_categories (
   id uuid primary key default gen_random_uuid(),
-  name text not null unique,
+  parent_id uuid references app.ritual_categories (id) on delete cascade,
+  name text not null,
   slug text not null unique,
   description text,
+  display_order int not null default 0,
   created_at timestamptz not null default now()
 );
+
+create index if not exists ritual_categories_parent_idx
+  on app.ritual_categories (parent_id, display_order, name);
+
+create unique index if not exists ritual_categories_parent_name_uniq
+  on app.ritual_categories (parent_id, lower(name));
 
 create table if not exists app.rituals (
   id uuid primary key default gen_random_uuid(),
@@ -248,6 +258,10 @@ create index if not exists bookings_user_status_idx
 create index if not exists bookings_priest_status_idx
   on app.bookings (priest_profile_id, status, scheduled_start_at desc);
 
+create index if not exists bookings_completed_idx
+  on app.bookings (status, completed_at desc)
+  where status = 'completed';
+
 alter table app.referrals
   add constraint referrals_first_booking_fk
   foreign key (first_booking_id) references app.bookings (id);
@@ -323,6 +337,32 @@ create table if not exists app.replacement_candidates (
   unique (replacement_request_id, priest_profile_id)
 );
 
+create table if not exists app.payout_logs (
+  id uuid primary key default gen_random_uuid(),
+  booking_id uuid not null unique references app.bookings (id) on delete cascade,
+  priest_profile_id uuid not null references app.priest_profiles (profile_id),
+  amount numeric(10,2) not null check (amount >= 0),
+  status app.payout_status not null default 'pending',
+  payout_method text not null default 'manual_upi',
+  payout_reference text,
+  provider text not null default 'manual',
+  provider_payload jsonb not null default '{}'::jsonb,
+  scheduled_at timestamptz,
+  paid_at timestamptz,
+  failed_at timestamptz,
+  failure_reason text,
+  created_by uuid references app.profiles (id),
+  updated_by uuid references app.profiles (id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists payout_logs_status_idx
+  on app.payout_logs (status, created_at desc);
+
+create index if not exists payout_logs_priest_status_idx
+  on app.payout_logs (priest_profile_id, status, created_at desc);
+
 create table if not exists app.admin_audit_logs (
   id uuid primary key default gen_random_uuid(),
   actor_profile_id uuid references app.profiles (id),
@@ -359,8 +399,17 @@ comment on column app.rituals.fard_template is
 comment on column app.bookings.fard_snapshot is
   'Immutable booking-time copy of the ritual Fard so the user can view or download the exact checklist after confirmation even if the ritual template changes later.';
 
+comment on table app.ritual_categories is
+  'Hierarchical ritual category tree using parent_id for unlimited sub-category depth and priest-side cascading selection.';
+
 comment on column app.bookings.contact_reveal_at is
   'Phone numbers should only become visible after advance payment confirmation and when current time is within the configured pre-ritual reveal window.';
 
 comment on table app.referrals is
   'Tracks referee discount and referrer reward release. Reward moves to credited only after the referred booking reaches completed via OTP verification.';
+
+comment on column app.priest_profiles.payout_details is
+  'JSON object storing payout-ready priest data such as UPI ID, account holder name, and future payout routing metadata.';
+
+comment on table app.payout_logs is
+  'Manual-first priest payout ledger for completed rituals. Designed to support future automated payout providers such as Razorpay Route without schema redesign.';
