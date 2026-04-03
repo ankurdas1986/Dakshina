@@ -5,6 +5,7 @@
 This repository is scaffolded as an admin-first Turborepo workspace with these top-level areas:
 
 - `apps/admin` for the first production surface
+- `apps/priest` for priest self-registration and priest-facing operations
 - `packages/config` for shared configuration
 - `packages/db` for shared domain types and database-facing contracts
 - `packages/ui` for reusable interface primitives
@@ -15,6 +16,7 @@ This repository is scaffolded as an admin-first Turborepo workspace with these t
 - Package manifests intentionally stay conservative and use stable release lines rather than canary or experimental channels.
 - Supabase Email OTP or Magic Link auth is the only MVP authentication direction reflected in the scaffold.
 - MVP admin persistence still uses local JSON stores for rapid iteration before Supabase-backed data flows are wired.
+- The new priest app currently shares the same local data plane as admin for registration visibility before full Supabase persistence is wired.
 
 ## Current Auth Baseline
 
@@ -22,6 +24,9 @@ This repository is scaffolded as an admin-first Turborepo workspace with these t
 - `apps/admin/app/sign-in/page.tsx` supports magic link and email OTP sign-in.
 - `apps/admin/app/auth/confirm/route.ts` completes magic link verification.
 - `apps/admin/app/dashboard/page.tsx` is the first protected admin route.
+- `apps/priest/app/page.tsx` supports priest email OTP or magic link sign-in.
+- `apps/priest/app/register/page.tsx` creates new priest registration records and admin notifications.
+- `apps/priest/app/dashboard/page.tsx` is the first protected priest route.
 
 ## First Build Modules
 

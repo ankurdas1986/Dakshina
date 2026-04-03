@@ -86,7 +86,12 @@ Legend:
 
 ## Remaining Non-Admin Work
 
-- `[ ]` Priest self-registration flow creates distinct priest records for multiple accounts
+- `[x]` Priest registration routes render in production build
+- `[x]` Priest login route renders in production build
+- `[x]` Priest self-registration flow creates distinct priest records for multiple accounts
+- `[x]` Priest self-registration creates admin inbox notifications
+- `[x]` Priest runtime smoke check passes for `/` and `/register`
+- `[ ]` Priest self-registration flow is wired fully to Supabase `app.profiles` / `app.priest_profiles`
 - `[ ]` User self-registration flow creates distinct user records for multiple accounts
 - `[ ]` Production persistence moved from local files to Supabase
 - `[ ]` CI runs lint, typecheck, and build

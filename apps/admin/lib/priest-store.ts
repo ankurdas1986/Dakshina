@@ -9,6 +9,7 @@ export type PriestVerificationStatus = "unverified" | "review" | "verified";
 export type PriestRecord = {
   id: string;
   name: string;
+  email?: string;
   district: string;
   locality: string;
   mainCategoryId: string | null;
@@ -43,6 +44,7 @@ const fallbackPriests: PriestStore = {
     {
       id: "priest_001",
       name: "Pandit Arindam Bhattacharya",
+      email: "arindam@dakshina.local",
       district: "Howrah",
       locality: "Bally",
       mainCategoryId: "cat_001",
@@ -60,6 +62,7 @@ const fallbackPriests: PriestStore = {
     {
       id: "priest_002",
       name: "Pandit Subhajit Chakraborty",
+      email: "subhajit@dakshina.local",
       district: "Hooghly",
       locality: "Uttarpara",
       mainCategoryId: "cat_004",
@@ -77,6 +80,7 @@ const fallbackPriests: PriestStore = {
     {
       id: "priest_003",
       name: "Pandit Debasish Goswami",
+      email: "debasish@dakshina.local",
       district: "North 24 Parganas",
       locality: "Barasat",
       mainCategoryId: "cat_007",
@@ -106,7 +110,18 @@ async function writeStore(store: PriestStore) {
 export async function getPriestStore() {
   try {
     const raw = await readFile(priestFilePath, "utf8");
-    return JSON.parse(raw) as PriestStore;
+    const parsed = JSON.parse(raw) as PriestStore;
+
+    return {
+      ...parsed,
+      priests: parsed.priests.map((priest, index) => ({
+        ...priest,
+        email:
+          priest.email ??
+          fallbackPriests.priests[index]?.email ??
+          `${priest.id}@dakshina.local`
+      }))
+    };
   } catch {
     await writeStore(fallbackPriests);
     return fallbackPriests;

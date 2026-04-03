@@ -109,10 +109,11 @@ Legend:
 
 ## 4. Priest App
 
-- `[ ]` app scaffold
-- `[ ]` priest auth integration
-- `[ ]` priest self-registration flow wired to Supabase and `app.profiles` / `app.priest_profiles`
-- `[ ]` priest onboarding form
+- `[x]` app scaffold
+- `[x]` priest auth integration with Email OTP / Magic Link and local dev fallback
+- `[x]` priest self-registration foundation creates distinct priest records and admin notifications
+- `[x]` priest onboarding form
+- `[ ]` priest self-registration flow wired fully to Supabase `app.profiles` / `app.priest_profiles`
 - `[ ]` KYC upload
 - `[ ]` service selection and radius setup
 - `[ ]` booking inbox
@@ -156,4 +157,4 @@ Legend:
 - `[x]` Module 4: Booking operations with queue and case detail routes
 - `[x]` Module 5: Payout management workflow
 - `[x]` Module 6: Trust and Referral admin workflows
-- `[~]` Platform hardening after super-admin completion
+- `[~]` Priest app foundation after super-admin completion
