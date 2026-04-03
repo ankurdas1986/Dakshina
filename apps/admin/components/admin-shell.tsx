@@ -11,8 +11,11 @@ import {
   LayoutDashboard,
   MapPinned,
   Menu,
+  Moon,
+  Palette,
   Search,
   ShieldCheck,
+  Sparkles,
   UserCircle2,
   X
 } from "lucide-react";
@@ -20,6 +23,7 @@ import { moduleStatus } from "../lib/admin-data";
 import { cn } from "../lib/utils";
 import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
+import { DakshinaLogo } from "./dakshina-logo";
 
 type AdminShellProps = {
   active: "settings" | "priests" | "rituals" | "bookings" | "trust";
@@ -67,6 +71,7 @@ export function AdminShell({
   subnav
 }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const initials = useMemo(() => getInitials(userEmail), [userEmail]);
 
   return (
@@ -101,11 +106,13 @@ export function AdminShell({
                 </button>
               </div>
 
+              <DakshinaLogo compact />
+
               <div className="flex min-h-0 flex-1 flex-col space-y-2">
                 <p className="px-1 text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
                   Navigation
                 </p>
-                <nav className="surface-scroll grid gap-1.5 overflow-y-auto pr-1">
+                <nav className="flex-1 space-y-1.5 overflow-y-auto pr-1">
                   {moduleStatus.map((item) => {
                     const Icon = iconMap[item.key];
                     const isActive = item.key === active;
@@ -185,12 +192,62 @@ export function AdminShell({
                     Every module reads from platform policy, district rules, and booking controls.
                   </p>
                 </div>
-                <div className="hidden items-center gap-2 rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground sm:flex">
-                  <UserCircle2 className="h-4 w-4 text-primary" />
-                  <span className="max-w-[180px] truncate">{userEmail ?? "admin@dakshina.local"}</span>
+                <div className="hidden items-center gap-2 rounded-full border border-border bg-white px-3 py-2 text-sm text-foreground sm:flex">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <Palette className="h-4 w-4 text-muted-foreground" />
+                  <Moon className="h-4 w-4 text-muted-foreground" />
+                  <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-sm font-bold text-foreground">
+                    {initials}
+                    <span className="absolute right-0 top-0 inline-flex h-2 w-2 rounded-full bg-success" />
+                  </span>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-sm font-bold text-foreground sm:hidden">
-                  {initials}
+                <div className="relative">
+                  <button
+                    className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-sm text-foreground"
+                    onClick={() => setProfileMenuOpen((prev) => !prev)}
+                    type="button"
+                  >
+                    <UserCircle2 className="h-6 w-6" />
+                    <span className="absolute right-1 top-1 inline-flex h-2 w-2 rounded-full bg-destructive" />
+                  </button>
+                  {profileMenuOpen ? (
+                    <div className="absolute right-0 top-full mt-2 w-[220px] rounded-[20px] border border-border bg-white shadow-lg">
+                      <div className="rounded-t-[18px] bg-gradient-to-br from-primary/20 to-secondary/40 px-4 py-3 text-sm text-foreground">
+                        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Operator</p>
+                        <p className="text-base font-semibold">Dakshina Admin</p>
+                        <p className="text-xs text-muted-foreground">{userEmail ?? "admin@dakshina.local"}</p>
+                      </div>
+                      <div className="space-y-2 px-4 py-3 text-sm text-foreground">
+                        <button className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50">
+                          <Sparkles className="h-4 w-4 text-primary" />
+                          Get Pro
+                        </button>
+                        <button className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50">
+                          <Bell className="h-4 w-4 text-primary" />
+                          Notifications
+                        </button>
+                        <button className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50">
+                          <Palette className="h-4 w-4 text-primary" />
+                          Account settings
+                        </button>
+                        <div className="rounded-xl border border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
+                          Credits: <span className="font-semibold text-foreground">5 left</span>
+                          <div className="mt-2 h-2 rounded-full bg-muted">
+                            <div className="h-2 w-full rounded-full bg-primary/70" />
+                          </div>
+                          <p className="text-[10px] text-muted-foreground">Daily credits used first</p>
+                        </div>
+                        <button
+                          className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left hover:bg-secondary/50"
+                          onClick={() => setProfileMenuOpen(false)}
+                          type="button"
+                        >
+                          <ChevronRight className="h-4 w-4 text-primary" />
+                          Log out
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
