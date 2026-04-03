@@ -8,32 +8,34 @@ type DakshinaLogoProps = {
 export function DakshinaLogo({ compact = false }: DakshinaLogoProps) {
   if (compact) {
     return (
-      <div className="w-full space-y-4">
-        <div className="w-full overflow-hidden rounded-3xl border border-border bg-white p-4 shadow-soft">
-          <Image
-            alt="Dakshina Direct logo"
-            className="h-auto w-full"
-            height={420}
-            priority
-            src="/brand/logo.png"
-            width={1280}
-          />
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 rounded-2xl border border-border bg-white px-3 py-3 shadow-soft">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-1.5">
+            <Image
+              alt="Dakshina Direct logo"
+              className="h-auto w-full"
+              height={160}
+              priority
+              src="/brand/logo.png"
+              width={160}
+            />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+              Dakshina Direct
+            </p>
+            <h1 className="truncate text-base font-bold tracking-tight text-foreground">Admin Command Center</h1>
+          </div>
         </div>
-        <div className="space-y-1 px-1">
-          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-            Dakshina Direct
-          </p>
-          <h1 className="text-lg font-extrabold tracking-tight text-foreground">Admin Command Center</h1>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Elite operations backbone for ritual marketplace control.
-          </p>
-        </div>
+        <p className="px-1 text-xs leading-5 text-muted-foreground">
+          Elite operations backbone for ritual marketplace control.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className={cn("flex flex-col gap-6 lg:flex-row lg:items-center") }>
+    <div className={cn("flex flex-col gap-6 lg:flex-row lg:items-center")}>
       <div className="w-full max-w-[360px] overflow-hidden rounded-[32px] border border-border bg-white p-5 shadow-soft">
         <Image
           alt="Dakshina Direct logo"
@@ -47,7 +49,7 @@ export function DakshinaLogo({ compact = false }: DakshinaLogoProps) {
 
       <div className="min-w-0 space-y-2">
         <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">Dakshina Direct</p>
-        <h1 className="font-extrabold tracking-tight text-foreground text-4xl md:text-5xl">Admin Command Center</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-foreground md:text-5xl">Admin Command Center</h1>
         <p className="max-w-xl text-sm leading-7 text-muted-foreground md:text-base">
           Premium ritual marketplace operations for launch markets across suburban West Bengal.
         </p>

@@ -10,7 +10,9 @@ import {
   MapPinned,
   Menu,
   Search,
-  ShieldCheck
+  ShieldCheck,
+  Sparkles,
+  UserCircle2
 } from "lucide-react";
 import { signOut } from "../app/actions/auth";
 import { moduleStatus } from "../lib/admin-data";
@@ -40,6 +42,22 @@ const iconMap = {
   trust: BellDot
 } as const;
 
+function getInitials(email?: string | null) {
+  if (!email) {
+    return "AD";
+  }
+
+  const source = email.split("@")[0] ?? email;
+  const cleaned = source.replace(/[^a-zA-Z0-9]/g, " ").trim();
+  const parts = cleaned.split(/\s+/).filter(Boolean);
+
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+
+  return source.slice(0, 2).toUpperCase();
+}
+
 export function AdminShell({
   active,
   children,
@@ -51,21 +69,21 @@ export function AdminShell({
   subnav
 }: AdminShellProps) {
   return (
-    <main className="min-h-screen bg-transparent px-3 py-3 md:px-5 md:py-5">
-      <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
-        <Card className="rounded-[28px] border-border/80 bg-white xl:sticky xl:top-5 xl:max-h-[calc(100vh-2.5rem)] xl:overflow-hidden">
-          <CardContent className="surface-scroll space-y-6 p-4 md:p-5 xl:max-h-[calc(100vh-2.5rem)] xl:overflow-y-auto xl:pr-3">
+    <main className="min-h-screen bg-transparent p-3 md:p-4">
+      <div className="grid gap-4 xl:grid-cols-[286px_minmax(0,1fr)]">
+        <Card className="rounded-[24px] border-border/80 bg-white xl:sticky xl:top-4 xl:h-[calc(100vh-2rem)] xl:overflow-hidden">
+          <CardContent className="surface-scroll flex h-full flex-col gap-5 overflow-y-auto p-4">
             <DakshinaLogo compact />
 
-            <div className="rounded-3xl border border-border bg-secondary/40 p-4 text-sm leading-6 text-muted-foreground">
-              Admin-first rollout. Each module reads from platform policy, district rules, and booking controls.
+            <div className="rounded-2xl border border-border bg-secondary/35 px-3 py-3 text-xs leading-5 text-muted-foreground">
+              Every module reads from platform policy, district rules, and booking controls.
             </div>
 
-            <div className="space-y-2.5">
-              <p className="px-1 text-[11px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+            <div className="space-y-2">
+              <p className="px-1 text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
                 Navigation
               </p>
-              <nav className="grid gap-2">
+              <nav className="grid gap-1.5">
                 {moduleStatus.map((item) => {
                   const Icon = iconMap[item.key];
                   const isActive = item.key === active;
@@ -73,20 +91,25 @@ export function AdminShell({
                   return (
                     <Link
                       className={cn(
-                        "group flex items-center justify-between rounded-2xl border px-3.5 py-3 text-sm transition-colors",
+                        "group flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors",
                         isActive
-                          ? "border-primary/25 bg-primary/10 text-foreground"
-                          : "border-transparent bg-white text-muted-foreground hover:border-border hover:bg-secondary/50 hover:text-foreground"
+                          ? "border-primary/20 bg-primary/10 text-foreground"
+                          : "border-transparent text-muted-foreground hover:border-border hover:bg-secondary/45 hover:text-foreground"
                       )}
                       href={item.href}
                       key={item.key}
                     >
-                      <span className="flex min-w-0 items-center gap-3">
-                        <span className={cn("rounded-xl p-2", isActive ? "bg-white text-primary" : "bg-secondary/70 text-muted-foreground group-hover:text-primary")}>
-                          <Icon className="h-4 w-4" />
-                        </span>
-                        <span className="truncate font-semibold">{item.title}</span>
+                      <span
+                        className={cn(
+                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
+                          isActive
+                            ? "bg-white text-primary"
+                            : "bg-secondary/60 text-muted-foreground group-hover:text-primary"
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
                       </span>
+                      <span className="min-w-0 flex-1 truncate font-medium">{item.title}</span>
                       <ChevronRight className="h-4 w-4 shrink-0" />
                     </Link>
                   );
@@ -94,75 +117,87 @@ export function AdminShell({
               </nav>
             </div>
 
-            <Separator />
-
-            <div className="rounded-3xl border border-border bg-white p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
-                  Active operator
-                </p>
-                <Badge variant="outline">Admin</Badge>
+            <div className="mt-auto space-y-4">
+              <Separator />
+              <div className="rounded-2xl border border-border bg-white p-3.5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-sm font-bold text-foreground">
+                    {getInitials(userEmail)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-foreground">{userEmail ?? "admin@dakshina.local"}</p>
+                    <p className="text-xs text-muted-foreground">Super admin operator</p>
+                  </div>
+                </div>
               </div>
-              <p className="mt-3 truncate text-base font-semibold text-foreground">{userEmail ?? "admin@dakshina.local"}</p>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Manual KYC, commission rules, privacy timing, and referral policy remain under admin control.
-              </p>
+              <form action={signOut}>
+                <Button className="h-10 w-full rounded-xl" variant="secondary" type="submit">
+                  Sign out
+                </Button>
+              </form>
             </div>
-
-            <form action={signOut}>
-              <Button className="w-full" variant="secondary" type="submit">
-                Sign out
-              </Button>
-            </form>
           </CardContent>
         </Card>
 
-        <section className="min-w-0 space-y-5">
-          <header className="flex flex-col gap-4 rounded-[28px] border border-border bg-white px-5 py-4 shadow-soft md:flex-row md:items-center md:justify-between">
-            <div className="min-w-0 space-y-1.5">
-              <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-                <Menu className="h-3.5 w-3.5" />
-                <span>Admin dashboard</span>
+        <section className="min-w-0 space-y-4">
+          <div className="rounded-[24px] border border-border bg-white shadow-soft">
+            <div className="flex flex-col gap-3 border-b border-border px-4 py-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3">
+                <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white text-muted-foreground" type="button">
+                  <Menu className="h-4 w-4" />
+                </button>
+                <div className="flex min-w-[220px] flex-1 items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 text-sm text-muted-foreground md:min-w-[320px]">
+                  <Search className="h-4 w-4" />
+                  <span className="truncate">Search modules...</span>
+                </div>
               </div>
-              <h2 className="truncate text-xl font-extrabold tracking-tight text-foreground md:text-2xl">{title}</h2>
-              <p className="max-w-3xl text-sm leading-6 text-muted-foreground">{subtitle}</p>
-            </div>
 
-            <div className="flex flex-col gap-3 lg:min-w-[360px] lg:max-w-[460px] lg:flex-row lg:items-center lg:justify-end">
-              <div className="flex items-center gap-2 rounded-2xl border border-border bg-secondary/40 px-3 py-2 text-sm text-muted-foreground">
-                <Search className="h-4 w-4" />
-                <span>Search modules</span>
-              </div>
-              <Link
-                aria-disabled={!notificationEnabled}
-                className={cn(
-                  "flex items-center justify-center rounded-2xl border border-border px-3 py-2 text-sm",
-                  notificationEnabled
-                    ? "bg-white text-foreground hover:bg-secondary"
-                    : "bg-secondary/40 text-muted-foreground"
-                )}
-                href="/dashboard"
-              >
-                <span className="relative inline-flex items-center">
+              <div className="flex items-center gap-2 self-end md:self-auto">
+                <Link
+                  aria-disabled={!notificationEnabled}
+                  className={cn(
+                    "relative flex h-10 w-10 items-center justify-center rounded-xl border border-border",
+                    notificationEnabled
+                      ? "bg-white text-foreground hover:bg-secondary"
+                      : "bg-secondary/40 text-muted-foreground"
+                  )}
+                  href="/dashboard"
+                >
                   <Bell className="h-4 w-4 text-primary" />
                   {notificationEnabled && notificationCount > 0 ? (
-                    <span className="absolute -right-2 -top-2 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">
+                    <span className="absolute right-1.5 top-1.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
                       {notificationCount}
                     </span>
                   ) : null}
-                </span>
-              </Link>
-              <div className="flex items-center gap-2 rounded-2xl border border-border bg-white px-3 py-2 text-sm text-foreground">
-                <LayoutDashboard className="h-4 w-4 text-primary" />
-                <span>{title}</span>
+                </Link>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white text-muted-foreground">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-secondary text-sm font-bold text-foreground">
+                  {getInitials(userEmail)}
+                </div>
               </div>
             </div>
-          </header>
+
+            <div className="flex flex-col gap-3 px-4 py-4 md:flex-row md:items-start md:justify-between">
+              <div className="min-w-0 space-y-1">
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+                  <LayoutDashboard className="h-3.5 w-3.5" />
+                  <span>Admin dashboard</span>
+                </div>
+                <h2 className="truncate text-[28px] font-bold tracking-tight text-foreground">{title}</h2>
+                <p className="max-w-3xl text-sm leading-6 text-muted-foreground">{subtitle}</p>
+              </div>
+
+              <div className="flex items-center gap-2 rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground">
+                <UserCircle2 className="h-4 w-4 text-primary" />
+                <span className="truncate">{title}</span>
+              </div>
+            </div>
+          </div>
 
           {subnav ? (
-            <div className="rounded-[24px] border border-border bg-white px-4 py-3 shadow-soft">
-              {subnav}
-            </div>
+            <div className="rounded-[20px] border border-border bg-white px-4 py-3 shadow-soft">{subnav}</div>
           ) : null}
 
           {children}
