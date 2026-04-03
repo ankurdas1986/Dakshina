@@ -29,6 +29,14 @@ export type SettingsSnapshot = {
     description: string;
     enabled: boolean;
   }>;
+  notificationSettings: {
+    adminInboxEnabled: boolean;
+    bookingAlertsEnabled: boolean;
+    kycAlertsEnabled: boolean;
+    referralAlertsEnabled: boolean;
+    dailyDigestEnabled: boolean;
+    unreadCount: number;
+  };
 };
 
 export const settingsSnapshot: SettingsSnapshot = {
@@ -107,5 +115,13 @@ export const settingsSnapshot: SettingsSnapshot = {
       description: "New priests are published automatically after signup.",
       enabled: false
     }
-  ]
+  ],
+  notificationSettings: {
+    adminInboxEnabled: true,
+    bookingAlertsEnabled: true,
+    kycAlertsEnabled: true,
+    referralAlertsEnabled: false,
+    dailyDigestEnabled: true,
+    unreadCount: 4
+  }
 };

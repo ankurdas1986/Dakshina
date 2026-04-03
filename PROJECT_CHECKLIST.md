@@ -36,11 +36,14 @@ Legend:
 - `[x]` responsive admin shell with fixed header and left navigation
 - `[x]` left panel vertical scroll behavior implemented
 - `[x]` long cards constrained with internal scroll
+- `[x]` top-right notification entry added to the admin header
+- `[x]` sub-navigation support added for module pages that need denser workflows
 
 ### 3.2 Global Settings
 
 - `[x]` read-only overview for commissions, privacy timing, service tiers, and controls
 - `[x]` editable settings forms with local persistence for UAT
+- `[x]` notification settings controls added to Module 1
 - `[ ]` Supabase-backed settings persistence
 - `[ ]` audit log for settings changes
 

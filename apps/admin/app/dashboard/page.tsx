@@ -1,5 +1,10 @@
-import { BellDot, Landmark, MapPinned, ShieldCheck, Sparkles, Wallet } from "lucide-react";
-import { saveControlSettings, saveDistrictSettings, savePlatformSettings } from "../actions/settings";
+import { Bell, BellDot, Landmark, MapPinned, ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import {
+  saveControlSettings,
+  saveDistrictSettings,
+  saveNotificationSettings,
+  savePlatformSettings
+} from "../actions/settings";
 import { AdminShell } from "../../components/admin-shell";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
@@ -16,7 +21,8 @@ type DashboardPageProps = {
 const messageMap: Record<string, string> = {
   platform_settings_saved: "Platform settings saved for local UAT.",
   district_settings_saved: "District commission settings saved for local UAT.",
-  policy_controls_saved: "Policy controls saved for local UAT."
+  policy_controls_saved: "Policy controls saved for local UAT.",
+  notification_settings_saved: "Notification settings saved for local UAT."
 };
 
 function readParam(
@@ -58,9 +64,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   return (
     <AdminShell
       active="settings"
+      notificationCount={settings.notificationSettings.unreadCount}
+      notificationEnabled={settings.notificationSettings.adminInboxEnabled}
       subtitle="Module 1 now runs as the first editable super-admin module, with local persistence for UAT before Supabase wiring."
       title="Global Settings"
       userEmail={user.email}
+      subnav={
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="success">Commercial rules</Badge>
+          <Badge variant="outline">District overrides</Badge>
+          <Badge variant="outline">Policy controls</Badge>
+          <Badge variant="outline">Notifications</Badge>
+        </div>
+      }
     >
       {bannerMessage ? (
         <div className="rounded-[24px] border border-success/20 bg-success/10 px-4 py-3 text-sm font-medium text-success">
@@ -110,7 +126,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <CardTitle className="text-lg">Admin module map</CardTitle>
             <CardDescription>The full admin surface remains split into focused modules with explicit ownership.</CardDescription>
           </CardHeader>
-          <CardContent className="max-h-[420px] space-y-3 overflow-y-auto pr-2 surface-scroll">
+          <CardContent className="surface-scroll max-h-[420px] space-y-3 overflow-y-auto pr-2">
             {moduleStatus.map((module) => (
               <div className="rounded-[22px] border border-border bg-white p-4" key={module.key}>
                 <div className="flex items-center justify-between gap-3">
@@ -138,11 +154,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <CardContent>
             <form action={savePlatformSettings} className="grid gap-4 sm:grid-cols-2">
               <Field label="Currency" name="currency" defaultValue={settings.platform.currency} />
-              <Field
-                label="Launch cluster"
-                name="launchRegion"
-                defaultValue={settings.platform.launchRegion}
-              />
+              <Field label="Launch cluster" name="launchRegion" defaultValue={settings.platform.launchRegion} />
               <NumberField
                 label="Default commission (%)"
                 name="defaultCommissionPercent"
@@ -173,7 +185,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 name="revealWindowMax"
                 defaultValue={settings.platform.revealWindowHours.max}
               />
-              <div className="sm:col-span-2 flex justify-end">
+              <div className="flex justify-end sm:col-span-2">
                 <Button type="submit">Save commercial settings</Button>
               </div>
             </form>
@@ -191,7 +203,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </div>
           </CardHeader>
           <CardContent>
-            <form action={saveControlSettings} className="max-h-[420px] space-y-3 overflow-y-auto pr-2 surface-scroll">
+            <form action={saveControlSettings} className="surface-scroll max-h-[420px] space-y-3 overflow-y-auto pr-2">
               {settings.controls.map((control, index) => (
                 <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4" key={control.label}>
                   <input
@@ -207,7 +219,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 </label>
               ))}
               <div className="flex justify-end">
-                <Button type="submit" variant="secondary">Save policy controls</Button>
+                <Button type="submit" variant="secondary">
+                  Save policy controls
+                </Button>
               </div>
             </form>
           </CardContent>
@@ -226,7 +240,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </div>
           </CardHeader>
           <CardContent>
-            <form action={saveDistrictSettings} className="max-h-[460px] space-y-3 overflow-y-auto pr-2 surface-scroll">
+            <form action={saveDistrictSettings} className="surface-scroll max-h-[460px] space-y-3 overflow-y-auto pr-2">
               {settings.districts.map((district, index) => (
                 <div className="rounded-[22px] border border-border bg-white p-4" key={district.district}>
                   <div className="mb-3 flex items-center gap-2">
@@ -277,25 +291,107 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <CardTitle className="text-lg">Official 4-tier service model</CardTitle>
-                <CardDescription>The tier model is stable and remains visible while ritual CRUD is built next.</CardDescription>
+                <CardTitle className="text-lg">Notification settings</CardTitle>
+                <CardDescription>Admin controls which operational events land in the inbox and digest.</CardDescription>
               </div>
-              <MapPinned className="h-5 w-5 text-primary" />
+              <Bell className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
-          <CardContent className="max-h-[460px] space-y-3 overflow-y-auto pr-2 surface-scroll">
-            {settings.serviceTiers.map((tier) => (
-              <div className="rounded-[22px] border border-border bg-white p-4" key={tier.name}>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">{tier.name}</p>
-                  <Badge variant={tier.status === "active" ? "success" : "secondary"}>{tier.status}</Badge>
-                </div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{tier.focus}</p>
+          <CardContent>
+            <form action={saveNotificationSettings} className="surface-scroll max-h-[460px] space-y-3 overflow-y-auto pr-2">
+              <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
+                <input
+                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  defaultChecked={settings.notificationSettings.adminInboxEnabled}
+                  name="adminInboxEnabled"
+                  type="checkbox"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-foreground">Admin inbox enabled</span>
+                  <span className="block text-sm leading-6 text-muted-foreground">Enable the top-right notification inbox icon for operators.</span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
+                <input
+                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  defaultChecked={settings.notificationSettings.bookingAlertsEnabled}
+                  name="bookingAlertsEnabled"
+                  type="checkbox"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-foreground">Booking alerts</span>
+                  <span className="block text-sm leading-6 text-muted-foreground">Notify admin for confirmations, failures, replacement risks, and timing issues.</span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
+                <input
+                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  defaultChecked={settings.notificationSettings.kycAlertsEnabled}
+                  name="kycAlertsEnabled"
+                  type="checkbox"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-foreground">KYC alerts</span>
+                  <span className="block text-sm leading-6 text-muted-foreground">Notify admin when new priest documents or verification tasks require review.</span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
+                <input
+                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  defaultChecked={settings.notificationSettings.referralAlertsEnabled}
+                  name="referralAlertsEnabled"
+                  type="checkbox"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-foreground">Referral alerts</span>
+                  <span className="block text-sm leading-6 text-muted-foreground">Notify admin when referral rewards become eligible for settlement.</span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
+                <input
+                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                  defaultChecked={settings.notificationSettings.dailyDigestEnabled}
+                  name="dailyDigestEnabled"
+                  type="checkbox"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-foreground">Daily digest</span>
+                  <span className="block text-sm leading-6 text-muted-foreground">Keep a daily summary for bookings, KYC queue, and trust operations.</span>
+                </span>
+              </label>
+              <NumberField label="Unread badge count" name="unreadCount" defaultValue={settings.notificationSettings.unreadCount} />
+              <div className="flex justify-end">
+                <Button type="submit" variant="secondary">
+                  Save notification settings
+                </Button>
               </div>
-            ))}
+            </form>
           </CardContent>
         </Card>
       </div>
+
+      <Card className="rounded-[28px] border-border/80 bg-white">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg">Official 4-tier service model</CardTitle>
+              <CardDescription>The tier model is stable and remains visible while ritual CRUD is built next.</CardDescription>
+            </div>
+            <MapPinned className="h-5 w-5 text-primary" />
+          </div>
+        </CardHeader>
+        <CardContent className="surface-scroll max-h-[460px] space-y-3 overflow-y-auto pr-2">
+          {settings.serviceTiers.map((tier) => (
+            <div className="rounded-[22px] border border-border bg-white p-4" key={tier.name}>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-foreground">{tier.name}</p>
+                <Badge variant={tier.status === "active" ? "success" : "secondary"}>{tier.status}</Badge>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{tier.focus}</p>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </AdminShell>
   );
 }

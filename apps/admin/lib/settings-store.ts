@@ -99,6 +99,19 @@ export async function updateControlSettings(controls: SettingsSnapshot["controls
   return next;
 }
 
+export async function updateNotificationSettings(
+  notificationSettings: SettingsSnapshot["notificationSettings"]
+) {
+  const current = await getSettingsSnapshot();
+  const next: SettingsSnapshot = {
+    ...current,
+    notificationSettings
+  };
+
+  await writeSettings(next);
+  return next;
+}
+
 export function parsePlatformFormData(formData: FormData, current: SettingsSnapshot): PlatformUpdate {
   const revealWindowMin = normalizeNumber(
     formData.get("revealWindowMin"),
@@ -171,3 +184,19 @@ export function parseControlFormData(
   }));
 }
 
+export function parseNotificationFormData(
+  formData: FormData,
+  current: SettingsSnapshot
+): SettingsSnapshot["notificationSettings"] {
+  return {
+    adminInboxEnabled: formData.get("adminInboxEnabled") === "on",
+    bookingAlertsEnabled: formData.get("bookingAlertsEnabled") === "on",
+    kycAlertsEnabled: formData.get("kycAlertsEnabled") === "on",
+    referralAlertsEnabled: formData.get("referralAlertsEnabled") === "on",
+    dailyDigestEnabled: formData.get("dailyDigestEnabled") === "on",
+    unreadCount: normalizeNumber(
+      formData.get("unreadCount"),
+      current.notificationSettings.unreadCount
+    )
+  };
+}

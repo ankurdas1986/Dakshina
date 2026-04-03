@@ -15,6 +15,7 @@ Legend:
 - `[~]` Saving commercial settings updates the dashboard metrics and values after refresh
 - `[~]` Saving district overrides updates district cards after refresh
 - `[~]` Saving policy controls updates enabled states after refresh
+- `[~]` Saving notification settings updates the header badge and persisted values after refresh
 - `[~]` Changes persist in `apps/admin/data/global-settings.json`
 - `[ ]` Typecheck passes in a runtime-enabled shell
 - `[ ]` Production persistence moved from local file to Supabase

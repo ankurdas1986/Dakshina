@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
+  Bell,
   BellDot,
   BookCheck,
   CalendarRange,
@@ -26,6 +27,9 @@ type AdminShellProps = {
   userEmail?: string | null;
   title: string;
   subtitle: string;
+  notificationCount?: number;
+  notificationEnabled?: boolean;
+  subnav?: ReactNode;
 };
 
 const iconMap = {
@@ -36,12 +40,21 @@ const iconMap = {
   trust: BellDot
 } as const;
 
-export function AdminShell({ active, children, userEmail, title, subtitle }: AdminShellProps) {
+export function AdminShell({
+  active,
+  children,
+  userEmail,
+  title,
+  subtitle,
+  notificationCount = 0,
+  notificationEnabled = true,
+  subnav
+}: AdminShellProps) {
   return (
     <main className="min-h-screen bg-transparent px-3 py-3 md:px-5 md:py-5">
       <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
         <Card className="rounded-[28px] border-border/80 bg-white xl:sticky xl:top-5 xl:max-h-[calc(100vh-2.5rem)] xl:overflow-hidden">
-          <CardContent className="space-y-6 p-4 md:p-5 xl:max-h-[calc(100vh-2.5rem)] xl:overflow-y-auto xl:pr-3 surface-scroll">
+          <CardContent className="surface-scroll space-y-6 p-4 md:p-5 xl:max-h-[calc(100vh-2.5rem)] xl:overflow-y-auto xl:pr-3">
             <DakshinaLogo compact />
 
             <div className="rounded-3xl border border-border bg-secondary/40 p-4 text-sm leading-6 text-muted-foreground">
@@ -115,17 +128,42 @@ export function AdminShell({ active, children, userEmail, title, subtitle }: Adm
               <p className="max-w-3xl text-sm leading-6 text-muted-foreground">{subtitle}</p>
             </div>
 
-            <div className="flex flex-col gap-3 lg:min-w-[300px] lg:max-w-[360px] lg:flex-row lg:items-center lg:justify-end">
+            <div className="flex flex-col gap-3 lg:min-w-[360px] lg:max-w-[460px] lg:flex-row lg:items-center lg:justify-end">
               <div className="flex items-center gap-2 rounded-2xl border border-border bg-secondary/40 px-3 py-2 text-sm text-muted-foreground">
                 <Search className="h-4 w-4" />
                 <span>Search modules</span>
               </div>
+              <Link
+                aria-disabled={!notificationEnabled}
+                className={cn(
+                  "flex items-center justify-center rounded-2xl border border-border px-3 py-2 text-sm",
+                  notificationEnabled
+                    ? "bg-white text-foreground hover:bg-secondary"
+                    : "bg-secondary/40 text-muted-foreground"
+                )}
+                href="/dashboard"
+              >
+                <span className="relative inline-flex items-center">
+                  <Bell className="h-4 w-4 text-primary" />
+                  {notificationEnabled && notificationCount > 0 ? (
+                    <span className="absolute -right-2 -top-2 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">
+                      {notificationCount}
+                    </span>
+                  ) : null}
+                </span>
+              </Link>
               <div className="flex items-center gap-2 rounded-2xl border border-border bg-white px-3 py-2 text-sm text-foreground">
                 <LayoutDashboard className="h-4 w-4 text-primary" />
                 <span>{title}</span>
               </div>
             </div>
           </header>
+
+          {subnav ? (
+            <div className="rounded-[24px] border border-border bg-white px-4 py-3 shadow-soft">
+              {subnav}
+            </div>
+          ) : null}
 
           {children}
         </section>

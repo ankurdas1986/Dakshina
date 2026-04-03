@@ -6,9 +6,11 @@ import {
   getSettingsSnapshot,
   parseControlFormData,
   parseDistrictFormData,
+  parseNotificationFormData,
   parsePlatformFormData,
   updateControlSettings,
   updateDistrictSettings,
+  updateNotificationSettings,
   updatePlatformSettings
 } from "../../lib/settings-store";
 
@@ -34,4 +36,12 @@ export async function saveControlSettings(formData: FormData) {
   await updateControlSettings(next);
   revalidatePath("/dashboard");
   redirect("/dashboard?message=policy_controls_saved");
+}
+
+export async function saveNotificationSettings(formData: FormData) {
+  const current = await getSettingsSnapshot();
+  const next = parseNotificationFormData(formData, current);
+  await updateNotificationSettings(next);
+  revalidatePath("/dashboard");
+  redirect("/dashboard?message=notification_settings_saved");
 }
