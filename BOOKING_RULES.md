@@ -140,6 +140,7 @@ Exception transitions:
 - The priest enters the OTP to mark the job as completed.
 - A booking can move to `completed` only after OTP verification succeeds.
 - Referral rewards depend on this completion event.
+- Admin must be able to see OTP issuance state, attempt count, last OTP event, and verification timestamp from the booking operations workspace.
 
 ## Referral Rules
 

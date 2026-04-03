@@ -55,6 +55,7 @@ Legend:
 - `[x]` Booking status changes follow allowed transitions
 - `[x]` Replacement flow is auditable
 - `[x]` Contact reveal timing follows configured window
+- `[x]` OTP completion oversight is visible and editable in the booking workspace
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell

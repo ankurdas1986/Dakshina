@@ -6,12 +6,18 @@ import {
   type AdvanceState,
   type BookingRisk,
   type BookingStatus,
+  type CompletionOtpStatus,
   getBookingStore,
   updateBookingCase
 } from "../../lib/booking-store";
 
 function normalizeText(value: FormDataEntryValue | null, fallback = "") {
   return typeof value === "string" ? value.trim() : fallback;
+}
+
+function normalizeNumber(value: FormDataEntryValue | null, fallback: number) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
 }
 
 function redirectSuccess(message: string) {
@@ -41,7 +47,27 @@ export async function saveBookingCase(formData: FormData) {
     contactReveal: normalizeText(formData.get("contactReveal"), booking.contactReveal),
     risk: normalizeText(formData.get("risk"), booking.risk) as BookingRisk,
     replacementRequired: formData.get("replacementRequired") === "on",
-    replacementNotes: normalizeText(formData.get("replacementNotes"), booking.replacementNotes)
+    replacementNotes: normalizeText(formData.get("replacementNotes"), booking.replacementNotes),
+    completionOtpStatus: normalizeText(
+      formData.get("completionOtpStatus"),
+      booking.completionOtpStatus
+    ) as CompletionOtpStatus,
+    completionOtpIssuedAt: normalizeText(
+      formData.get("completionOtpIssuedAt"),
+      booking.completionOtpIssuedAt
+    ),
+    completionOtpVerifiedAt: normalizeText(
+      formData.get("completionOtpVerifiedAt"),
+      booking.completionOtpVerifiedAt
+    ),
+    completionOtpAttempts: normalizeNumber(
+      formData.get("completionOtpAttempts"),
+      booking.completionOtpAttempts
+    ),
+    completionOtpLastEvent: normalizeText(
+      formData.get("completionOtpLastEvent"),
+      booking.completionOtpLastEvent
+    )
   });
 
   redirectSuccess("booking_saved");

@@ -76,7 +76,7 @@ Legend:
 - `[x]` booking queue with list/detail operating view
 - `[x]` reassignment and replacement controls
 - `[x]` contact reveal timing enforcement UI
-- `[ ]` OTP completion oversight
+- `[x]` OTP completion oversight
 
 ### 3.6 Trust and Referral
 

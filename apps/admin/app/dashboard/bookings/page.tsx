@@ -27,6 +27,14 @@ const errorMap: Record<string, string> = {
 const checkboxClassName =
   "mt-1 h-4 w-4 accent-[hsl(var(--primary))] rounded border-border focus:ring-primary";
 
+const otpStatusOptions = [
+  { value: "not_issued", label: "not_issued" },
+  { value: "issued", label: "issued" },
+  { value: "verified", label: "verified" },
+  { value: "expired", label: "expired" },
+  { value: "failed", label: "failed" }
+];
+
 function readParam(
   params: Record<string, string | string[] | undefined>,
   key: string
@@ -120,11 +128,12 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
           </CardHeader>
           <CardContent className="surface-scroll overflow-y-auto p-0 xl:max-h-[860px]">
             <div className="min-w-[760px]">
-              <div className="grid grid-cols-[1.4fr_0.9fr_0.9fr_0.8fr_0.9fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+              <div className="grid grid-cols-[1.3fr_0.95fr_0.8fr_0.8fr_0.75fr_0.85fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
                 <span>Booking</span>
                 <span>Status</span>
                 <span>Advance</span>
                 <span>Risk</span>
+                <span>OTP</span>
                 <span>Contact</span>
                 <span className="text-right">Action</span>
               </div>
@@ -133,7 +142,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
 
                 return (
                   <Link
-                    className={`grid grid-cols-[1.4fr_0.9fr_0.9fr_0.8fr_0.9fr_0.7fr] gap-3 border-b border-border px-5 py-4 transition-colors hover:bg-secondary/35 ${
+                    className={`grid grid-cols-[1.3fr_0.95fr_0.8fr_0.8fr_0.75fr_0.85fr_0.7fr] gap-3 border-b border-border px-5 py-4 transition-colors hover:bg-secondary/35 ${
                       isActive ? "bg-primary/5" : "bg-white"
                     }`}
                     href={`/dashboard/bookings?booking=${booking.id}`}
@@ -154,6 +163,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
                     </div>
                     <p className="text-sm text-foreground">{booking.advanceState}</p>
                     <p className="text-sm text-foreground">{booking.risk}</p>
+                    <p className="text-sm text-foreground">{booking.completionOtpStatus}</p>
                     <p className="text-sm text-foreground">{booking.contactReveal}</p>
                     <div className="flex justify-end">
                       <span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">
@@ -279,6 +289,47 @@ function BookingDetailPanel({ booking, statuses }: BookingDetailPanelProps) {
         </span>
       </label>
 
+      <div className="rounded-[24px] border border-border bg-secondary/25 p-4">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Completion OTP oversight</p>
+            <p className="text-sm leading-6 text-muted-foreground">
+              Admin tracks issuance, attempts, and verification before the booking can be treated as completed.
+            </p>
+          </div>
+          <Badge variant={booking.completionOtpStatus === "verified" ? "success" : "outline"}>
+            {booking.completionOtpStatus}
+          </Badge>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <SelectField
+            defaultValue={booking.completionOtpStatus}
+            label="OTP status"
+            name="completionOtpStatus"
+            options={otpStatusOptions}
+          />
+          <NumberField
+            defaultValue={booking.completionOtpAttempts}
+            label="Attempt count"
+            min={0}
+            name="completionOtpAttempts"
+          />
+          <Field label="Issued at">
+            <Input defaultValue={booking.completionOtpIssuedAt} name="completionOtpIssuedAt" />
+          </Field>
+          <Field label="Verified at">
+            <Input defaultValue={booking.completionOtpVerifiedAt} name="completionOtpVerifiedAt" />
+          </Field>
+          <div className="md:col-span-2">
+            <TextAreaField
+              defaultValue={booking.completionOtpLastEvent}
+              label="OTP event note"
+              name="completionOtpLastEvent"
+            />
+          </div>
+        </div>
+      </div>
+
       <TextAreaField label="Replacement notes" defaultValue={booking.replacementNotes} name="replacementNotes" />
 
       <div className="flex justify-end">
@@ -343,6 +394,22 @@ function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
           </option>
         ))}
       </select>
+    </label>
+  );
+}
+
+type NumberFieldProps = {
+  label: string;
+  name: string;
+  defaultValue: number;
+  min?: number;
+};
+
+function NumberField({ label, name, defaultValue, min = 0 }: NumberFieldProps) {
+  return (
+    <label className="grid gap-2 text-sm font-semibold text-foreground">
+      <span>{label}</span>
+      <Input defaultValue={defaultValue} min={min} name={name} type="number" />
     </label>
   );
 }

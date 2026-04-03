@@ -20,6 +20,7 @@ export type BookingStatus =
 
 export type BookingRisk = "low" | "medium" | "high";
 export type AdvanceState = "pending" | "paid" | "failed" | "refunded";
+export type CompletionOtpStatus = "not_issued" | "issued" | "verified" | "expired" | "failed";
 
 export type BookingCase = {
   id: string;
@@ -34,6 +35,11 @@ export type BookingCase = {
   risk: BookingRisk;
   replacementRequired: boolean;
   replacementNotes: string;
+  completionOtpStatus: CompletionOtpStatus;
+  completionOtpIssuedAt: string;
+  completionOtpVerifiedAt: string;
+  completionOtpAttempts: number;
+  completionOtpLastEvent: string;
 };
 
 export type BookingStore = {
@@ -78,7 +84,12 @@ const fallbackStore: BookingStore = {
       contactReveal: "2026-04-03 10:00",
       risk: "low",
       replacementRequired: false,
-      replacementNotes: "None"
+      replacementNotes: "None",
+      completionOtpStatus: "issued",
+      completionOtpIssuedAt: "2026-04-03 09:15",
+      completionOtpVerifiedAt: "",
+      completionOtpAttempts: 0,
+      completionOtpLastEvent: "OTP issued after advance payment confirmation."
     },
     {
       id: "booking_002",
@@ -92,7 +103,12 @@ const fallbackStore: BookingStore = {
       contactReveal: "payment required",
       risk: "medium",
       replacementRequired: false,
-      replacementNotes: "Waiting for user advance."
+      replacementNotes: "Waiting for user advance.",
+      completionOtpStatus: "not_issued",
+      completionOtpIssuedAt: "",
+      completionOtpVerifiedAt: "",
+      completionOtpAttempts: 0,
+      completionOtpLastEvent: "OTP is blocked until advance payment is confirmed."
     },
     {
       id: "booking_003",
@@ -106,7 +122,12 @@ const fallbackStore: BookingStore = {
       contactReveal: "blocked",
       risk: "high",
       replacementRequired: true,
-      replacementNotes: "Original priest cancelled. Search verified priest inside radius."
+      replacementNotes: "Original priest cancelled. Search verified priest inside radius.",
+      completionOtpStatus: "failed",
+      completionOtpIssuedAt: "2026-04-03 18:00",
+      completionOtpVerifiedAt: "",
+      completionOtpAttempts: 2,
+      completionOtpLastEvent: "Original priest cancellation invalidated the previous completion flow."
     }
   ]
 };
@@ -147,6 +168,10 @@ export function getBookingMetrics(store: BookingStore) {
     ).length,
     paymentPending: store.cases.filter((item) => item.advanceState === "pending").length,
     replacementCases: store.cases.filter((item) => item.replacementRequired).length,
-    completionPending: store.cases.filter((item) => item.status === "in_progress" || item.status === "contact_window_open").length
+    completionPending: store.cases.filter((item) =>
+      ["issued", "failed"].includes(item.completionOtpStatus) ||
+      item.status === "in_progress" ||
+      item.status === "contact_window_open"
+    ).length
   };
 }

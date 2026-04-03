@@ -32,7 +32,12 @@
       "contactReveal": "2026-04-03 10:00",
       "risk": "low",
       "replacementRequired": false,
-      "replacementNotes": "None"
+      "replacementNotes": "None",
+      "completionOtpStatus": "issued",
+      "completionOtpIssuedAt": "2026-04-03 09:15",
+      "completionOtpVerifiedAt": "",
+      "completionOtpAttempts": 0,
+      "completionOtpLastEvent": "OTP issued after advance payment confirmation."
     },
     {
       "id": "booking_002",
@@ -46,7 +51,12 @@
       "contactReveal": "payment required",
       "risk": "medium",
       "replacementRequired": false,
-      "replacementNotes": "Waiting for user advance."
+      "replacementNotes": "Waiting for user advance.",
+      "completionOtpStatus": "not_issued",
+      "completionOtpIssuedAt": "",
+      "completionOtpVerifiedAt": "",
+      "completionOtpAttempts": 0,
+      "completionOtpLastEvent": "OTP is blocked until advance payment is confirmed."
     },
     {
       "id": "booking_003",
@@ -60,7 +70,12 @@
       "contactReveal": "blocked",
       "risk": "high",
       "replacementRequired": true,
-      "replacementNotes": "Original priest cancelled. Search verified priest inside radius."
+      "replacementNotes": "Original priest cancelled. Search verified priest inside radius.",
+      "completionOtpStatus": "failed",
+      "completionOtpIssuedAt": "2026-04-03 18:00",
+      "completionOtpVerifiedAt": "",
+      "completionOtpAttempts": 2,
+      "completionOtpLastEvent": "Original priest cancellation invalidated the previous completion flow."
     }
   ]
 }
