@@ -68,19 +68,19 @@ Legend:
 ### 3.5 Booking Operations
 
 - `[x]` module route and responsive shell page
-- `[ ]` booking list with status filters
-- `[ ]` booking detail screen
-- `[ ]` reassignment and replacement controls
-- `[ ]` contact reveal timing enforcement UI
+- `[x]` booking list with status filters
+- `[x]` booking detail screen
+- `[x]` reassignment and replacement controls
+- `[x]` contact reveal timing enforcement UI
 - `[ ]` OTP completion oversight
 
 ### 3.6 Trust and Referral
 
 - `[x]` module route and responsive shell page
-- `[ ]` review moderation UI
-- `[ ]` referral ledger actions
-- `[ ]` completion-gated reward release workflow
-- `[ ]` trust score operations panel
+- `[x]` review moderation UI
+- `[x]` referral ledger actions
+- `[x]` completion-gated reward release workflow
+- `[~]` trust score operations panel
 
 ## 4. Priest App
 
@@ -126,4 +126,5 @@ Legend:
 - `[x]` Module 1: Global Settings editable super-admin workflow
 - `[~]` Module 2: Priest Management with manual KYC workflow
 - `[~]` Module 3: Rituals and Fard management
-- `[ ]` Module 4: Booking operations and replacement controls
+- `[~]` Module 4: Booking operations and replacement controls
+- `[x]` Module 5: Trust and Referral admin workflows

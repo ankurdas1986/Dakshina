@@ -1,0 +1,66 @@
+{
+  "statuses": [
+    "draft",
+    "pending_priest_confirmation",
+    "awaiting_advance_payment",
+    "confirmed",
+    "contact_window_locked",
+    "contact_window_open",
+    "in_progress",
+    "completed",
+    "cancelled_by_user",
+    "cancelled_by_priest",
+    "cancelled_by_admin",
+    "replacement_in_progress",
+    "expired"
+  ],
+  "replacementPolicy": [
+    "Replacement starts as an admin-assisted workflow.",
+    "Only verified priests inside the required radius are eligible.",
+    "Contact stays hidden until replacement is committed and payment state remains valid."
+  ],
+  "cases": [
+    {
+      "id": "booking_001",
+      "bookingCode": "DK-1042",
+      "ritual": "Satyanarayan Puja",
+      "district": "Howrah",
+      "eventDate": "2026-04-05",
+      "status": "confirmed",
+      "assignedPriest": "Pandit Arindam Bhattacharya",
+      "advanceState": "paid",
+      "contactReveal": "2026-04-03 10:00",
+      "risk": "low",
+      "replacementRequired": false,
+      "replacementNotes": "None"
+    },
+    {
+      "id": "booking_002",
+      "bookingCode": "DK-1048",
+      "ritual": "Wedding Ritual",
+      "district": "Hooghly",
+      "eventDate": "2026-04-08",
+      "status": "awaiting_advance_payment",
+      "assignedPriest": "Pandit Subhajit Chakraborty",
+      "advanceState": "pending",
+      "contactReveal": "payment required",
+      "risk": "medium",
+      "replacementRequired": false,
+      "replacementNotes": "Waiting for user advance."
+    },
+    {
+      "id": "booking_003",
+      "bookingCode": "DK-1051",
+      "ritual": "Kali Puja",
+      "district": "North 24 Parganas",
+      "eventDate": "2026-04-04",
+      "status": "replacement_in_progress",
+      "assignedPriest": "Pending reassignment",
+      "advanceState": "paid",
+      "contactReveal": "blocked",
+      "risk": "high",
+      "replacementRequired": true,
+      "replacementNotes": "Original priest cancelled. Search verified priest inside radius."
+    }
+  ]
+}

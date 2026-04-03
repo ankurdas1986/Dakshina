@@ -47,12 +47,18 @@ Legend:
 
 ## Module 4: Bookings
 
-- `[ ]` Booking status changes follow allowed transitions
-- `[ ]` Replacement flow is auditable
-- `[ ]` Contact reveal timing follows configured window
+- `[x]` Booking status changes follow allowed transitions
+- `[x]` Replacement flow is auditable
+- `[x]` Contact reveal timing follows configured window
+- `[x]` Typecheck passes in a runtime-enabled shell
+- `[x]` Lint passes in a runtime-enabled shell
+- `[x]` Production build passes in a runtime-enabled shell
 
 ## Module 5: Trust and Referral
 
-- `[ ]` Review moderation works
-- `[ ]` Referral reward release occurs only after completion
-- `[ ]` Trust data reflects booking outcomes correctly
+- `[x]` Review moderation works
+- `[x]` Referral reward release occurs only after completion
+- `[x]` Trust data reflects booking outcomes correctly
+- `[x]` Typecheck passes in a runtime-enabled shell
+- `[x]` Lint passes in a runtime-enabled shell
+- `[x]` Production build passes in a runtime-enabled shell

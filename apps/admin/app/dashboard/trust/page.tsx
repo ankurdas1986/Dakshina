@@ -1,21 +1,62 @@
 import { MessageSquareQuote, ShieldCheck, Star, WalletCards } from "lucide-react";
+import {
+  saveReferralEntry,
+  saveReviewEntry,
+  saveTrustControl
+} from "../../actions/trust";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
+import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
-import { trustSnapshot } from "../../../lib/admin-data";
+import { Input } from "../../../components/ui/input";
 import { requireAdminUser } from "../../../lib/auth";
+import { getTrustMetrics, getTrustStore } from "../../../lib/trust-store";
 
 export const dynamic = "force-dynamic";
 
-const metrics = [
-  { label: "Average rating", value: trustSnapshot.metrics.averageRating, icon: Star },
-  { label: "Reviews pending", value: trustSnapshot.metrics.reviewsAwaitingModeration, icon: MessageSquareQuote },
-  { label: "Referral credits pending", value: trustSnapshot.metrics.referralCreditsPending, icon: WalletCards },
-  { label: "Priests below threshold", value: trustSnapshot.metrics.priestsBelowThreshold, icon: ShieldCheck }
-];
+type TrustPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
 
-export default async function TrustPage() {
+const messageMap: Record<string, string> = {
+  control_saved: "Trust control updated and stored for local UAT.",
+  referral_saved: "Referral ledger entry updated and stored for local UAT.",
+  review_saved: "Review moderation entry updated and stored for local UAT."
+};
+
+const errorMap: Record<string, string> = {
+  missing_control_id: "Control id is missing.",
+  invalid_control_id: "Control id is invalid.",
+  missing_referral_id: "Referral id is missing.",
+  invalid_referral_id: "Referral id is invalid.",
+  missing_review_id: "Review id is missing.",
+  invalid_review_id: "Review id is invalid."
+};
+
+function readParam(
+  params: Record<string, string | string[] | undefined>,
+  key: string
+) {
+  const value = params[key];
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export default async function TrustPage({ searchParams }: TrustPageProps) {
   const user = await requireAdminUser();
+  const store = await getTrustStore();
+  const metricsSnapshot = getTrustMetrics(store);
+  const resolvedSearchParams = (await searchParams) ?? {};
+  const messageKey = readParam(resolvedSearchParams, "message");
+  const errorKey = readParam(resolvedSearchParams, "error");
+  const bannerMessage = messageKey ? messageMap[messageKey] ?? null : null;
+  const bannerError = errorKey ? errorMap[errorKey] ?? errorKey : null;
+
+  const metrics = [
+    { label: "Average rating", value: metricsSnapshot.averageRating, icon: Star },
+    { label: "Reviews pending", value: metricsSnapshot.reviewsAwaitingModeration, icon: MessageSquareQuote },
+    { label: "Referral credits pending", value: metricsSnapshot.referralCreditsPending, icon: WalletCards },
+    { label: "Trust controls", value: metricsSnapshot.controlItems, icon: ShieldCheck }
+  ];
 
   return (
     <AdminShell
@@ -23,7 +64,26 @@ export default async function TrustPage() {
       subtitle="Track marketplace quality, review eligibility, and referral reward release after OTP-based completion."
       title="Trust and Referral"
       userEmail={user.email}
+      subnav={
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="success">Review moderation</Badge>
+          <Badge variant="outline">Referral ledger</Badge>
+          <Badge variant="outline">Completion gate</Badge>
+          <Badge variant="outline">Trust controls</Badge>
+        </div>
+      }
     >
+      {bannerMessage ? (
+        <div className="rounded-[24px] border border-success/20 bg-success/10 px-4 py-3 text-sm font-medium text-success">
+          {bannerMessage}
+        </div>
+      ) : null}
+      {bannerError ? (
+        <div className="rounded-[24px] border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">
+          {bannerError}
+        </div>
+      ) : null}
+
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => {
           const Icon = metric.icon;
@@ -43,48 +103,188 @@ export default async function TrustPage() {
         })}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1fr_1fr]">
+      <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
             <CardTitle className="text-lg">Trust controls</CardTitle>
-            <CardDescription>Reviewing and rewarding only after valid completion protects the business model.</CardDescription>
+            <CardDescription>Completion gates, review policy, and quality operations remain admin-managed.</CardDescription>
           </CardHeader>
-          <CardContent className="max-h-[460px] space-y-3 overflow-y-auto pr-2 surface-scroll">
-            {trustSnapshot.controls.map((control) => (
-              <div className="rounded-[24px] border border-border bg-white p-4" key={control.title}>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">{control.title}</p>
-                  <Badge variant={control.state === "active" ? "success" : "secondary"}>{control.state}</Badge>
+          <CardContent className="surface-scroll max-h-[720px] space-y-4 overflow-y-auto pr-2">
+            {store.controls.map((control) => (
+              <form action={saveTrustControl} className="rounded-[24px] border border-border bg-white p-4" key={control.id}>
+                <input name="id" type="hidden" value={control.id} />
+                <div className="grid gap-3">
+                  <Field label="Control title">
+                    <Input defaultValue={control.title} name="title" required />
+                  </Field>
+                  <TextAreaField label="Detail" defaultValue={control.detail} name="detail" />
+                  <SelectField
+                    defaultValue={control.state}
+                    label="State"
+                    name="state"
+                    options={[
+                      { value: "active", label: "active" },
+                      { value: "planned", label: "planned" }
+                    ]}
+                  />
+                  <div className="flex justify-end">
+                    <Button type="submit" variant="secondary">Save control</Button>
+                  </div>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{control.detail}</p>
-              </div>
+              </form>
             ))}
           </CardContent>
         </Card>
 
-        <Card className="rounded-[28px] border-border/80 bg-white">
-          <CardHeader>
-            <CardTitle className="text-lg">Referral ledger</CardTitle>
-            <CardDescription>Reward credit remains completion-gated and auditable from admin.</CardDescription>
-          </CardHeader>
-          <CardContent className="max-h-[460px] space-y-3 overflow-y-auto pr-2 surface-scroll">
-            {trustSnapshot.referrals.map((entry) => (
-              <div className="rounded-[24px] border border-border bg-white p-4" key={`${entry.referrer}-${entry.referee}`}>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">{entry.referrer} {"->"} {entry.referee}</p>
-                  <Badge variant={entry.state === "credited" ? "success" : "outline"}>{entry.state}</Badge>
-                </div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">Booking {entry.firstBooking}</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  Referee discount {entry.refereeDiscount} | Reward {entry.rewardCredit}
-                </p>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+        <div className="space-y-5">
+          <Card className="rounded-[28px] border-border/80 bg-white">
+            <CardHeader>
+              <CardTitle className="text-lg">Referral ledger</CardTitle>
+              <CardDescription>Reward release remains auditable and depends on completion state.</CardDescription>
+            </CardHeader>
+            <CardContent className="surface-scroll max-h-[420px] space-y-4 overflow-y-auto pr-2">
+              {store.referrals.map((entry) => (
+                <form action={saveReferralEntry} className="rounded-[24px] border border-border bg-white p-4" key={entry.id}>
+                  <input name="id" type="hidden" value={entry.id} />
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{entry.referrer} {"->"} {entry.referee}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">Booking {entry.firstBooking}</p>
+                    </div>
+                    <Badge variant={entry.state === "credited" ? "success" : "outline"}>{entry.state}</Badge>
+                  </div>
+                  <div className="grid gap-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <Field label="Referee discount">
+                        <Input defaultValue={entry.refereeDiscount} disabled />
+                      </Field>
+                      <Field label="Reward credit">
+                        <Input defaultValue={entry.rewardCredit} disabled />
+                      </Field>
+                    </div>
+                    <SelectField
+                      defaultValue={entry.state}
+                      label="Reward state"
+                      name="state"
+                      options={[
+                        { value: "pending_completion", label: "pending_completion" },
+                        { value: "eligible", label: "eligible" },
+                        { value: "credited", label: "credited" },
+                        { value: "cancelled", label: "cancelled" }
+                      ]}
+                    />
+                    <TextAreaField label="Admin notes" defaultValue={entry.adminNotes} name="adminNotes" />
+                    <div className="flex justify-end">
+                      <Button type="submit" variant="secondary">Save referral entry</Button>
+                    </div>
+                  </div>
+                </form>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[28px] border-border/80 bg-white">
+            <CardHeader>
+              <CardTitle className="text-lg">Review moderation</CardTitle>
+              <CardDescription>Reviews should only stay visible after valid completed bookings.</CardDescription>
+            </CardHeader>
+            <CardContent className="surface-scroll max-h-[420px] space-y-4 overflow-y-auto pr-2">
+              {store.reviews.map((review) => (
+                <form action={saveReviewEntry} className="rounded-[24px] border border-border bg-white p-4" key={review.id}>
+                  <input name="id" type="hidden" value={review.id} />
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{review.bookingCode} - {review.priest}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">Moderation state {review.status}</p>
+                    </div>
+                    <Badge variant={review.status === "visible" ? "success" : review.status === "hidden" ? "secondary" : "outline"}>
+                      {review.status}
+                    </Badge>
+                  </div>
+                  <div className="grid gap-3">
+                    <Field label="Rating">
+                      <Input defaultValue={review.rating} max={5} min={1} name="rating" type="number" />
+                    </Field>
+                    <SelectField
+                      defaultValue={review.status}
+                      label="Review state"
+                      name="status"
+                      options={[
+                        { value: "visible", label: "visible" },
+                        { value: "pending_moderation", label: "pending_moderation" },
+                        { value: "hidden", label: "hidden" }
+                      ]}
+                    />
+                    <TextAreaField label="Review comment" defaultValue={review.comment} name="comment" />
+                    <div className="flex justify-end">
+                      <Button type="submit">Save review</Button>
+                    </div>
+                  </div>
+                </form>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </AdminShell>
   );
 }
 
+type FieldProps = {
+  label: string;
+  children: React.ReactNode;
+};
 
+function Field({ label, children }: FieldProps) {
+  return (
+    <label className="grid gap-2 text-sm font-semibold text-foreground">
+      <span>{label}</span>
+      {children}
+    </label>
+  );
+}
+
+type TextAreaFieldProps = {
+  label: string;
+  name: string;
+  defaultValue: string;
+};
+
+function TextAreaField({ label, name, defaultValue }: TextAreaFieldProps) {
+  return (
+    <label className="grid gap-2 text-sm font-semibold text-foreground">
+      <span>{label}</span>
+      <textarea
+        className="min-h-28 rounded-[22px] border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+        defaultValue={defaultValue}
+        name={name}
+      />
+    </label>
+  );
+}
+
+type SelectFieldProps = {
+  label: string;
+  name: string;
+  defaultValue: string;
+  options: Array<{ value: string; label: string }>;
+};
+
+function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
+  return (
+    <label className="grid gap-2 text-sm font-semibold text-foreground">
+      <span>{label}</span>
+      <select
+        className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+        defaultValue={defaultValue}
+        name={name}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
