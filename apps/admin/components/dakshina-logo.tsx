@@ -8,29 +8,14 @@ type DakshinaLogoProps = {
 export function DakshinaLogo({ compact = false }: DakshinaLogoProps) {
   if (compact) {
     return (
-      <div className="space-y-3">
-        <div className="flex items-center gap-3 rounded-2xl border border-border bg-white px-3 py-3 shadow-soft">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white p-1.5">
-            <Image
-              alt="Dakshina Direct logo"
-              className="h-auto w-full"
-              height={160}
-              priority
-              src="/brand/logo.png"
-              width={160}
-            />
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-              Dakshina Direct
-            </p>
-            <h1 className="truncate text-base font-bold tracking-tight text-foreground">Admin Command Center</h1>
-          </div>
-        </div>
-        <p className="px-1 text-xs leading-5 text-muted-foreground">
-          Elite operations backbone for ritual marketplace control.
-        </p>
-      </div>
+      <Image
+        alt="Dakshina Direct logo"
+        className="h-auto w-full"
+        height={420}
+        priority
+        src="/brand/logo.png"
+        width={1280}
+      />
     );
   }
 

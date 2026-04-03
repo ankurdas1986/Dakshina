@@ -8,6 +8,8 @@ import { Input } from "../../../components/ui/input";
 import { requireAdminUser } from "../../../lib/auth";
 import { getPriestMetrics, getPriestStore } from "../../../lib/priest-store";
 
+export const dynamic = "force-dynamic";
+
 type PriestsPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };

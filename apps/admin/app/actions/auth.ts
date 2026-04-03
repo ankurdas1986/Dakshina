@@ -6,7 +6,7 @@ import {
   clearDevSession,
   getDevFixedOtp,
   setDevSession,
-  useDevAuthFallback
+  shouldUseDevAuthFallback
 } from "../../lib/auth";
 
 function normalizeEmail(value: FormDataEntryValue | null) {
@@ -15,14 +15,15 @@ function normalizeEmail(value: FormDataEntryValue | null) {
 
 export async function requestMagicLink(formData: FormData) {
   const email = normalizeEmail(formData.get("email"));
-  const nextPath = typeof formData.get("next") === "string" ? formData.get("next") : "/dashboard";
+  const nextValue = formData.get("next");
+  const nextPath = typeof nextValue === "string" ? nextValue : "/dashboard";
   const fixedOtp = getDevFixedOtp();
 
   if (!email) {
     redirect(`/sign-in?error=missing_email`);
   }
 
-  if (useDevAuthFallback()) {
+  if (shouldUseDevAuthFallback()) {
     redirect(
       `/sign-in?message=${encodeURIComponent(`Development mode is active. Use OTP ${fixedOtp}.`)}&email=${encodeURIComponent(email)}&next=${encodeURIComponent(nextPath)}`
     );
@@ -48,9 +49,10 @@ export async function requestMagicLink(formData: FormData) {
 
 export async function verifyEmailOtp(formData: FormData) {
   const email = normalizeEmail(formData.get("email"));
-  const token = typeof formData.get("token") === "string" ? formData.get("token").trim() : "";
+  const tokenValue = formData.get("token");
+  const token = typeof tokenValue === "string" ? tokenValue.trim() : "";
   const fixedOtp = getDevFixedOtp();
-  const devFallback = useDevAuthFallback();
+  const devFallback = shouldUseDevAuthFallback();
 
   if (!email || !token) {
     redirect("/sign-in?error=missing_otp_details");
@@ -82,7 +84,7 @@ export async function verifyEmailOtp(formData: FormData) {
 export async function signOut() {
   await clearDevSession();
 
-  if (useDevAuthFallback()) {
+  if (shouldUseDevAuthFallback()) {
     redirect("/sign-in?message=Signed out");
   }
 

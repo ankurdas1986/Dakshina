@@ -116,7 +116,8 @@ Legend:
 
 - `[~]` self-verification after each implemented task
 - `[x]` formal UAT checklist per module created
-- `[ ]` lint and typecheck run clean in CI and locally
+- `[x]` lint and typecheck run clean locally
+- `[ ]` lint and typecheck run clean in CI
 - `[ ]` staging deployment verification
 - `[ ]` MVP release checklist
 

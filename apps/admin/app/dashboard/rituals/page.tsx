@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { ritualSnapshot } from "../../../lib/admin-data";
 import { requireAdminUser } from "../../../lib/auth";
 
+export const dynamic = "force-dynamic";
+
 const metrics = [
   { label: "Service tiers", value: ritualSnapshot.categories.length, icon: Layers3 },
   { label: "Featured rituals", value: ritualSnapshot.featuredRituals.length, icon: ScrollText },

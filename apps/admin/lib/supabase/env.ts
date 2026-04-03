@@ -18,5 +18,8 @@ export function requireSupabaseEnv() {
     );
   }
 
-  return env;
+  return {
+    url: env.url as string,
+    publishableKey: env.publishableKey as string
+  };
 }

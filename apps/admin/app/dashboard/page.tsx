@@ -14,6 +14,8 @@ import { moduleStatus } from "../../lib/admin-data";
 import { requireAdminUser } from "../../lib/auth";
 import { getSettingsSnapshot } from "../../lib/settings-store";
 
+export const dynamic = "force-dynamic";
+
 type DashboardPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };

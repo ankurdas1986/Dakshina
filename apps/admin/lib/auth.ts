@@ -4,6 +4,12 @@ import { createClient } from "./supabase/server";
 
 const DEV_SESSION_COOKIE = "dakshina_dev_session";
 
+type AdminLikeUser = {
+  email?: string | null;
+  app_metadata?: Record<string, unknown> | null;
+  user_metadata?: Record<string, unknown> | null;
+};
+
 function getDevAdminAllowlist() {
   const value = process.env.DEV_ADMIN_EMAILS ?? "";
 
@@ -47,6 +53,10 @@ export async function requireUser() {
     }
   }
 
+  if (!isSupabaseConfigured()) {
+    redirect("/sign-in");
+  }
+
   const supabase = await createClient();
   const {
     data: { user }
@@ -59,10 +69,15 @@ export async function requireUser() {
   return user;
 }
 
-export function isAdminUser(user: { email?: string | null; app_metadata?: { role?: string }; user_metadata?: { role?: string } }) {
+function readRole(metadata?: Record<string, unknown> | null) {
+  const role = metadata?.role;
+  return typeof role === "string" ? role : undefined;
+}
+
+export function isAdminUser(user: AdminLikeUser) {
   return (
-    user.app_metadata?.role === "admin" ||
-    user.user_metadata?.role === "admin" ||
+    readRole(user.app_metadata) === "admin" ||
+    readRole(user.user_metadata) === "admin" ||
     isDevAdminEmail(user.email)
   );
 }
@@ -124,7 +139,7 @@ export function isSupabaseConfigured() {
   );
 }
 
-export function useDevAuthFallback() {
+export function shouldUseDevAuthFallback() {
   if (process.env.NODE_ENV === "production") {
     return false;
   }

@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { trustSnapshot } from "../../../lib/admin-data";
 import { requireAdminUser } from "../../../lib/auth";
 
+export const dynamic = "force-dynamic";
+
 const metrics = [
   { label: "Average rating", value: trustSnapshot.metrics.averageRating, icon: Star },
   { label: "Reviews pending", value: trustSnapshot.metrics.reviewsAwaitingModeration, icon: MessageSquareQuote },

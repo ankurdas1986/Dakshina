@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { bookingSnapshot } from "../../../lib/admin-data";
 import { requireAdminUser } from "../../../lib/auth";
 
+export const dynamic = "force-dynamic";
+
 const metrics = [
   { label: "Active bookings", value: bookingSnapshot.totals.activeBookings, icon: Clock3 },
   { label: "Advance pending", value: bookingSnapshot.totals.paymentPending, icon: Wallet },

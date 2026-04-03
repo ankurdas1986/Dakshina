@@ -18,7 +18,6 @@ import { signOut } from "../app/actions/auth";
 import { moduleStatus } from "../lib/admin-data";
 import { cn } from "../lib/utils";
 import { DakshinaLogo } from "./dakshina-logo";
-import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Separator } from "./ui/separator";

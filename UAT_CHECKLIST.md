@@ -17,7 +17,9 @@ Legend:
 - `[~]` Saving policy controls updates enabled states after refresh
 - `[~]` Saving notification settings updates the header badge and persisted values after refresh
 - `[~]` Changes persist in `apps/admin/data/global-settings.json`
-- `[ ]` Typecheck passes in a runtime-enabled shell
+- `[x]` Typecheck passes in a runtime-enabled shell
+- `[x]` Lint passes in a runtime-enabled shell
+- `[x]` Production build passes in a runtime-enabled shell
 - `[ ]` Production persistence moved from local file to Supabase
 
 ## Module 2: Priest Management
@@ -26,7 +28,13 @@ Legend:
 - `[~]` KYC review actions update status, verification, radius, and notes
 - `[~]` Changes persist in `apps/admin/data/priests.json`
 - `[ ]` Search and filter workflow added
-- `[ ]` Typecheck passes in a runtime-enabled shell
+- `[x]` Typecheck passes in a runtime-enabled shell
+- `[x]` Lint passes in a runtime-enabled shell
+- `[x]` Production build passes in a runtime-enabled shell
+
+## Runtime Notes
+
+- `[~]` Middleware shows a non-blocking Supabase Edge runtime warning during production build
 
 ## Module 3: Rituals and Fard
 

@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { Input } from "../../components/ui/input";
 import { getDevAdminHint, getDevFixedOtp, isSupabaseConfigured } from "../../lib/auth";
 
+export const dynamic = "force-dynamic";
+
 type SignInPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
