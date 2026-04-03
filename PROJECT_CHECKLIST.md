@@ -59,10 +59,10 @@ Legend:
 ### 3.4 Rituals and Fard
 
 - `[x]` module route and responsive shell page
-- `[ ]` ritual category CRUD
-- `[ ]` ritual CRUD
-- `[ ]` 4-tier service model management
-- `[ ]` JSON-based Fard editor
+- `[~]` ritual category CRUD
+- `[x]` ritual CRUD
+- `[x]` 4-tier service model management
+- `[x]` JSON-based Fard editor
 - `[ ]` Fard snapshot preview rules
 
 ### 3.5 Booking Operations
@@ -125,4 +125,5 @@ Legend:
 
 - `[x]` Module 1: Global Settings editable super-admin workflow
 - `[~]` Module 2: Priest Management with manual KYC workflow
-- `[ ]` Module 3: Rituals and Fard management
+- `[~]` Module 3: Rituals and Fard management
+- `[ ]` Module 4: Booking operations and replacement controls

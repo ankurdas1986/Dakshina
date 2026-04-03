@@ -38,9 +38,12 @@ Legend:
 
 ## Module 3: Rituals and Fard
 
-- `[ ]` Ritual CRUD works
-- `[ ]` Fard JSON editor validates correctly
+- `[x]` Ritual CRUD works
+- `[x]` Fard JSON editor validates correctly
 - `[ ]` Booking Fard snapshot rules hold after ritual edits
+- `[x]` Typecheck passes in a runtime-enabled shell
+- `[x]` Lint passes in a runtime-enabled shell
+- `[x]` Production build passes in a runtime-enabled shell
 
 ## Module 4: Bookings
 
