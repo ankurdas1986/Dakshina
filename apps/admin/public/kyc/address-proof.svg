@@ -1,0 +1,13 @@
+<svg width="800" height="520" viewBox="0 0 800 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="520" rx="32" fill="#FFF8ED"/>
+  <rect x="54" y="42" width="692" height="436" rx="28" fill="white" stroke="#E8D5BD" stroke-width="2"/>
+  <rect x="92" y="102" width="164" height="120" rx="20" fill="#FFE7C7"/>
+  <path d="M140 184V146L174 118L208 146V184" stroke="#8D4A10" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="290" y="102" width="220" height="22" rx="11" fill="#8D4A10"/>
+  <rect x="290" y="148" width="320" height="16" rx="8" fill="#D7C0A6"/>
+  <rect x="290" y="184" width="260" height="16" rx="8" fill="#D7C0A6"/>
+  <rect x="92" y="268" width="616" height="24" rx="12" fill="#F8E8CF"/>
+  <rect x="92" y="316" width="616" height="24" rx="12" fill="#F8E8CF"/>
+  <rect x="92" y="364" width="420" height="24" rx="12" fill="#F8E8CF"/>
+  <text x="92" y="74" fill="#8D4A10" font-family="Arial, sans-serif" font-size="28" font-weight="700">Address Proof</text>
+</svg>

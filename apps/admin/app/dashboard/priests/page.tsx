@@ -1,4 +1,5 @@
-import { BadgeCheck, FileCheck2, MapPinned, Users } from "lucide-react";
+import Image from "next/image";
+import { BadgeCheck, FileCheck2, FileImage, FolderOpenDot, MapPinned, PhoneCall, ScrollText, Users } from "lucide-react";
 import { savePriestReview } from "../../actions/priests";
 import { AdminShell } from "../../../components/admin-shell";
 import { PriestServiceSelector } from "../../../components/priest-service-selector";
@@ -18,6 +19,14 @@ type PriestsPageProps = {
 
 const messageMap: Record<string, string> = {
   priest_review_saved: "Priest review updated and stored for local UAT."
+};
+
+const documentPreviewMap: Record<string, { title: string; asset: string }> = {
+  govt_id: { title: "Government ID", asset: "/kyc/govt-id.svg" },
+  address_proof: { title: "Address proof", asset: "/kyc/address-proof.svg" },
+  profile_photo: { title: "Profile photo", asset: "/kyc/profile-photo.svg" },
+  service_specialization: { title: "Service specialization", asset: "/kyc/service-specialization.svg" },
+  home_pin: { title: "Home pin", asset: "/kyc/home-pin.svg" }
 };
 
 function readParam(
@@ -102,16 +111,69 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
                         {priest.verificationStatus}
                       </Badge>
                     </div>
-                    <p className="text-sm leading-6 text-muted-foreground">Services: {priest.services.join(", ")}</p>
-                    <p className="text-sm leading-6 text-muted-foreground">
-                      Category path:{" "}
-                      {priest.serviceCategoryId
-                        ? buildCategoryLabel(priest.serviceCategoryId, ritualStore.categories)
-                        : "Not assigned"}
-                    </p>
-                    <p className="text-sm leading-6 text-muted-foreground">Documents: {priest.documents.join(", ")}</p>
-                    <p className="text-sm leading-6 text-muted-foreground">Contact: {priest.phone}</p>
-                    <p className="text-sm leading-6 text-muted-foreground">Submitted {priest.submittedAt}</p>
+                    <div className="grid gap-2">
+                      <InfoRow
+                        icon={ScrollText}
+                        label="Services"
+                        value={priest.services.join(", ")}
+                      />
+                      <InfoRow
+                        icon={FolderOpenDot}
+                        label="Category path"
+                        value={
+                          priest.serviceCategoryId
+                            ? buildCategoryLabel(priest.serviceCategoryId, ritualStore.categories)
+                            : "Not assigned"
+                        }
+                      />
+                      <InfoRow
+                        icon={PhoneCall}
+                        label="Contact"
+                        value={priest.phone}
+                      />
+                      <InfoRow
+                        icon={MapPinned}
+                        label="Submitted"
+                        value={priest.submittedAt}
+                      />
+                    </div>
+                    <div className="rounded-[20px] border border-border bg-secondary/35 p-3">
+                      <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+                        <FileImage className="h-4 w-4 text-primary" />
+                        <span>KYC documents</span>
+                      </div>
+                      <div className="grid gap-3">
+                        {priest.documents.map((documentKey) => {
+                          const preview = documentPreviewMap[documentKey] ?? {
+                            title: documentKey,
+                            asset: "/kyc/govt-id.svg"
+                          };
+
+                          return (
+                            <div className="overflow-hidden rounded-[18px] border border-border bg-white" key={documentKey}>
+                              <div className="relative aspect-[16/10] bg-muted">
+                                <Image
+                                  alt={preview.title}
+                                  className="object-cover"
+                                  fill
+                                  sizes="(max-width: 1280px) 100vw, 240px"
+                                  src={preview.asset}
+                                />
+                              </div>
+                              <div className="flex items-center justify-between gap-3 px-3 py-2.5">
+                                <div>
+                                  <p className="text-sm font-semibold text-foreground">{preview.title}</p>
+                                  <p className="text-xs text-muted-foreground">Preview available for admin review</p>
+                                </div>
+                                <Button size="sm" type="button" variant="secondary">
+                                  View
+                                </Button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="grid gap-3 md:grid-cols-2">
@@ -199,5 +261,25 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
         </Card>
       </div>
     </AdminShell>
+  );
+}
+
+type InfoRowProps = {
+  icon: typeof ScrollText;
+  label: string;
+  value: string;
+};
+
+function InfoRow({ icon: Icon, label, value }: InfoRowProps) {
+  return (
+    <div className="flex items-start gap-3 rounded-[18px] border border-border bg-white px-3 py-2.5">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <Icon className="h-4 w-4" />
+      </span>
+      <div className="min-w-0">
+        <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{label}</p>
+        <p className="mt-1 text-sm leading-6 text-foreground">{value}</p>
+      </div>
+    </div>
   );
 }

@@ -1,0 +1,10 @@
+<svg width="800" height="520" viewBox="0 0 800 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="520" rx="32" fill="#FFF8ED"/>
+  <rect x="78" y="42" width="644" height="436" rx="28" fill="white" stroke="#E8D5BD" stroke-width="2"/>
+  <circle cx="400" cy="214" r="94" fill="#FFE7C7"/>
+  <circle cx="400" cy="190" r="42" fill="#D6A55C"/>
+  <path d="M330 302C347 262 379 242 400 242C421 242 453 262 470 302V330H330V302Z" fill="#D6A55C"/>
+  <rect x="260" y="360" width="280" height="18" rx="9" fill="#8D4A10"/>
+  <rect x="304" y="396" width="192" height="14" rx="7" fill="#D7C0A6"/>
+  <text x="78" y="74" fill="#8D4A10" font-family="Arial, sans-serif" font-size="28" font-weight="700">Priest Profile Photo</text>
+</svg>

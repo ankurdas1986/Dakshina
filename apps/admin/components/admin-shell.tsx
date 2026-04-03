@@ -93,7 +93,7 @@ export function AdminShell({
           )}
         >
           <Card className="h-[calc(100vh-1.5rem)] rounded-[24px] border-border/80 bg-white shadow-soft xl:h-[calc(100vh-2rem)]">
-            <CardContent className="surface-scroll flex h-full flex-col gap-5 overflow-y-auto p-4">
+            <CardContent className="flex h-full flex-col gap-5 overflow-hidden p-4">
               <div className="flex items-center justify-between xl:hidden">
                 <p className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground">Navigation</p>
                 <button
@@ -111,11 +111,11 @@ export function AdminShell({
                 Every module reads from platform policy, district rules, and booking controls.
               </div>
 
-              <div className="space-y-2">
+              <div className="flex min-h-0 flex-1 flex-col space-y-2">
                 <p className="px-1 text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
                   Navigation
                 </p>
-                <nav className="grid gap-1.5">
+                <nav className="surface-scroll grid gap-1.5 overflow-y-auto pr-1">
                   {moduleStatus.map((item) => {
                     const Icon = iconMap[item.key];
                     const isActive = item.key === active;

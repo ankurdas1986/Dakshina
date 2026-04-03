@@ -1,0 +1,15 @@
+<svg width="800" height="520" viewBox="0 0 800 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="520" rx="32" fill="#FFF8ED"/>
+  <rect x="36" y="36" width="728" height="448" rx="28" fill="white" stroke="#E8D5BD" stroke-width="2"/>
+  <rect x="72" y="88" width="150" height="180" rx="20" fill="#FFE7C7"/>
+  <circle cx="147" cy="154" r="42" fill="#D6A55C"/>
+  <rect x="106" y="205" width="82" height="16" rx="8" fill="#D6A55C"/>
+  <rect x="270" y="102" width="212" height="22" rx="11" fill="#8D4A10"/>
+  <rect x="270" y="146" width="300" height="16" rx="8" fill="#D7C0A6"/>
+  <rect x="270" y="182" width="240" height="16" rx="8" fill="#D7C0A6"/>
+  <rect x="270" y="218" width="278" height="16" rx="8" fill="#D7C0A6"/>
+  <rect x="72" y="320" width="656" height="96" rx="18" fill="#FFF3DF" stroke="#F0D7B4" stroke-width="2"/>
+  <rect x="96" y="346" width="154" height="14" rx="7" fill="#8D4A10"/>
+  <rect x="96" y="376" width="480" height="12" rx="6" fill="#D7C0A6"/>
+  <text x="72" y="68" fill="#8D4A10" font-family="Arial, sans-serif" font-size="28" font-weight="700">Government ID Proof</text>
+</svg>

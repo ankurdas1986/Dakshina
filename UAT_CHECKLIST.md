@@ -26,6 +26,7 @@ Legend:
 
 - `[~]` Priest listing renders from persisted data
 - `[~]` KYC review actions update status, verification, radius, and notes
+- `[~]` KYC document previews render for each uploaded proof
 - `[~]` Cascading category selection maps priests to leaf categories and ritual checklists
 - `[~]` Changes persist in `apps/admin/data/priests.json`
 - `[ ]` Search and filter workflow added

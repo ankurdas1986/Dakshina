@@ -1,0 +1,11 @@
+<svg width="800" height="520" viewBox="0 0 800 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="520" rx="32" fill="#FFF8ED"/>
+  <rect x="48" y="42" width="704" height="436" rx="28" fill="white" stroke="#E8D5BD" stroke-width="2"/>
+  <rect x="88" y="92" width="624" height="328" rx="22" fill="#FFF3DF"/>
+  <path d="M220 144H582" stroke="#E4C499" stroke-width="12" stroke-linecap="round"/>
+  <path d="M220 224H582" stroke="#E4C499" stroke-width="12" stroke-linecap="round"/>
+  <path d="M220 304H582" stroke="#E4C499" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="400" cy="246" r="58" fill="#FFD39D"/>
+  <path d="M400 194C379 194 362 211 362 232C362 264 400 300 400 300C400 300 438 264 438 232C438 211 421 194 400 194ZM400 248C390 248 382 240 382 230C382 220 390 212 400 212C410 212 418 220 418 230C418 240 410 248 400 248Z" fill="#8D4A10"/>
+  <text x="88" y="72" fill="#8D4A10" font-family="Arial, sans-serif" font-size="28" font-weight="700">Home Pin Validation</text>
+</svg>

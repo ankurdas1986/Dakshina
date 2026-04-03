@@ -11,7 +11,12 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Dakshina Admin",
-  description: "Admin command center for Dakshina Direct."
+  description: "Admin command center for Dakshina Direct.",
+  icons: {
+    icon: "/brand/logo.png",
+    shortcut: "/brand/logo.png",
+    apple: "/brand/logo.png"
+  }
 };
 
 type RootLayoutProps = {

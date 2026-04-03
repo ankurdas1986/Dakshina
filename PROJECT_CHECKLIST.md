@@ -53,6 +53,7 @@ Legend:
 - `[x]` module route and responsive shell page
 - `[x]` editable KYC review workflow with local persistence
 - `[x]` verified/unverified status control and admin notes
+- `[x]` KYC document preview cards for admin review
 - `[x]` cascading category and ritual selection flow
 - `[~]` priest list/detail operating view
 - `[ ]` priest table with search/filter
