@@ -16,6 +16,7 @@ Legend:
 - `[~]` Saving district overrides updates district cards after refresh
 - `[~]` Saving policy controls updates enabled states after refresh
 - `[~]` Saving notification settings updates the header badge and persisted values after refresh
+- `[x]` Admin inbox shows new priest and user registration alerts
 - `[x]` Settings audit log records admin changes
 - `[~]` Changes persist in `apps/admin/data/global-settings.json`
 - `[x]` Typecheck passes in a runtime-enabled shell

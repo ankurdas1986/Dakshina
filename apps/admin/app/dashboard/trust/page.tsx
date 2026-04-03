@@ -10,6 +10,7 @@ import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
+import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getTrustMetrics, getTrustStore } from "../../../lib/trust-store";
 
@@ -47,6 +48,7 @@ function readParam(
 
 export default async function TrustPage({ searchParams }: TrustPageProps) {
   const user = await requireAdminUser();
+  const { notifications, notificationCount, notificationEnabled } = await getAdminShellData();
   const store = await getTrustStore();
   const metricsSnapshot = getTrustMetrics(store);
   const resolvedSearchParams = (await searchParams) ?? {};
@@ -78,6 +80,9 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
   return (
     <AdminShell
       active="trust"
+      notificationCount={notificationCount}
+      notificationEnabled={notificationEnabled}
+      notifications={notifications}
       subtitle="Track marketplace quality, review eligibility, and referral reward release after OTP-based completion."
       title="Trust and Referral"
       userEmail={user.email}
@@ -320,7 +325,7 @@ function TextAreaField({ label, name, defaultValue }: TextAreaFieldProps) {
     <label className="grid gap-2 text-sm font-semibold text-foreground">
       <span>{label}</span>
       <textarea
-        className="min-h-28 rounded-[22px] border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+        className="min-h-28 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
         defaultValue={defaultValue}
         name={name}
       />
@@ -340,7 +345,7 @@ function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
     <label className="grid gap-2 text-sm font-semibold text-foreground">
       <span>{label}</span>
       <select
-        className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+        className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
         defaultValue={defaultValue}
         name={name}
       >
@@ -353,3 +358,4 @@ function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
     </label>
   );
 }
+

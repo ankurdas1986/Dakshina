@@ -6,6 +6,7 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { getPayoutVariant } from "../../../components/payouts/payout-detail-panel";
+import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getPayoutMetrics, getPayoutStore } from "../../../lib/payout-store";
 
@@ -31,6 +32,7 @@ function readParam(params: Record<string, string | string[] | undefined>, key: s
 
 export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
   const user = await requireAdminUser();
+  const { notifications, notificationCount, notificationEnabled } = await getAdminShellData();
   const store = await getPayoutStore();
   const metrics = getPayoutMetrics(store);
   const resolvedSearchParams = (await searchParams) ?? {};
@@ -62,6 +64,9 @@ export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
   return (
     <AdminShell
       active="payouts"
+      notificationCount={notificationCount}
+      notificationEnabled={notificationEnabled}
+      notifications={notifications}
       subtitle="Manual-first payout console for completed rituals. Admin reviews payout-ready bookings, verifies UPI details, and marks settlements after transfer."
       title="Payout Management"
       userEmail={user.email}
@@ -114,7 +119,7 @@ export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input className="h-11 rounded-[22px] pl-9" defaultValue={query} name="q" placeholder="Search payout, priest, UPI, district..." />
             </label>
-            <select className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground" defaultValue={statusFilter} name="status">
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={statusFilter} name="status">
               <option value="all">All statuses</option>
               <option value="pending">pending</option>
               <option value="scheduled">scheduled</option>
@@ -164,3 +169,4 @@ export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
     </AdminShell>
   );
 }
+

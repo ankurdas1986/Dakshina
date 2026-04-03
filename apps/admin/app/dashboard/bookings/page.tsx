@@ -5,6 +5,7 @@ import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
+import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getBookingMetrics, getBookingStore } from "../../../lib/booking-store";
 import { getBookingStatusVariant } from "../../../components/bookings/booking-detail-panel";
@@ -31,6 +32,7 @@ function readParam(params: Record<string, string | string[] | undefined>, key: s
 
 export default async function BookingsPage({ searchParams }: BookingsPageProps) {
   const user = await requireAdminUser();
+  const { notifications, notificationCount, notificationEnabled } = await getAdminShellData();
   const store = await getBookingStore();
   const metricsSnapshot = getBookingMetrics(store);
   const resolvedSearchParams = (await searchParams) ?? {};
@@ -69,6 +71,9 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
   return (
     <AdminShell
       active="bookings"
+      notificationCount={notificationCount}
+      notificationEnabled={notificationEnabled}
+      notifications={notifications}
       subtitle="Use the booking queue to triage payment, reveal timing, replacement risk, and completion OTP status. Open a case to handle the full workflow in a dedicated detail page."
       title="Bookings"
       userEmail={user.email}
@@ -122,19 +127,19 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input className="h-11 rounded-[22px] pl-9" defaultValue={query} name="q" placeholder="Search booking, ritual, district, priest..." />
             </label>
-            <select className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground" defaultValue={statusFilter} name="status">
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={statusFilter} name="status">
               <option value="all">All statuses</option>
               {store.statuses.map((status) => (
                 <option key={status} value={status}>{status}</option>
               ))}
             </select>
-            <select className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground" defaultValue={riskFilter} name="risk">
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={riskFilter} name="risk">
               <option value="all">All risk</option>
               <option value="low">low</option>
               <option value="medium">medium</option>
               <option value="high">high</option>
             </select>
-            <select className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground" defaultValue={replacementFilter} name="replacement">
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={replacementFilter} name="replacement">
               <option value="all">All replacement states</option>
               <option value="required">replacement required</option>
               <option value="clear">no replacement</option>
@@ -195,3 +200,4 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
     </AdminShell>
   );
 }
+

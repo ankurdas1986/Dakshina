@@ -5,6 +5,7 @@ import { AdminShell } from "../../../../components/admin-shell";
 import { PriestDetailPanel, getPriestStatusVariant } from "../../../../components/priests/priest-detail-panel";
 import { Badge } from "../../../../components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { getAdminShellData } from "../../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../../lib/auth";
 import { getPriestStore } from "../../../../lib/priest-store";
 import { buildCategoryLabel, getRitualStore } from "../../../../lib/ritual-store";
@@ -27,6 +28,7 @@ const messageMap: Record<string, string> = {
 
 export default async function PriestDetailPage({ params, searchParams }: PriestDetailPageProps) {
   const user = await requireAdminUser();
+  const { notifications, notificationCount, notificationEnabled } = await getAdminShellData();
   const { id } = await params;
   const store = await getPriestStore();
   const ritualStore = await getRitualStore();
@@ -46,6 +48,9 @@ export default async function PriestDetailPage({ params, searchParams }: PriestD
   return (
     <AdminShell
       active="priests"
+      notificationCount={notificationCount}
+      notificationEnabled={notificationEnabled}
+      notifications={notifications}
       breadcrumbs={
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <Link className="inline-flex items-center gap-2 font-medium text-foreground hover:text-primary" href="/dashboard/priests">

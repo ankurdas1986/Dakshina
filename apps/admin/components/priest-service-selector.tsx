@@ -141,7 +141,7 @@ export function PriestServiceSelector({
             <label className="grid gap-2 text-sm font-semibold text-foreground" key={`level-${index}`}>
               <span className="block leading-5">{label}</span>
               <select
-                className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                 onChange={(event) => updateLevel(index, event.target.value)}
                 value={selectedValue}
               >
@@ -193,3 +193,4 @@ export function PriestServiceSelector({
     </div>
   );
 }
+

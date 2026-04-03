@@ -1,0 +1,58 @@
+{
+  "entries": [
+    {
+      "id": "payout_001",
+      "bookingCode": "DK-1042",
+      "ritual": "Satyanarayan Puja",
+      "priest": "Pandit Arindam Bhattacharya",
+      "district": "Howrah",
+      "completedAt": "2026-04-06 09:30",
+      "payoutAmount": 2500,
+      "status": "pending",
+      "payoutMethod": "manual_upi",
+      "payoutReference": "",
+      "payoutScheduledFor": "2026-04-07",
+      "payoutNotes": "Hold until admin confirms final completion quality.",
+      "payoutDetails": {
+        "upiId": "arindam.purohit@upi",
+        "accountHolder": "Arindam Bhattacharya"
+      }
+    },
+    {
+      "id": "payout_002",
+      "bookingCode": "DK-1038",
+      "ritual": "Wedding Ritual",
+      "priest": "Pandit Subhajit Chakraborty",
+      "district": "Hooghly",
+      "completedAt": "2026-04-01 22:00",
+      "payoutAmount": 8500,
+      "status": "scheduled",
+      "payoutMethod": "manual_upi",
+      "payoutReference": "",
+      "payoutScheduledFor": "2026-04-04",
+      "payoutNotes": "Manual UPI transfer queued for next settlement cycle.",
+      "payoutDetails": {
+        "upiId": "subhajit.rituals@upi",
+        "accountHolder": "Subhajit Chakraborty"
+      }
+    },
+    {
+      "id": "payout_003",
+      "bookingCode": "DK-1027",
+      "ritual": "Lakshmi Puja",
+      "priest": "Pandit Debasish Goswami",
+      "district": "North 24 Parganas",
+      "completedAt": "2026-03-29 20:10",
+      "payoutAmount": 2100,
+      "status": "paid",
+      "payoutMethod": "manual_upi",
+      "payoutReference": "UPI-8246719102",
+      "payoutScheduledFor": "2026-03-30",
+      "payoutNotes": "Paid manually after OTP completion verification.",
+      "payoutDetails": {
+        "upiId": "debasish.goswami@upi",
+        "accountHolder": "Debasish Goswami"
+      }
+    }
+  ]
+}

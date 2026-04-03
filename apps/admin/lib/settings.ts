@@ -31,11 +31,11 @@ export type SettingsSnapshot = {
   }>;
   notificationSettings: {
     adminInboxEnabled: boolean;
+    registrationAlertsEnabled: boolean;
     bookingAlertsEnabled: boolean;
     kycAlertsEnabled: boolean;
     referralAlertsEnabled: boolean;
     dailyDigestEnabled: boolean;
-    unreadCount: number;
   };
   auditLog: Array<{
     id: string;
@@ -125,11 +125,11 @@ export const settingsSnapshot: SettingsSnapshot = {
   ],
   notificationSettings: {
     adminInboxEnabled: true,
+    registrationAlertsEnabled: true,
     bookingAlertsEnabled: true,
     kycAlertsEnabled: true,
     referralAlertsEnabled: false,
-    dailyDigestEnabled: true,
-    unreadCount: 4
+    dailyDigestEnabled: true
   },
   auditLog: [
     {

@@ -10,9 +10,9 @@ import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
+import { getAdminShellData } from "../../lib/admin-shell-data";
 import { moduleStatus } from "../../lib/admin-data";
 import { requireAdminUser } from "../../lib/auth";
-import { getSettingsSnapshot } from "../../lib/settings-store";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +40,7 @@ function readParam(
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const user = await requireAdminUser();
-  const settings = await getSettingsSnapshot();
+  const { notifications, notificationCount, notificationEnabled, settings } = await getAdminShellData();
   const resolvedSearchParams = (await searchParams) ?? {};
   const messageKey = readParam(resolvedSearchParams, "message");
   const query = readParam(resolvedSearchParams, "q")?.toLowerCase() ?? "";
@@ -71,8 +71,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   return (
     <AdminShell
       active="settings"
-      notificationCount={settings.notificationSettings.unreadCount}
-      notificationEnabled={settings.notificationSettings.adminInboxEnabled}
+      notificationCount={notificationCount}
+      notificationEnabled={notificationEnabled}
+      notifications={notifications}
       subtitle="Module 1 now runs as the first editable super-admin module, with local persistence for UAT before Supabase wiring."
       title="Global Settings"
       userEmail={user.email}
@@ -274,7 +275,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                       <label className="grid gap-2 text-sm font-semibold text-foreground">
                         <span>Service clusters</span>
                         <textarea
-                          className="min-h-24 rounded-[22px] border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                          className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                           defaultValue={district.serviceClusters.join(", ")}
                           name={`districtClusters-${index}`}
                         />
@@ -284,7 +285,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                       <label className="grid gap-2 text-sm font-semibold text-foreground">
                         <span>Status</span>
                         <select
-                          className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                          className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                           defaultValue={district.status}
                           name={`districtStatus-${index}`}
                         >
@@ -327,6 +328,18 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <span>
                   <span className="block text-sm font-semibold text-foreground">Admin inbox enabled</span>
                   <span className="block text-sm leading-6 text-muted-foreground">Enable the top-right notification inbox icon for operators.</span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
+                <input
+                  className={checkboxClassName}
+                  defaultChecked={settings.notificationSettings.registrationAlertsEnabled}
+                  name="registrationAlertsEnabled"
+                  type="checkbox"
+                />
+                <span>
+                  <span className="block text-sm font-semibold text-foreground">Registration alerts</span>
+                  <span className="block text-sm leading-6 text-muted-foreground">Notify admin when a new priest or user registration is submitted.</span>
                 </span>
               </label>
               <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
@@ -377,7 +390,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                   <span className="block text-sm leading-6 text-muted-foreground">Keep a daily summary for bookings, KYC queue, and trust operations.</span>
                 </span>
               </label>
-              <NumberField label="Unread badge count" name="unreadCount" defaultValue={settings.notificationSettings.unreadCount} />
+              <div className="rounded-[22px] border border-border bg-secondary/20 px-4 py-3">
+                <p className="text-sm font-semibold text-foreground">Current unread notifications</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  The inbox badge is calculated from active notification events. Current unread count: {notificationCount}.
+                </p>
+              </div>
               <div className="flex justify-end">
                 <Button type="submit" variant="secondary">
                   Save notification settings
@@ -467,3 +485,4 @@ function NumberField({ label, name, defaultValue }: NumberFieldProps) {
     </label>
   );
 }
+

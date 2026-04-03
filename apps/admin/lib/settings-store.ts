@@ -156,7 +156,7 @@ export async function updateNotificationSettings(
     auditLog: appendAuditLog(
       current,
       "Notification settings updated",
-      `Inbox badge count is now ${notificationSettings.unreadCount} with admin inbox ${notificationSettings.adminInboxEnabled ? "enabled" : "disabled"}.`
+      `Admin inbox is ${notificationSettings.adminInboxEnabled ? "enabled" : "disabled"} and registration alerts are ${notificationSettings.registrationAlertsEnabled ? "enabled" : "disabled"}.`
     ),
     notificationSettings
   };
@@ -237,19 +237,13 @@ export function parseControlFormData(
   }));
 }
 
-export function parseNotificationFormData(
-  formData: FormData,
-  current: SettingsSnapshot
-): SettingsSnapshot["notificationSettings"] {
+export function parseNotificationFormData(formData: FormData): SettingsSnapshot["notificationSettings"] {
   return {
     adminInboxEnabled: formData.get("adminInboxEnabled") === "on",
+    registrationAlertsEnabled: formData.get("registrationAlertsEnabled") === "on",
     bookingAlertsEnabled: formData.get("bookingAlertsEnabled") === "on",
     kycAlertsEnabled: formData.get("kycAlertsEnabled") === "on",
     referralAlertsEnabled: formData.get("referralAlertsEnabled") === "on",
-    dailyDigestEnabled: formData.get("dailyDigestEnabled") === "on",
-    unreadCount: normalizeNumber(
-      formData.get("unreadCount"),
-      current.notificationSettings.unreadCount
-    )
+    dailyDigestEnabled: formData.get("dailyDigestEnabled") === "on"
   };
 }

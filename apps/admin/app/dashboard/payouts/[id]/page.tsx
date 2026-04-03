@@ -5,6 +5,7 @@ import { AdminShell } from "../../../../components/admin-shell";
 import { PayoutDetailPanel, getPayoutVariant } from "../../../../components/payouts/payout-detail-panel";
 import { Badge } from "../../../../components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { getAdminShellData } from "../../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../../lib/auth";
 import { getPayoutStore } from "../../../../lib/payout-store";
 
@@ -31,6 +32,7 @@ function readParam(params: Record<string, string | string[] | undefined>, key: s
 
 export default async function PayoutDetailPage({ params, searchParams }: PayoutDetailPageProps) {
   const user = await requireAdminUser();
+  const { notifications, notificationCount, notificationEnabled } = await getAdminShellData();
   const { id } = await params;
   const store = await getPayoutStore();
   const entry = store.entries.find((item) => item.id === id);
@@ -48,6 +50,9 @@ export default async function PayoutDetailPage({ params, searchParams }: PayoutD
   return (
     <AdminShell
       active="payouts"
+      notificationCount={notificationCount}
+      notificationEnabled={notificationEnabled}
+      notifications={notifications}
       breadcrumbs={
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <Link className="inline-flex items-center gap-2 font-medium text-foreground hover:text-primary" href="/dashboard/payouts">

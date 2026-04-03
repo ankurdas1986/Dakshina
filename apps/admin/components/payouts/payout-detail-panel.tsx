@@ -72,7 +72,7 @@ export function PayoutDetailPanel({ entry, returnTo }: PayoutDetailPanelProps) {
       <label className="grid gap-2 text-sm font-semibold text-foreground">
         <span>Admin notes</span>
         <textarea
-          className="min-h-28 rounded-[22px] border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="min-h-28 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
           defaultValue={entry.payoutNotes}
           name="payoutNotes"
         />
@@ -111,7 +111,7 @@ function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
     <label className="grid gap-2 text-sm font-semibold text-foreground">
       <span>{label}</span>
       <select
-        className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+        className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
         defaultValue={defaultValue}
         name={name}
       >
@@ -124,3 +124,4 @@ function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
     </label>
   );
 }
+

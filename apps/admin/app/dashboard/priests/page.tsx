@@ -5,6 +5,7 @@ import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
+import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getPriestMetrics, getPriestStore } from "../../../lib/priest-store";
 import { buildCategoryLabel, getRitualStore } from "../../../lib/ritual-store";
@@ -27,6 +28,7 @@ function readParam(params: Record<string, string | string[] | undefined>, key: s
 
 export default async function PriestsPage({ searchParams }: PriestsPageProps) {
   const user = await requireAdminUser();
+  const { notifications, notificationCount, notificationEnabled } = await getAdminShellData();
   const store = await getPriestStore();
   const ritualStore = await getRitualStore();
   const metricsSnapshot = getPriestMetrics(store);
@@ -84,6 +86,9 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
   return (
     <AdminShell
       active="priests"
+      notificationCount={notificationCount}
+      notificationEnabled={notificationEnabled}
+      notifications={notifications}
       subtitle="Use the queue to scan KYC state, coverage, and service mapping. Open a priest record to complete the full review workflow in a dedicated detail page."
       title="Priest Management"
       userEmail={user.email}
@@ -154,20 +159,20 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input className="h-11 rounded-[22px] pl-9" defaultValue={query} name="q" placeholder="Search priest, district, service, phone..." />
             </label>
-            <select className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground" defaultValue={districtFilter} name="district">
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={districtFilter} name="district">
               <option value="all">All districts</option>
               {districts.map((district) => (
                 <option key={district} value={district}>{district}</option>
               ))}
             </select>
-            <select className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground" defaultValue={kycFilter} name="kyc">
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={kycFilter} name="kyc">
               <option value="all">All KYC</option>
               <option value="pending">pending</option>
               <option value="review">review</option>
               <option value="approved">approved</option>
               <option value="rejected">rejected</option>
             </select>
-            <select className="h-11 rounded-[22px] border border-border bg-white px-4 text-sm text-foreground" defaultValue={verificationFilter} name="verification">
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={verificationFilter} name="verification">
               <option value="all">All verification</option>
               <option value="unverified">unverified</option>
               <option value="review">review</option>
@@ -218,3 +223,4 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
     </AdminShell>
   );
 }
+

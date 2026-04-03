@@ -38,6 +38,7 @@ Legend:
 - `[x]` left panel vertical scroll behavior implemented
 - `[x]` long cards constrained with internal scroll
 - `[x]` top-right notification entry added to the admin header
+- `[x]` admin inbox now includes new priest and user registration notifications
 - `[x]` sub-navigation support added for module pages that need denser workflows
 
 ### 3.2 Global Settings
@@ -45,6 +46,7 @@ Legend:
 - `[x]` read-only overview for commissions, privacy timing, service tiers, and controls
 - `[x]` editable settings forms with local persistence for UAT
 - `[x]` notification settings controls added to Module 1
+- `[x]` registration alert toggle added for new priest and user registrations
 - `[x]` local audit log for settings changes
 - `[ ]` Supabase-backed settings persistence
 

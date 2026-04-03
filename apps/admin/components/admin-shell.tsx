@@ -1,5 +1,6 @@
 "use client";
 
+import type { Route } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
@@ -8,6 +9,7 @@ import {
   BookCheck,
   CalendarRange,
   ChevronRight,
+  CircleUserRound,
   Handshake,
   LayoutDashboard,
   Landmark,
@@ -24,6 +26,7 @@ import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { DakshinaLogo } from "./dakshina-logo";
+import type { AdminNotification } from "../lib/notification-store";
 
 type AdminShellProps = {
   active: "settings" | "priests" | "rituals" | "bookings" | "payouts" | "trust";
@@ -33,6 +36,7 @@ type AdminShellProps = {
   subtitle: string;
   notificationCount?: number;
   notificationEnabled?: boolean;
+  notifications?: AdminNotification[];
   breadcrumbs?: ReactNode;
   subnav?: ReactNode;
 };
@@ -97,10 +101,12 @@ export function AdminShell({
   subtitle,
   notificationCount = 0,
   notificationEnabled = true,
+  notifications = [],
   breadcrumbs,
   subnav
 }: AdminShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const initials = useMemo(() => getInitials(userEmail), [userEmail]);
   const currentSearch = searchConfig[active];
@@ -199,16 +205,24 @@ export function AdminShell({
                 </form>
               </div>
 
-              <div className="flex items-center gap-2 self-end md:self-auto">
-                <Link
-                  aria-disabled={!notificationEnabled}
+              <div className="relative flex items-center gap-2 self-end md:self-auto">
+                <button
                   className={cn(
                     "relative flex h-10 w-10 items-center justify-center rounded-xl border border-border",
                     notificationEnabled
                       ? "bg-white text-foreground hover:bg-secondary"
                       : "bg-secondary/40 text-muted-foreground"
                   )}
-                  href="/dashboard#notifications"
+                  disabled={!notificationEnabled}
+                  onClick={() => {
+                    if (!notificationEnabled) {
+                      return;
+                    }
+
+                    setNotificationMenuOpen((prev) => !prev);
+                    setProfileMenuOpen(false);
+                  }}
+                  type="button"
                 >
                   <Bell className="h-4 w-4 text-primary" />
                   {notificationEnabled && notificationCount > 0 ? (
@@ -216,11 +230,65 @@ export function AdminShell({
                       {notificationCount}
                     </span>
                   ) : null}
-                </Link>
+                </button>
+                {notificationEnabled && notificationMenuOpen ? (
+                  <div className="absolute right-[4.25rem] top-[4.75rem] z-20 w-[320px] rounded-[20px] border border-border bg-white shadow-lg">
+                    <div className="border-b border-border px-4 py-3">
+                      <p className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground">Notifications</p>
+                      <p className="mt-1 text-sm text-foreground">
+                        {notificationCount > 0 ? `${notificationCount} unread` : "All caught up"}
+                      </p>
+                    </div>
+                    <div className="surface-scroll max-h-[360px] space-y-2 overflow-y-auto px-3 py-3">
+                      {notifications.length ? notifications.map((item) => (
+                        <Link
+                          className="block rounded-xl border border-border bg-white px-3 py-3 transition-colors hover:bg-secondary/40"
+                          href={item.href as Route}
+                          key={item.id}
+                          onClick={() => setNotificationMenuOpen(false)}
+                        >
+                          <div className="flex items-start gap-3">
+                            <span className={cn(
+                              "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary",
+                              item.read ? "opacity-70" : "ring-2 ring-primary/10"
+                            )}>
+                              {item.type === "priest_registration" ? (
+                                <BookCheck className="h-4 w-4" />
+                              ) : item.type === "user_registration" ? (
+                                <CircleUserRound className="h-4 w-4" />
+                              ) : item.type === "booking" ? (
+                                <MapPinned className="h-4 w-4" />
+                              ) : item.type === "kyc" ? (
+                                <Settings2 className="h-4 w-4" />
+                              ) : (
+                                <Handshake className="h-4 w-4" />
+                              )}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-start justify-between gap-3">
+                                <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                                {!item.read ? <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" /> : null}
+                              </div>
+                              <p className="mt-1 text-sm leading-5 text-muted-foreground">{item.detail}</p>
+                              <p className="mt-2 text-xs font-medium text-muted-foreground">{item.createdAt}</p>
+                            </div>
+                          </div>
+                        </Link>
+                      )) : (
+                        <div className="rounded-xl border border-border bg-secondary/20 px-3 py-4 text-sm text-muted-foreground">
+                          No notifications are available for the current alert settings.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
                 <div className="relative">
                   <button
                     className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-sm text-foreground"
-                    onClick={() => setProfileMenuOpen((prev) => !prev)}
+                    onClick={() => {
+                      setProfileMenuOpen((prev) => !prev);
+                      setNotificationMenuOpen(false);
+                    }}
                     type="button"
                   >
                     <span className="relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-sm font-bold text-foreground">
