@@ -1,0 +1,80 @@
+{
+  "requirements": [
+    "Government ID proof",
+    "Address proof",
+    "Recent priest profile photo",
+    "Primary ritual specialization",
+    "Home pin and travel radius"
+  ],
+  "priests": [
+    {
+      "id": "priest_001",
+      "name": "Pandit Arindam Bhattacharya",
+      "district": "Howrah",
+      "locality": "Bally",
+      "services": [
+        "Lakshmi Puja",
+        "Satyanarayan Puja",
+        "Grihoprobesh"
+      ],
+      "radiusKm": 14,
+      "kycStatus": "pending",
+      "verificationStatus": "unverified",
+      "submittedAt": "2026-04-01",
+      "phone": "+91 90070 10001",
+      "documents": [
+        "govt_id",
+        "address_proof",
+        "profile_photo"
+      ],
+      "notes": "Strong local demand fit for Tier 1 rituals."
+    },
+    {
+      "id": "priest_002",
+      "name": "Pandit Subhajit Chakraborty",
+      "district": "Hooghly",
+      "locality": "Uttarpara",
+      "services": [
+        "Wedding",
+        "Sacred Thread",
+        "Annaprashan"
+      ],
+      "radiusKm": 18,
+      "kycStatus": "review",
+      "verificationStatus": "review",
+      "submittedAt": "2026-03-31",
+      "phone": "+91 90070 10002",
+      "documents": [
+        "govt_id",
+        "address_proof",
+        "profile_photo",
+        "service_specialization"
+      ],
+      "notes": "Needs final confirmation on district travel commitment."
+    },
+    {
+      "id": "priest_003",
+      "name": "Pandit Debasish Goswami",
+      "district": "North 24 Parganas",
+      "locality": "Barasat",
+      "services": [
+        "Durga Puja",
+        "Kali Puja",
+        "Community Events"
+      ],
+      "radiusKm": 22,
+      "kycStatus": "approved",
+      "verificationStatus": "verified",
+      "submittedAt": "2026-03-29",
+      "phone": "+91 90070 10003",
+      "documents": [
+        "govt_id",
+        "address_proof",
+        "profile_photo",
+        "service_specialization",
+        "home_pin"
+      ],
+      "notes": "Suitable backup for public and barwari assignments."
+    }
+  ]
+}

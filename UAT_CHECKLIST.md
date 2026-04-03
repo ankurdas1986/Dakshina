@@ -21,9 +21,11 @@ Legend:
 
 ## Module 2: Priest Management
 
-- `[ ]` Priest listing renders from live data
-- `[ ]` KYC review actions work
-- `[ ]` Verification status changes persist
+- `[~]` Priest listing renders from persisted data
+- `[~]` KYC review actions update status, verification, radius, and notes
+- `[~]` Changes persist in `apps/admin/data/priests.json`
+- `[ ]` Search and filter workflow added
+- `[ ]` Typecheck passes in a runtime-enabled shell
 
 ## Module 3: Rituals and Fard
 

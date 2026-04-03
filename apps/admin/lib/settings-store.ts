@@ -4,7 +4,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { settingsSnapshot, type DistrictCommissionOverride, type SettingsSnapshot } from "./settings";
 
-const settingsFilePath = path.join(process.cwd(), "apps", "admin", "data", "global-settings.json");
+const settingsFilePath = path.join(process.cwd(), "data", "global-settings.json");
 
 function cloneDefaults() {
   return JSON.parse(JSON.stringify(settingsSnapshot)) as SettingsSnapshot;
@@ -170,3 +170,4 @@ export function parseControlFormData(
     enabled: formData.get(`controlEnabled-${index}`) === "on"
   }));
 }
+

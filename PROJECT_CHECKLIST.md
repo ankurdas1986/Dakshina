@@ -40,18 +40,18 @@ Legend:
 ### 3.2 Global Settings
 
 - `[x]` read-only overview for commissions, privacy timing, service tiers, and controls
-- `[~]` editable settings forms with local persistence for UAT
+- `[x]` editable settings forms with local persistence for UAT
 - `[ ]` Supabase-backed settings persistence
 - `[ ]` audit log for settings changes
 
 ### 3.3 Priest Management
 
 - `[x]` module route and responsive shell page
+- `[x]` editable KYC review workflow with local persistence
+- `[x]` verified/unverified status control and admin notes
+- `[~]` priest list/detail operating view
 - `[ ]` priest table with search/filter
-- `[ ]` priest detail view
-- `[ ]` manual KYC approve/reject flow
-- `[ ]` verified toggle and trust metadata
-- `[ ]` district/radius management
+- `[ ]` district/radius management beyond per-priest editing
 
 ### 3.4 Rituals and Fard
 
@@ -112,12 +112,13 @@ Legend:
 ## 7. Quality, UAT, and Release
 
 - `[~]` self-verification after each implemented task
-- `[ ]` formal UAT checklist per module
+- `[x]` formal UAT checklist per module created
 - `[ ]` lint and typecheck run clean in CI and locally
 - `[ ]` staging deployment verification
 - `[ ]` MVP release checklist
 
 ## Current Focus
 
-- `[~]` Module 1: Global Settings editable super-admin workflow
-- `[ ]` Module 2: Priest Management with manual KYC workflow
+- `[x]` Module 1: Global Settings editable super-admin workflow
+- `[~]` Module 2: Priest Management with manual KYC workflow
+- `[ ]` Module 3: Rituals and Fard management
