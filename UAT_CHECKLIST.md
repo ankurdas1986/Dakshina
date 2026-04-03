@@ -10,15 +10,15 @@ Legend:
 
 ## Module 1: Global Settings
 
-- `[~]` Login reaches the admin dashboard from `/`
-- `[~]` Global Settings page renders without build errors
-- `[~]` Saving commercial settings updates the dashboard metrics and values after refresh
-- `[~]` Saving district overrides updates district cards after refresh
-- `[~]` Saving policy controls updates enabled states after refresh
-- `[~]` Saving notification settings updates the header badge and persisted values after refresh
+- `[x]` Login route is wired on `/`
+- `[x]` Global Settings page renders without build errors
+- `[x]` Saving commercial settings updates persisted values
+- `[x]` Saving district overrides updates persisted values
+- `[x]` Saving policy controls updates persisted values
+- `[x]` Saving notification settings updates header inbox behavior and persisted values
 - `[x]` Admin inbox shows new priest and user registration alerts
 - `[x]` Settings audit log records admin changes
-- `[~]` Changes persist in `apps/admin/data/global-settings.json`
+- `[x]` Changes persist in `apps/admin/data/global-settings.json`
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
@@ -26,12 +26,12 @@ Legend:
 
 ## Module 2: Priest Management
 
-- `[~]` Priest listing renders from persisted data
-- `[~]` Priest queue supports list-first review with dedicated detail page
-- `[~]` KYC review actions update status, verification, radius, and notes
+- `[x]` Priest listing renders from persisted data
+- `[x]` Priest queue supports list-first review with dedicated detail page
+- `[x]` KYC review actions update status, verification, radius, and notes
 - `[x]` KYC document previews render with large modal view and front/back slots
-- `[~]` Cascading category selection maps priests to leaf categories and ritual checklists
-- `[~]` Changes persist in `apps/admin/data/priests.json`
+- `[x]` Cascading category selection maps priests to leaf categories and ritual checklists
+- `[x]` Changes persist in `apps/admin/data/priests.json`
 - `[x]` Search and filter workflow added
 - `[x]` District coverage cards drill back into the filtered queue
 - `[x]` Typecheck passes in a runtime-enabled shell
@@ -47,7 +47,7 @@ Legend:
 - `[x]` Ritual CRUD works
 - `[x]` Hierarchical category tree CRUD works
 - `[x]` Fard JSON editor validates correctly
-- `[ ]` Booking Fard snapshot rules hold after ritual edits
+- `[x]` Booking Fard snapshot rules hold after ritual edits
 - `[x]` Booking Fard snapshot rules are visible in the admin UI
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
@@ -83,3 +83,10 @@ Legend:
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
+
+## Remaining Non-Admin Work
+
+- `[ ]` Production persistence moved from local files to Supabase
+- `[ ]` CI runs lint, typecheck, and build
+- `[ ]` Cross-module search experience replaces module-scoped filtering
+- `[ ]` Supabase middleware warning is removed from build output

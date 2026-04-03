@@ -14,7 +14,7 @@ Legend:
 - `[x]` project plan documented with admin-first execution strategy
 - `[x]` booking lifecycle and anti-leakage rules documented
 - `[x]` database schema drafted with PostGIS and Fard JSON support
-- `[~]` project-wide execution checklist maintained and updated per module
+- `[x]` project-wide execution checklist maintained and updated per module
 - `[ ]` open product decisions resolved for payments, pricing ownership, trust score, and launch geo granularity
 
 ## 2. Repository and Architecture
@@ -97,6 +97,15 @@ Legend:
 - `[x]` completion-gated reward release workflow
 - `[x]` trust score operations panel
 
+### 3.8 Super Admin Completion Status
+
+- `[x]` super-admin module surface is complete across settings, priests, rituals, bookings, payouts, and trust
+- `[x]` responsive list/detail workflow is implemented for the high-density operational modules
+- `[x]` admin notification inbox covers new priest and user registration visibility
+- `[ ]` Supabase persistence replacement for local JSON admin stores
+- `[ ]` global cross-module search results experience beyond per-module filtering
+- `[ ]` middleware/Supabase Edge runtime warning cleanup
+
 ## 4. Priest App
 
 - `[ ]` app scaffold
@@ -144,3 +153,4 @@ Legend:
 - `[x]` Module 4: Booking operations with queue and case detail routes
 - `[x]` Module 5: Payout management workflow
 - `[x]` Module 6: Trust and Referral admin workflows
+- `[~]` Platform hardening after super-admin completion
