@@ -13,9 +13,9 @@ export const metadata: Metadata = {
   title: "Dakshina Admin",
   description: "Admin command center for Dakshina Direct.",
   icons: {
-    icon: "/brand/logo.png",
-    shortcut: "/brand/logo.png",
-    apple: "/brand/logo.png"
+    icon: "/brand/favico.png",
+    shortcut: "/brand/favico.png",
+    apple: "/brand/favico.png"
   }
 };
 
