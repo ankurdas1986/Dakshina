@@ -40,6 +40,11 @@ export type BookingCase = {
   completionOtpVerifiedAt: string;
   completionOtpAttempts: number;
   completionOtpLastEvent: string;
+  fardSnapshotLockedAt: string;
+  fardSnapshot: {
+    deliveryMode: "ui_only" | "ui_and_pdf";
+    items: Array<{ label: string; quantity: string }>;
+  };
 };
 
 export type BookingStore = {
@@ -89,7 +94,16 @@ const fallbackStore: BookingStore = {
       completionOtpIssuedAt: "2026-04-03 09:15",
       completionOtpVerifiedAt: "",
       completionOtpAttempts: 0,
-      completionOtpLastEvent: "OTP issued after advance payment confirmation."
+      completionOtpLastEvent: "OTP issued after advance payment confirmation.",
+      fardSnapshotLockedAt: "2026-04-02 17:45",
+      fardSnapshot: {
+        deliveryMode: "ui_and_pdf",
+        items: [
+          { label: "Ghot", quantity: "1" },
+          { label: "Mango leaves", quantity: "5" },
+          { label: "Flowers", quantity: "As required" }
+        ]
+      }
     },
     {
       id: "booking_002",
@@ -108,7 +122,16 @@ const fallbackStore: BookingStore = {
       completionOtpIssuedAt: "",
       completionOtpVerifiedAt: "",
       completionOtpAttempts: 0,
-      completionOtpLastEvent: "OTP is blocked until advance payment is confirmed."
+      completionOtpLastEvent: "OTP is blocked until advance payment is confirmed.",
+      fardSnapshotLockedAt: "",
+      fardSnapshot: {
+        deliveryMode: "ui_and_pdf",
+        items: [
+          { label: "Topor", quantity: "1" },
+          { label: "Mala", quantity: "2" },
+          { label: "Puja samagri set", quantity: "1" }
+        ]
+      }
     },
     {
       id: "booking_003",
@@ -127,7 +150,16 @@ const fallbackStore: BookingStore = {
       completionOtpIssuedAt: "2026-04-03 18:00",
       completionOtpVerifiedAt: "",
       completionOtpAttempts: 2,
-      completionOtpLastEvent: "Original priest cancellation invalidated the previous completion flow."
+      completionOtpLastEvent: "Original priest cancellation invalidated the previous completion flow.",
+      fardSnapshotLockedAt: "2026-04-01 14:30",
+      fardSnapshot: {
+        deliveryMode: "ui_only",
+        items: [
+          { label: "Dhaak arrangement", quantity: "1" },
+          { label: "Pushpanjali flowers", quantity: "Bulk" },
+          { label: "Bhog ingredients", quantity: "Bulk" }
+        ]
+      }
     }
   ]
 };
@@ -144,7 +176,24 @@ async function writeStore(store: BookingStore) {
 export async function getBookingStore() {
   try {
     const raw = await readFile(bookingFilePath, "utf8");
-    return JSON.parse(raw) as BookingStore;
+    const parsed = JSON.parse(raw) as BookingStore;
+
+    return {
+      ...parsed,
+      cases: parsed.cases.map((item, index) => {
+        const fallback = fallbackStore.cases[index];
+        return {
+          ...item,
+          completionOtpStatus: item.completionOtpStatus ?? fallback?.completionOtpStatus ?? "not_issued",
+          completionOtpIssuedAt: item.completionOtpIssuedAt ?? fallback?.completionOtpIssuedAt ?? "",
+          completionOtpVerifiedAt: item.completionOtpVerifiedAt ?? fallback?.completionOtpVerifiedAt ?? "",
+          completionOtpAttempts: item.completionOtpAttempts ?? fallback?.completionOtpAttempts ?? 0,
+          completionOtpLastEvent: item.completionOtpLastEvent ?? fallback?.completionOtpLastEvent ?? "",
+          fardSnapshotLockedAt: item.fardSnapshotLockedAt ?? fallback?.fardSnapshotLockedAt ?? "",
+          fardSnapshot: item.fardSnapshot ?? fallback?.fardSnapshot ?? { deliveryMode: "ui_only", items: [] }
+        };
+      })
+    };
   } catch {
     await writeStore(fallbackStore);
     return fallbackStore;

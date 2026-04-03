@@ -43,7 +43,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const settings = await getSettingsSnapshot();
   const resolvedSearchParams = (await searchParams) ?? {};
   const messageKey = readParam(resolvedSearchParams, "message");
+  const query = readParam(resolvedSearchParams, "q")?.toLowerCase() ?? "";
   const bannerMessage = messageKey ? messageMap[messageKey] ?? null : null;
+  const matchesSection = (value: string) => !query || value.toLowerCase().includes(query);
 
   const launchMetrics = [
     {
@@ -132,7 +134,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <CardDescription>The full admin surface remains split into focused modules with explicit ownership.</CardDescription>
           </CardHeader>
           <CardContent className="surface-scroll max-h-[420px] space-y-3 overflow-y-auto pr-2">
-            {moduleStatus.map((module) => (
+            {moduleStatus
+              .filter((module) =>
+                matchesSection([module.title, module.summary].join(" "))
+              )
+              .map((module) => (
               <div className="rounded-[22px] border border-border bg-white p-4" key={module.key}>
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-semibold text-foreground">{module.title}</p>
@@ -146,6 +152,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+        {matchesSection("commercial settings default commission advance payment referee discount referrer reward reveal window launch cluster currency") ? (
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between gap-3">
@@ -196,7 +203,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </form>
           </CardContent>
         </Card>
+        ) : null}
 
+        {matchesSection("policy controls manual kyc otp replacement auto approval feature flags") ? (
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between gap-3">
@@ -231,9 +240,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </form>
           </CardContent>
         </Card>
+        ) : null}
       </div>
 
       <div className="grid gap-5 xl:grid-cols-2">
+        {matchesSection("district commission overrides regional service clusters") ? (
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between gap-3">
@@ -291,7 +302,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </form>
           </CardContent>
         </Card>
+        ) : null}
 
+        {matchesSection("notification settings admin inbox booking alerts kyc alerts referral alerts daily digest unread badge") ? (
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between gap-3">
@@ -373,8 +386,31 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </form>
           </CardContent>
         </Card>
+        ) : null}
       </div>
 
+      {matchesSection("audit log change history settings updates") ? (
+      <Card className="rounded-[28px] border-border/80 bg-white">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">Settings audit log</CardTitle>
+          <CardDescription>Recent super-admin setting changes are recorded here for operational traceability.</CardDescription>
+        </CardHeader>
+        <CardContent className="surface-scroll max-h-[320px] space-y-3 overflow-y-auto pr-2">
+          {settings.auditLog.map((entry) => (
+            <div className="rounded-[22px] border border-border bg-white p-4" key={entry.id}>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-foreground">{entry.action}</p>
+                <span className="text-xs text-muted-foreground">{entry.createdAt}</span>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{entry.detail}</p>
+              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{entry.actor}</p>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+      ) : null}
+
+      {matchesSection("official 4-tier service model tier essential home grand event barwari monthly trustee") ? (
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between gap-3">
@@ -397,6 +433,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           ))}
         </CardContent>
       </Card>
+      ) : null}
     </AdminShell>
   );
 }

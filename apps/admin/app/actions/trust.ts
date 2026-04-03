@@ -6,9 +6,11 @@ import {
   getTrustStore,
   type ReferralState,
   type ReviewState,
+  type TrustScoreEntry,
   type TrustControlState,
   updateReferralEntry,
   updateReviewEntry,
+  updateTrustScoreEntry,
   updateTrustControl
 } from "../../lib/trust-store";
 
@@ -95,4 +97,49 @@ export async function saveReviewEntry(formData: FormData) {
   });
 
   redirectSuccess("review_saved");
+}
+
+export async function saveTrustScoreEntry(formData: FormData) {
+  const id = normalizeText(formData.get("id"));
+
+  if (!id) {
+    redirect("/dashboard/trust?error=missing_score_id");
+  }
+
+  const current = await getTrustStore();
+  const scorecard = current.scorecards.find((item) => item.id === id);
+
+  if (!scorecard) {
+    redirect("/dashboard/trust?error=invalid_score_id");
+  }
+
+  const nextVisibleScore = Number(
+    (
+      (
+        normalizeNumber(formData.get("averageRating"), scorecard.averageRating) +
+        normalizeNumber(formData.get("punctualityScore"), scorecard.punctualityScore) +
+        normalizeNumber(formData.get("completionQualityScore"), scorecard.completionQualityScore) +
+        normalizeNumber(formData.get("verificationScore"), scorecard.verificationScore)
+      ) /
+        4 +
+      normalizeNumber(formData.get("adminAdjustment"), scorecard.adminAdjustment)
+    ).toFixed(1)
+  );
+
+  const nextScorecard: TrustScoreEntry = {
+    ...scorecard,
+    averageRating: normalizeNumber(formData.get("averageRating"), scorecard.averageRating),
+    punctualityScore: normalizeNumber(formData.get("punctualityScore"), scorecard.punctualityScore),
+    completionQualityScore: normalizeNumber(
+      formData.get("completionQualityScore"),
+      scorecard.completionQualityScore
+    ),
+    verificationScore: normalizeNumber(formData.get("verificationScore"), scorecard.verificationScore),
+    adminAdjustment: normalizeNumber(formData.get("adminAdjustment"), scorecard.adminAdjustment),
+    visibleScore: nextVisibleScore,
+    notes: normalizeText(formData.get("notes"), scorecard.notes)
+  };
+
+  await updateTrustScoreEntry(nextScorecard);
+  redirectSuccess("score_saved");
 }

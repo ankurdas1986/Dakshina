@@ -30,6 +30,13 @@ export const moduleStatus = [
     summary: "Booking status control, district dispatch, delayed contact reveal, and replacement workflow."
   },
   {
+    key: "payouts",
+    title: "Payout Management",
+    href: "/dashboard/payouts",
+    status: "live",
+    summary: "Manual-first priest payout ledger for completed rituals, UPI readiness, and admin mark-as-paid workflow."
+  },
+  {
     key: "trust",
     title: "Trust and Referral",
     href: "/dashboard/trust",

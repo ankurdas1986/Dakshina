@@ -34,10 +34,23 @@ export type ReviewEntry = {
   comment: string;
 };
 
+export type TrustScoreEntry = {
+  id: string;
+  priest: string;
+  averageRating: number;
+  punctualityScore: number;
+  completionQualityScore: number;
+  verificationScore: number;
+  adminAdjustment: number;
+  visibleScore: number;
+  notes: string;
+};
+
 export type TrustStore = {
   controls: TrustControl[];
   referrals: ReferralEntry[];
   reviews: ReviewEntry[];
+  scorecards: TrustScoreEntry[];
 };
 
 const trustFilePath = path.join(process.cwd(), "data", "trust.json");
@@ -102,6 +115,30 @@ const fallbackStore: TrustStore = {
       status: "pending_moderation",
       comment: "Pending moderation because the booking is not yet completed."
     }
+  ],
+  scorecards: [
+    {
+      id: "score_001",
+      priest: "Pandit Arindam Bhattacharya",
+      averageRating: 4.9,
+      punctualityScore: 4.8,
+      completionQualityScore: 4.9,
+      verificationScore: 5,
+      adminAdjustment: 0.1,
+      visibleScore: 4.9,
+      notes: "Strong local reliability. Eligible for higher-priority assignments."
+    },
+    {
+      id: "score_002",
+      priest: "Pandit Subhajit Chakraborty",
+      averageRating: 4.1,
+      punctualityScore: 3.8,
+      completionQualityScore: 4.2,
+      verificationScore: 3.5,
+      adminAdjustment: -0.2,
+      visibleScore: 3.9,
+      notes: "Keep under observation until punctuality improves."
+    }
   ]
 };
 
@@ -117,7 +154,13 @@ async function writeStore(store: TrustStore) {
 export async function getTrustStore() {
   try {
     const raw = await readFile(trustFilePath, "utf8");
-    return JSON.parse(raw) as TrustStore;
+    const parsed = JSON.parse(raw) as Partial<TrustStore>;
+    return {
+      controls: parsed.controls ?? fallbackStore.controls,
+      referrals: parsed.referrals ?? fallbackStore.referrals,
+      reviews: parsed.reviews ?? fallbackStore.reviews,
+      scorecards: parsed.scorecards ?? fallbackStore.scorecards
+    };
   } catch {
     await writeStore(fallbackStore);
     return fallbackStore;
@@ -154,12 +197,23 @@ export async function updateReviewEntry(input: ReviewEntry) {
   return next;
 }
 
+export async function updateTrustScoreEntry(input: TrustScoreEntry) {
+  const current = await getTrustStore();
+  const next: TrustStore = {
+    ...current,
+    scorecards: current.scorecards.map((item) => (item.id === input.id ? input : item))
+  };
+  await writeStore(next);
+  return next;
+}
+
 export function getTrustMetrics(store: TrustStore) {
   const totalRatings = store.reviews.reduce((sum, review) => sum + review.rating, 0);
   return {
     averageRating: store.reviews.length > 0 ? Number((totalRatings / store.reviews.length).toFixed(1)) : 0,
     reviewsAwaitingModeration: store.reviews.filter((review) => review.status === "pending_moderation").length,
     referralCreditsPending: store.referrals.filter((entry) => entry.state !== "credited").length,
-    controlItems: store.controls.length
+    controlItems: store.controls.length,
+    priestsBelowThreshold: store.scorecards.filter((entry) => entry.visibleScore < 4).length
   };
 }

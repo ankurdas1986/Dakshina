@@ -45,8 +45,8 @@ Legend:
 - `[x]` read-only overview for commissions, privacy timing, service tiers, and controls
 - `[x]` editable settings forms with local persistence for UAT
 - `[x]` notification settings controls added to Module 1
+- `[x]` local audit log for settings changes
 - `[ ]` Supabase-backed settings persistence
-- `[ ]` audit log for settings changes
 
 ### 3.3 Priest Management
 
@@ -54,10 +54,11 @@ Legend:
 - `[x]` editable KYC review workflow with local persistence
 - `[x]` verified/unverified status control and admin notes
 - `[x]` KYC document preview cards for admin review
+- `[x]` KYC document large preview modal with front/back slots for identity and address proof
 - `[x]` cascading category and ritual selection flow
 - `[x]` priest list index and dedicated detail route
 - `[x]` priest table with search/filter
-- `[ ]` district/radius management beyond per-priest editing
+- `[x]` district/radius operations summary with queue drill-down
 
 ### 3.4 Rituals and Fard
 
@@ -66,7 +67,7 @@ Legend:
 - `[x]` ritual CRUD
 - `[x]` 4-tier service model management
 - `[x]` JSON-based Fard editor
-- `[ ]` Fard snapshot preview rules
+- `[x]` Fard snapshot preview rules
 
 ### 3.5 Booking Operations
 
@@ -77,14 +78,22 @@ Legend:
 - `[x]` reassignment and replacement controls
 - `[x]` contact reveal timing enforcement UI
 - `[x]` OTP completion oversight
+- `[x]` booking-side Fard snapshot preview
 
-### 3.6 Trust and Referral
+### 3.6 Payout Management
+
+- `[x]` module route and responsive shell page
+- `[x]` payout queue with search/filter
+- `[x]` payout detail route with manual settlement workspace
+- `[x]` UPI payout details and mark-as-paid controls
+
+### 3.7 Trust and Referral
 
 - `[x]` module route and responsive shell page
 - `[x]` review moderation UI
 - `[x]` referral ledger actions
 - `[x]` completion-gated reward release workflow
-- `[~]` trust score operations panel
+- `[x]` trust score operations panel
 
 ## 4. Priest App
 
@@ -128,7 +137,8 @@ Legend:
 ## Current Focus
 
 - `[x]` Module 1: Global Settings editable super-admin workflow
-- `[~]` Module 2: Priest Management with search-driven queue and detail route
+- `[x]` Module 2: Priest Management with search-driven queue and detail route
 - `[x]` Module 3: Rituals and Fard management
-- `[~]` Module 4: Booking operations with queue and case detail routes
-- `[x]` Module 5: Trust and Referral admin workflows
+- `[x]` Module 4: Booking operations with queue and case detail routes
+- `[x]` Module 5: Payout management workflow
+- `[x]` Module 6: Trust and Referral admin workflows

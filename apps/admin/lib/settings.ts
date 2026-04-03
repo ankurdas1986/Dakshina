@@ -37,6 +37,13 @@ export type SettingsSnapshot = {
     dailyDigestEnabled: boolean;
     unreadCount: number;
   };
+  auditLog: Array<{
+    id: string;
+    action: string;
+    detail: string;
+    actor: string;
+    createdAt: string;
+  }>;
 };
 
 export const settingsSnapshot: SettingsSnapshot = {
@@ -123,5 +130,21 @@ export const settingsSnapshot: SettingsSnapshot = {
     referralAlertsEnabled: false,
     dailyDigestEnabled: true,
     unreadCount: 4
-  }
+  },
+  auditLog: [
+    {
+      id: "audit_001",
+      action: "Platform settings updated",
+      detail: "Default commission and reveal timing were aligned to launch-market policy.",
+      actor: "Admin operator",
+      createdAt: "2026-04-03 09:30"
+    },
+    {
+      id: "audit_002",
+      action: "District override revised",
+      detail: "North 24 Parganas commission remains under review until launch coverage stabilizes.",
+      actor: "Admin operator",
+      createdAt: "2026-04-03 08:10"
+    }
+  ]
 };

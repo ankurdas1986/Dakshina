@@ -7,6 +7,7 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { requireAdminUser } from "../../../lib/auth";
+import { getBookingStore } from "../../../lib/booking-store";
 import {
   buildCategoryLabel,
   getCategoryDepth,
@@ -53,14 +54,39 @@ function readParam(
 export default async function RitualsPage({ searchParams }: RitualsPageProps) {
   const user = await requireAdminUser();
   const store = await getRitualStore();
+  const bookingStore = await getBookingStore();
   const metrics = getRitualMetrics(store);
   const resolvedSearchParams = (await searchParams) ?? {};
   const messageKey = readParam(resolvedSearchParams, "message");
   const errorKey = readParam(resolvedSearchParams, "error");
+  const query = readParam(resolvedSearchParams, "q")?.toLowerCase() ?? "";
   const bannerMessage = messageKey ? messageMap[messageKey] ?? null : null;
   const bannerError = errorKey ? errorMap[errorKey] ?? errorKey : null;
   const leafCategoryOptions = getLeafCategoryOptions(store.categories);
   const topLevelCategories = getChildCategories(null, store.categories);
+  const filteredTiers = store.tiers.filter((tier) =>
+    [tier.name, tier.title, tier.focus, tier.pricingMode, tier.status].join(" ").toLowerCase().includes(query)
+  );
+  const filteredTopLevelCategories = topLevelCategories.filter((category) =>
+    buildCategoryLabel(category.id, store.categories).toLowerCase().includes(query) ||
+    category.description.toLowerCase().includes(query)
+  );
+  const filteredRituals = store.rituals.filter((ritual) =>
+    [
+      ritual.name,
+      buildCategoryLabel(ritual.categoryId, store.categories),
+      ritual.status,
+      ritual.deliveryMode,
+      ritual.pricingMode
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(query)
+  );
+  const filteredFardRules = store.fardRules.filter((rule) => rule.toLowerCase().includes(query));
+  const snapshotCases = bookingStore.cases.filter((booking) =>
+    !query || [booking.bookingCode, booking.ritual, booking.fardSnapshotLockedAt].join(" ").toLowerCase().includes(query)
+  );
 
   const metricCards = [
     { label: "Service tiers", value: metrics.serviceTiers, icon: Layers3 },
@@ -95,6 +121,13 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
         </div>
       ) : null}
 
+      <form className="rounded-[20px] border border-border bg-white px-4 py-3 shadow-soft">
+        <label className="grid gap-2 text-sm font-semibold text-foreground">
+          <span>Search ritual operations</span>
+          <Input defaultValue={query} name="q" placeholder="Search category, ritual, tier, snapshot..." />
+        </label>
+      </form>
+
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((metric) => {
           const Icon = metric.icon;
@@ -121,7 +154,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
             <CardDescription>These four tiers stay standardized but remain editable for title, focus, and pricing posture.</CardDescription>
           </CardHeader>
           <CardContent className="surface-scroll max-h-[720px] space-y-4 overflow-y-auto pr-2">
-            {store.tiers.map((tier) => (
+            {filteredTiers.map((tier) => (
               <form action={saveTier} className="rounded-[24px] border border-border bg-white p-4" key={tier.id}>
                 <input name="id" type="hidden" value={tier.id} />
                 <div className="mb-3 flex items-center justify-between gap-3">
@@ -229,7 +262,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
             <CardDescription>Manage nested ritual categories with parent-child relationships and tier ownership.</CardDescription>
           </CardHeader>
           <CardContent className="surface-scroll max-h-[920px] space-y-4 overflow-y-auto pr-2">
-            {topLevelCategories.map((category) => (
+            {filteredTopLevelCategories.map((category) => (
               <CategoryBranch key={category.id} categoryId={category.id} store={store} />
             ))}
           </CardContent>
@@ -305,9 +338,37 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
               <CardDescription>Booking confirmation snapshots the ritual checklist before user delivery.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {store.fardRules.map((rule) => (
+              {filteredFardRules.map((rule) => (
                 <div className="rounded-[20px] border border-border bg-white p-4" key={rule}>
                   <p className="text-sm leading-6 text-muted-foreground">{rule}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[28px] border-border/80 bg-white">
+            <CardHeader>
+              <CardTitle className="text-lg">Booking Fard snapshots</CardTitle>
+              <CardDescription>These examples prove the booking-side checklist is locked even if the live ritual template changes later.</CardDescription>
+            </CardHeader>
+            <CardContent className="surface-scroll max-h-[320px] space-y-3 overflow-y-auto pr-2">
+              {snapshotCases.map((booking) => (
+                <div className="rounded-[20px] border border-border bg-white p-4" key={booking.id}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{booking.bookingCode} - {booking.ritual}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">Locked at {booking.fardSnapshotLockedAt || "booking confirmation"}</p>
+                    </div>
+                    <Badge variant="outline">{booking.fardSnapshot.deliveryMode}</Badge>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {booking.fardSnapshot.items.map((item) => (
+                      <div className="flex items-center justify-between gap-3 rounded-[16px] border border-border bg-secondary/25 px-3 py-2" key={`${booking.id}-${item.label}`}>
+                        <span className="text-sm text-foreground">{item.label}</span>
+                        <span className="text-sm text-muted-foreground">{item.quantity}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </CardContent>
@@ -321,7 +382,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
           <CardDescription>Edit category mapping, delivery mode, and JSON-based Fard templates for each ritual.</CardDescription>
         </CardHeader>
         <CardContent className="surface-scroll max-h-[920px] space-y-4 overflow-y-auto pr-2">
-          {store.rituals.map((ritual) => (
+          {filteredRituals.map((ritual) => (
             <form action={saveRitual} className="rounded-[24px] border border-border bg-white p-4" key={ritual.id}>
               <input name="id" type="hidden" value={ritual.id} />
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">

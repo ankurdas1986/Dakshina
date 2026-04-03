@@ -22,12 +22,45 @@ async function writeSettings(settings: SettingsSnapshot) {
 export async function getSettingsSnapshot() {
   try {
     const raw = await readFile(settingsFilePath, "utf8");
-    return JSON.parse(raw) as SettingsSnapshot;
+    const parsed = JSON.parse(raw) as Partial<SettingsSnapshot>;
+    return {
+      ...cloneDefaults(),
+      ...parsed,
+      platform: {
+        ...cloneDefaults().platform,
+        ...parsed.platform
+      },
+      notificationSettings: {
+        ...cloneDefaults().notificationSettings,
+        ...parsed.notificationSettings
+      },
+      districts: parsed.districts ?? cloneDefaults().districts,
+      serviceTiers: parsed.serviceTiers ?? cloneDefaults().serviceTiers,
+      controls: parsed.controls ?? cloneDefaults().controls,
+      auditLog: parsed.auditLog ?? cloneDefaults().auditLog
+    };
   } catch {
     const fallback = cloneDefaults();
     await writeSettings(fallback);
     return fallback;
   }
+}
+
+function appendAuditLog(
+  current: SettingsSnapshot,
+  action: string,
+  detail: string
+): SettingsSnapshot["auditLog"] {
+  return [
+    {
+      id: `audit_${Date.now()}`,
+      action,
+      detail,
+      actor: "Admin operator",
+      createdAt: new Date().toISOString().slice(0, 16).replace("T", " ")
+    },
+    ...current.auditLog
+  ].slice(0, 12);
 }
 
 type PlatformUpdate = {
@@ -59,6 +92,11 @@ export async function updatePlatformSettings(input: PlatformUpdate) {
   const current = await getSettingsSnapshot();
   const next: SettingsSnapshot = {
     ...current,
+    auditLog: appendAuditLog(
+      current,
+      "Platform settings updated",
+      `Commission ${input.defaultCommissionPercent}% and advance ${input.bookingAdvancePercent}% are now active.`
+    ),
     platform: {
       launchRegion: input.launchRegion,
       currency: input.currency,
@@ -81,6 +119,11 @@ export async function updateDistrictSettings(districts: DistrictCommissionOverri
   const current = await getSettingsSnapshot();
   const next: SettingsSnapshot = {
     ...current,
+    auditLog: appendAuditLog(
+      current,
+      "District settings updated",
+      `Regional commission and service cluster overrides were updated for ${districts.length} districts.`
+    ),
     districts
   };
 
@@ -92,6 +135,11 @@ export async function updateControlSettings(controls: SettingsSnapshot["controls
   const current = await getSettingsSnapshot();
   const next: SettingsSnapshot = {
     ...current,
+    auditLog: appendAuditLog(
+      current,
+      "Policy controls updated",
+      "Admin policy toggles were changed in the super-admin settings module."
+    ),
     controls
   };
 
@@ -105,6 +153,11 @@ export async function updateNotificationSettings(
   const current = await getSettingsSnapshot();
   const next: SettingsSnapshot = {
     ...current,
+    auditLog: appendAuditLog(
+      current,
+      "Notification settings updated",
+      `Inbox badge count is now ${notificationSettings.unreadCount} with admin inbox ${notificationSettings.adminInboxEnabled ? "enabled" : "disabled"}.`
+    ),
     notificationSettings
   };
 

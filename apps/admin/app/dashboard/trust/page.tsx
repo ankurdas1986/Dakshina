@@ -2,6 +2,7 @@ import { MessageSquareQuote, ShieldCheck, Star, WalletCards } from "lucide-react
 import {
   saveReferralEntry,
   saveReviewEntry,
+  saveTrustScoreEntry,
   saveTrustControl
 } from "../../actions/trust";
 import { AdminShell } from "../../../components/admin-shell";
@@ -21,7 +22,8 @@ type TrustPageProps = {
 const messageMap: Record<string, string> = {
   control_saved: "Trust control updated and stored for local UAT.",
   referral_saved: "Referral ledger entry updated and stored for local UAT.",
-  review_saved: "Review moderation entry updated and stored for local UAT."
+  review_saved: "Review moderation entry updated and stored for local UAT.",
+  score_saved: "Trust score entry updated and stored for local UAT."
 };
 
 const errorMap: Record<string, string> = {
@@ -30,7 +32,9 @@ const errorMap: Record<string, string> = {
   missing_referral_id: "Referral id is missing.",
   invalid_referral_id: "Referral id is invalid.",
   missing_review_id: "Review id is missing.",
-  invalid_review_id: "Review id is invalid."
+  invalid_review_id: "Review id is invalid.",
+  missing_score_id: "Trust score id is missing.",
+  invalid_score_id: "Trust score id is invalid."
 };
 
 function readParam(
@@ -48,14 +52,27 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
   const resolvedSearchParams = (await searchParams) ?? {};
   const messageKey = readParam(resolvedSearchParams, "message");
   const errorKey = readParam(resolvedSearchParams, "error");
+  const query = readParam(resolvedSearchParams, "q")?.toLowerCase() ?? "";
   const bannerMessage = messageKey ? messageMap[messageKey] ?? null : null;
   const bannerError = errorKey ? errorMap[errorKey] ?? errorKey : null;
+  const filteredControls = store.controls.filter((control) =>
+    [control.title, control.detail, control.state].join(" ").toLowerCase().includes(query)
+  );
+  const filteredReferrals = store.referrals.filter((entry) =>
+    [entry.referrer, entry.referee, entry.firstBooking, entry.state].join(" ").toLowerCase().includes(query)
+  );
+  const filteredReviews = store.reviews.filter((review) =>
+    [review.bookingCode, review.priest, review.status, review.comment].join(" ").toLowerCase().includes(query)
+  );
+  const filteredScorecards = store.scorecards.filter((entry) =>
+    [entry.priest, entry.notes, String(entry.visibleScore)].join(" ").toLowerCase().includes(query)
+  );
 
   const metrics = [
     { label: "Average rating", value: metricsSnapshot.averageRating, icon: Star },
     { label: "Reviews pending", value: metricsSnapshot.reviewsAwaitingModeration, icon: MessageSquareQuote },
     { label: "Referral credits pending", value: metricsSnapshot.referralCreditsPending, icon: WalletCards },
-    { label: "Trust controls", value: metricsSnapshot.controlItems, icon: ShieldCheck }
+    { label: "Priests below threshold", value: metricsSnapshot.priestsBelowThreshold, icon: ShieldCheck }
   ];
 
   return (
@@ -69,7 +86,7 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
           <Badge variant="success">Review moderation</Badge>
           <Badge variant="outline">Referral ledger</Badge>
           <Badge variant="outline">Completion gate</Badge>
-          <Badge variant="outline">Trust controls</Badge>
+          <Badge variant="outline">Trust score</Badge>
         </div>
       }
     >
@@ -103,6 +120,12 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
         })}
       </div>
 
+      <form className="rounded-[20px] border border-border bg-white px-4 py-3 shadow-soft">
+        <Field label="Search trust operations">
+          <Input defaultValue={query} name="q" placeholder="Search controls, referrals, reviews, priests..." />
+        </Field>
+      </form>
+
       <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
@@ -110,7 +133,7 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
             <CardDescription>Completion gates, review policy, and quality operations remain admin-managed.</CardDescription>
           </CardHeader>
           <CardContent className="surface-scroll max-h-[720px] space-y-4 overflow-y-auto pr-2">
-            {store.controls.map((control) => (
+            {filteredControls.map((control) => (
               <form action={saveTrustControl} className="rounded-[24px] border border-border bg-white p-4" key={control.id}>
                 <input name="id" type="hidden" value={control.id} />
                 <div className="grid gap-3">
@@ -139,11 +162,53 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
         <div className="space-y-5">
           <Card className="rounded-[28px] border-border/80 bg-white">
             <CardHeader>
+              <CardTitle className="text-lg">Trust score operations</CardTitle>
+              <CardDescription>Admin can tune the visible score using rating, punctuality, completion quality, verification, and a controlled adjustment.</CardDescription>
+            </CardHeader>
+            <CardContent className="surface-scroll max-h-[420px] space-y-4 overflow-y-auto pr-2">
+              {filteredScorecards.map((entry) => (
+                <form action={saveTrustScoreEntry} className="rounded-[24px] border border-border bg-white p-4" key={entry.id}>
+                  <input name="id" type="hidden" value={entry.id} />
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{entry.priest}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">Visible score {entry.visibleScore}</p>
+                    </div>
+                    <Badge variant={entry.visibleScore >= 4 ? "success" : "secondary"}>{entry.visibleScore}</Badge>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Field label="Average rating">
+                      <Input defaultValue={entry.averageRating} max={5} min={0} name="averageRating" type="number" />
+                    </Field>
+                    <Field label="Punctuality score">
+                      <Input defaultValue={entry.punctualityScore} max={5} min={0} name="punctualityScore" type="number" />
+                    </Field>
+                    <Field label="Completion quality">
+                      <Input defaultValue={entry.completionQualityScore} max={5} min={0} name="completionQualityScore" type="number" />
+                    </Field>
+                    <Field label="Verification score">
+                      <Input defaultValue={entry.verificationScore} max={5} min={0} name="verificationScore" type="number" />
+                    </Field>
+                    <Field label="Admin adjustment">
+                      <Input defaultValue={entry.adminAdjustment} max={1} min={-1} name="adminAdjustment" step="0.1" type="number" />
+                    </Field>
+                  </div>
+                  <TextAreaField label="Admin notes" defaultValue={entry.notes} name="notes" />
+                  <div className="flex justify-end">
+                    <Button type="submit" variant="secondary">Save trust score</Button>
+                  </div>
+                </form>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[28px] border-border/80 bg-white">
+            <CardHeader>
               <CardTitle className="text-lg">Referral ledger</CardTitle>
               <CardDescription>Reward release remains auditable and depends on completion state.</CardDescription>
             </CardHeader>
             <CardContent className="surface-scroll max-h-[420px] space-y-4 overflow-y-auto pr-2">
-              {store.referrals.map((entry) => (
+              {filteredReferrals.map((entry) => (
                 <form action={saveReferralEntry} className="rounded-[24px] border border-border bg-white p-4" key={entry.id}>
                   <input name="id" type="hidden" value={entry.id} />
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -189,7 +254,7 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
               <CardDescription>Reviews should only stay visible after valid completed bookings.</CardDescription>
             </CardHeader>
             <CardContent className="surface-scroll max-h-[420px] space-y-4 overflow-y-auto pr-2">
-              {store.reviews.map((review) => (
+              {filteredReviews.map((review) => (
                 <form action={saveReviewEntry} className="rounded-[24px] border border-border bg-white p-4" key={review.id}>
                   <input name="id" type="hidden" value={review.id} />
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-3">

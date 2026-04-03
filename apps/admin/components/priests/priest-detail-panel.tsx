@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { FileImage, FolderOpenDot, MapPinned, PhoneCall, ScrollText } from "lucide-react";
 import { savePriestReview } from "../../app/actions/priests";
+import { KycDocumentGallery } from "./kyc-document-gallery";
 import { PriestServiceSelector } from "../priest-service-selector";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -8,12 +8,12 @@ import { Input } from "../ui/input";
 import type { PriestRecord } from "../../lib/priest-store";
 import { buildCategoryLabel, type RitualStore } from "../../lib/ritual-store";
 
-const documentPreviewMap: Record<string, { title: string; asset: string }> = {
-  govt_id: { title: "Government ID", asset: "/kyc/govt-id.svg" },
-  address_proof: { title: "Address proof", asset: "/kyc/address-proof.svg" },
-  profile_photo: { title: "Profile photo", asset: "/kyc/profile-photo.svg" },
-  service_specialization: { title: "Service specialization", asset: "/kyc/service-specialization.svg" },
-  home_pin: { title: "Home pin", asset: "/kyc/home-pin.svg" }
+const documentPreviewMap: Record<string, { title: string; asset: string; sides: 1 | 2 }> = {
+  govt_id: { title: "Government ID", asset: "/kyc/govt-id.svg", sides: 2 },
+  address_proof: { title: "Address proof", asset: "/kyc/address-proof.svg", sides: 2 },
+  profile_photo: { title: "Profile photo", asset: "/kyc/profile-photo.svg", sides: 1 },
+  service_specialization: { title: "Service specialization", asset: "/kyc/service-specialization.svg", sides: 1 },
+  home_pin: { title: "Home pin", asset: "/kyc/home-pin.svg", sides: 1 }
 };
 
 export function getPriestStatusVariant(status: string) {
@@ -122,32 +122,44 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
           <FileImage className="h-4 w-4 text-primary" />
           <span>KYC documents</span>
         </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          {priest.documents.map((documentKey) => {
+        <KycDocumentGallery
+          documents={priest.documents.flatMap((documentKey) => {
             const preview = documentPreviewMap[documentKey] ?? {
               title: documentKey,
-              asset: "/kyc/govt-id.svg"
+              asset: "/kyc/govt-id.svg",
+              sides: 1 as const
             };
 
-            return (
-              <div className="overflow-hidden rounded-[18px] border border-border bg-white" key={documentKey}>
-                <div className="relative aspect-[16/10] bg-muted">
-                  <Image
-                    alt={preview.title}
-                    className="object-cover"
-                    fill
-                    sizes="(max-width: 1280px) 100vw, 240px"
-                    src={preview.asset}
-                  />
-                </div>
-                <div className="px-3 py-2.5">
-                  <p className="text-sm font-semibold text-foreground">{preview.title}</p>
-                  <p className="text-xs text-muted-foreground">Preview available for admin review</p>
-                </div>
-              </div>
-            );
+            if (preview.sides === 2) {
+              return [
+                {
+                  key: `${documentKey}:front`,
+                  title: preview.title,
+                  asset: preview.asset,
+                  sideLabel: "Front",
+                  note: "Large preview available"
+                },
+                {
+                  key: `${documentKey}:back`,
+                  title: preview.title,
+                  asset: preview.asset,
+                  sideLabel: "Back",
+                  note: "Large preview available"
+                }
+              ];
+            }
+
+            return [
+              {
+                key: documentKey,
+                title: preview.title,
+                asset: preview.asset,
+                sideLabel: "Single",
+                note: "Large preview available"
+              }
+            ];
           })}
-        </div>
+        />
       </div>
 
       <label className="grid gap-2 text-sm font-semibold text-foreground">

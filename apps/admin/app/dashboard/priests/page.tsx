@@ -128,12 +128,17 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {districtSummaries.map((summary) => (
-            <div className="rounded-[24px] border border-border bg-secondary/20 p-4" key={summary.district}>
+            <Link
+              className="rounded-[24px] border border-border bg-secondary/20 p-4 transition-colors hover:bg-primary/5"
+              href={`/dashboard/priests?district=${encodeURIComponent(summary.district)}`}
+              key={summary.district}
+            >
               <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{summary.district}</p>
               <p className="mt-2 text-lg font-semibold text-foreground">{summary.priests} priests</p>
               <p className="mt-1 text-sm text-muted-foreground">{summary.verified} verified</p>
               <p className="mt-1 text-sm text-muted-foreground">Avg radius {summary.averageRadius} km</p>
-            </div>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Open district queue</p>
+            </Link>
           ))}
         </CardContent>
       </Card>

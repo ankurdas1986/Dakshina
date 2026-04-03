@@ -8,11 +8,12 @@ import {
   BookCheck,
   CalendarRange,
   ChevronRight,
+  Handshake,
   LayoutDashboard,
+  Landmark,
   MapPinned,
   Menu,
   Search,
-  ShieldCheck,
   Settings2,
   X
 } from "lucide-react";
@@ -25,7 +26,7 @@ import { Input } from "./ui/input";
 import { DakshinaLogo } from "./dakshina-logo";
 
 type AdminShellProps = {
-  active: "settings" | "priests" | "rituals" | "bookings" | "trust";
+  active: "settings" | "priests" | "rituals" | "bookings" | "payouts" | "trust";
   children: ReactNode;
   userEmail?: string | null;
   title: string;
@@ -37,11 +38,39 @@ type AdminShellProps = {
 };
 
 const iconMap = {
-  settings: ShieldCheck,
+  settings: Settings2,
   priests: BookCheck,
   rituals: CalendarRange,
   bookings: MapPinned,
-  trust: Bell
+  payouts: Landmark,
+  trust: Handshake
+} as const;
+
+const searchConfig = {
+  settings: {
+    action: "/dashboard",
+    placeholder: "Search settings, policies, districts..."
+  },
+  priests: {
+    action: "/dashboard/priests",
+    placeholder: "Search priests, districts, rituals..."
+  },
+  rituals: {
+    action: "/dashboard/rituals",
+    placeholder: "Search tiers, categories, rituals..."
+  },
+  bookings: {
+    action: "/dashboard/bookings",
+    placeholder: "Search bookings, rituals, priests..."
+  },
+  payouts: {
+    action: "/dashboard/payouts",
+    placeholder: "Search payouts, priests, bookings..."
+  },
+  trust: {
+    action: "/dashboard/trust",
+    placeholder: "Search trust controls, referrals, reviews..."
+  }
 } as const;
 
 function getInitials(email?: string | null) {
@@ -74,6 +103,7 @@ export function AdminShell({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const initials = useMemo(() => getInitials(userEmail), [userEmail]);
+  const currentSearch = searchConfig[active];
 
   return (
     <main className="min-h-screen bg-transparent p-3 md:p-4">
@@ -163,10 +193,10 @@ export function AdminShell({
                   <Menu className="h-4 w-4" />
                 </button>
 
-                <div className="relative w-full md:w-[320px] lg:w-[380px]">
+                <form action={currentSearch.action} className="relative w-full md:w-[320px] lg:w-[380px]">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input className="h-10 rounded-xl pl-9" placeholder="Search modules, rituals, priests..." />
-                </div>
+                  <Input className="h-10 rounded-xl pl-9" name="q" placeholder={currentSearch.placeholder} />
+                </form>
               </div>
 
               <div className="flex items-center gap-2 self-end md:self-auto">
@@ -263,9 +293,7 @@ export function AdminShell({
             </div>
           </div>
 
-          {breadcrumbs ? (
-            <div className="rounded-[20px] border border-border bg-white px-4 py-3 shadow-soft">{breadcrumbs}</div>
-          ) : null}
+          {breadcrumbs}
 
           {subnav ? (
             <div className="rounded-[20px] border border-border bg-white px-4 py-3 shadow-soft">{subnav}</div>
@@ -276,7 +304,10 @@ export function AdminShell({
           <footer className="rounded-[20px] border border-border bg-white/80 px-4 py-3 text-sm text-muted-foreground shadow-soft backdrop-blur">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="font-medium text-foreground">Dakshina Direct Admin</p>
-              <p>Copyright 2026 Dakshina Direct. Admin operations console.</p>
+              <div className="text-right">
+                <p>Designed and developed by Ankur Das</p>
+                <p>Copyright 2026 Dakshina Direct. Admin operations console.</p>
+              </div>
             </div>
           </footer>
         </section>

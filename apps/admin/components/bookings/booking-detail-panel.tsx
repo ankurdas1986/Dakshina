@@ -147,6 +147,31 @@ export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetai
         </div>
       </div>
 
+      <div className="rounded-[24px] border border-border bg-secondary/25 p-4">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Fard snapshot</p>
+            <p className="text-sm leading-6 text-muted-foreground">
+              This checklist is locked to the booking. Ritual template edits must not rewrite this historical snapshot.
+            </p>
+          </div>
+          <Badge variant="outline">{booking.fardSnapshot.deliveryMode}</Badge>
+        </div>
+        <div className="rounded-[20px] border border-border bg-white p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">
+            Locked at {booking.fardSnapshotLockedAt || "booking confirmation"}
+          </p>
+          <div className="mt-3 space-y-2">
+            {booking.fardSnapshot.items.map((item) => (
+              <div className="flex items-center justify-between gap-3 rounded-[16px] border border-border bg-secondary/30 px-3 py-2" key={`${item.label}-${item.quantity}`}>
+                <span className="text-sm font-medium text-foreground">{item.label}</span>
+                <span className="text-sm text-muted-foreground">{item.quantity}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <TextAreaField label="Replacement notes" defaultValue={booking.replacementNotes} name="replacementNotes" />
 
       <div className="flex justify-end">
