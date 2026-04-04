@@ -160,7 +160,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         {matchesSection("commercial settings culture booking window commission advance payment reveal window forced booking") ? (
-          <Card className="rounded-[28px] border-border/80 bg-white">
+          <Card className="h-full rounded-[28px] border-border/80 bg-white">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Commercial and governance settings</CardTitle>
               <CardDescription>Primary economics, Bengali-first launch preference, and booking intelligence rules.</CardDescription>
@@ -292,8 +292,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <CardTitle className="text-lg">Notification settings</CardTitle>
               <CardDescription>Admin controls which operational events land in the inbox and digest.</CardDescription>
             </CardHeader>
-            <CardContent>
-              <form action={saveNotificationSettings} className="surface-scroll max-h-[460px] space-y-3 overflow-y-auto pr-2">
+            <CardContent className="flex h-full flex-col">
+              <form action={saveNotificationSettings} className="flex h-full flex-col gap-3">
                 {[
                   ["adminInboxEnabled", "Admin inbox enabled", "Enable the top-right notification inbox icon for operators."],
                   ["registrationAlertsEnabled", "Registration alerts", "Notify admin when a new priest or user registration is submitted."],
