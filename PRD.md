@@ -1,412 +1,458 @@
-# Dakshina Product Requirements Document
+﻿# Dakshina Product Requirements Document
 
 ## 1. Product Overview
 
-Dakshina is a hyper-local marketplace for Hindu ritual services. The platform is intended to bring structure, trust, and operational reliability to a service category that is currently managed through informal networks and word-of-mouth.
+Dakshina is a hyper-local marketplace for Hindu ritual services. The product is now defined as a multicultural operating system for ritual booking, priest discovery, governance, and trust across multiple traditions.
 
-The first launch market is suburban West Bengal, with initial focus on:
+The marketplace must support at least these launch cultures:
 
-- Howrah
-- Hooghly
-- North 24 Parganas
+- Bengali
+- North Indian (UP/Bihar)
+- Marwadi
+- Odia
+- Gujarati
 
-The MVP will be built admin-first so the business can control verification, service quality, pricing logic, and booking operations before scaling supply and demand.
+The platform remains admin-first, but every major domain object must now be culture-aware so supply, rituals, booking rules, calendars, and pricing can expand without schema rewrites.
 
 ## 2. Problem Statement
 
-Priest booking in the target market has several recurring problems:
+Ritual booking is fragmented across regions and traditions. The current market suffers from:
 
-- no reliable discovery system,
-- no trustable verification process,
-- inconsistent pricing,
-- low accountability around punctuality and commitment,
-- weak fallback options when a priest cancels,
-- high dependency on local personal networks.
+- informal discovery and manual calling,
+- poor matching between family tradition and priest specialization,
+- no structured cultural segregation in service catalogs,
+- weak priest verification,
+- inconsistent pricing and travel fee handling,
+- no reliable availability locking,
+- poor handling of auspicious dates and muhurta windows,
+- no trusted payout and review accountability layer.
 
-This creates friction for users and limits the ability to build a scalable service business.
+Dakshina must solve these problems without increasing early operating cost.
 
-## 3. Vision
+## 3. Product Vision
 
-Dakshina should become the trusted standard for booking Hindu ritual services in its target markets.
+Dakshina should become the trusted hyper-local standard for booking culture-specific Hindu ritual services.
 
-The product should combine:
+The product must combine:
 
-- cultural credibility,
+- cultural correctness,
+- hyper-local priest matching,
 - operational reliability,
-- transparent booking mechanics,
-- controlled supply quality,
-- premium trust-first brand positioning.
+- transparent pricing,
+- controlled booking governance,
+- strict privacy timing,
+- admin-grade oversight,
+- zero-cost-friendly infrastructure.
 
 ## 4. Product Goals
 
 ### Primary Goals
 
-- Build trust in ritual service booking.
-- Create an admin-controlled operational backbone.
-- Onboard and verify priests through a managed process.
-- Enable nearby service discovery.
-- Prevent leakage outside the platform during booking flow.
-- Keep MVP infrastructure cost near zero.
+- Match users with priests by culture, geography, and availability.
+- Let admins govern booking windows, blackout dates, and exception overrides.
+- Let priests self-manage registration, KYC, culture tags, languages, services, and availability.
+- Let users discover top rituals by culture and book with confidence.
+- Prevent double booking through slot auto-blocking.
+- Preserve privacy until advance payment and reveal window conditions are satisfied.
+- Keep auth and baseline infrastructure near zero recurring cost.
 
-### Success Goals for MVP
+### MVP Success Goals
 
-- Admin can manage platform settings and priest verification without engineering help.
-- Priests can be onboarded in a structured format.
-- Users can discover and book priests in supported areas.
-- Contact information remains protected until booking commitment.
-- Booking completion can be confirmed through OTP.
-- Ratings and reviews can be captured only after completion.
+- Admin can manage ritual catalogs, pricing, governance, and verification without engineering help.
+- Priests can register across multiple cultures and languages without data collisions.
+- Users can search rituals by culture and location.
+- Confirmed bookings automatically block priest availability.
+- Reviews are accepted only for completed bookings.
+- Manual payout operations work cleanly while staying ready for later automation.
 
-## 5. Non-Goals for MVP
+## 5. Non-Goals for the Current Cut
 
-The first release should not try to solve everything. These are out of scope unless later confirmed:
+These remain out of scope unless explicitly pulled forward:
 
 - native iOS app,
 - native Android app,
-- advanced automation for all replacement cases,
-- multilingual expansion beyond immediate launch needs,
-- complex subscription billing beyond basic groundwork,
-- AI recommendations,
-- large-scale temple ERP features.
+- marketplace auto-payout compliance flows,
+- AI priest matching,
+- multilingual marketing content automation,
+- temple ERP / trust accounting.
 
 ## 6. User Types
 
-### 6.1 Admin
+### 6.1 Super Admin
 
-The platform operator who controls verification, settings, oversight, and issue resolution.
+Controls platform policy, catalog structure, KYC, booking governance, payouts, and operational interventions.
 
-Primary needs:
+### 6.2 Priest
 
-- verify priests,
-- manage services and categories,
-- control platform commission and booking rules,
-- monitor bookings,
-- intervene in replacement/escalation scenarios,
-- review trust and feedback signals.
+Registers as a service provider, uploads KYC, selects cultures, languages, rituals, availability, and receives bookings.
 
-### 6.2 Priest / Purohit
+### 6.3 User
 
-The service provider who offers ritual services within a configurable travel radius.
+Searches rituals by culture and area, chooses a priest, pays advance, receives reminders, and reviews after completion.
 
-Primary needs:
+## 7. Core Marketplace Model
 
-- create and maintain a profile,
-- upload KYC documents,
-- set service area,
-- receive and manage bookings,
-- complete jobs and confirm via OTP,
-- build trust score over time.
+Dakshina is no longer only a priest directory. It is a culturally segmented booking marketplace.
 
-### 6.3 Devotee / User
+Core marketplace dimensions:
 
-The customer booking ritual services for home, family, event, or community use.
+- culture,
+- geography,
+- ritual taxonomy,
+- pricing breakdown,
+- availability locking,
+- trust and KYC,
+- payout settlement,
+- privacy timing.
 
-Primary needs:
+Every major workflow must honor all of those dimensions.
 
-- find reliable priests nearby,
-- understand service and pricing structure,
-- book with confidence,
-- avoid last-minute cancellation risk,
-- pay advances safely,
-- leave feedback after completion.
+## 8. Deep Cultural Segregation
 
-## 7. Core Value Proposition
+This is the core architectural change.
 
-Dakshina differentiates through trust and execution, not just listing density.
+### 8.1 Supported Cultures
 
-Core value pillars:
+The system must support at least these culture types:
 
-- verified priests,
-- transparent booking process,
-- hidden contact details until booking commitment,
-- replacement guarantee,
-- ratings and trust signals,
-- culturally aligned premium presentation.
+- Bengali
+- North Indian
+- Marwadi
+- Odia
+- Gujarati
 
-## 8. Functional Scope
+### 8.2 Category Hierarchy
 
-## 8.1 Unified Entry and Authentication
+The ritual catalog must follow a culture-aware hierarchy:
 
-- Single landing page for all users.
-- Role selection for admin, priest, and user flows.
-- Shared authentication system using Supabase Email OTP or Magic Links.
-- Role-based redirection after login.
-- Admin-only route protection.
-- Third-party SMS gateways such as Twilio are out of scope for the MVP to preserve zero operational cost.
+- Tradition
+- Service Type
+- Specific Ritual
 
-## 8.2 Admin Panel
+Example:
 
-### Required in MVP
+- Odia -> Marriage -> Hastagranthi
 
-- admin authentication and authorization,
-- dashboard shell and navigation,
-- settings management,
-- global and district-based commission configuration,
-- priest listing and detail view,
-- manual KYC review,
-- verified status toggle,
-- multilayer service category tree management,
-- ritual/service management,
-- dynamic JSON-based Fard management per ritual,
-- booking list and detail management,
-- booking status oversight,
-- payout management for manually released priest settlements,
-- trust and review visibility,
-- referral settings visibility,
-- replacement handling support.
+Admin must manage this as a nested category tree.
 
-### Likely Settings Needed
+### 8.3 Priest Tagging
 
-- global commission percentage,
-- district or region-specific commission overrides,
+Priests must support multi-select tagging for:
+
+- cultures served,
+- languages spoken,
+- rituals performed.
+
+The priest experience must never assume one priest serves only one tradition.
+
+## 9. Authentication and Roles
+
+### 9.1 Auth Policy
+
+All roles must use Supabase Email OTP or Magic Links only:
+
+- Admin
+- Priest
+- User
+
+Third-party SMS gateways are out of scope for MVP.
+
+### 9.2 Role Handling
+
+- role-aware route protection remains mandatory,
+- priest and user self-registration must create distinct profile rows,
+- admin notification rules must include new registrations.
+
+## 10. Admin Platform Scope
+
+The super-admin remains the operating backbone.
+
+### Required Capabilities
+
+- role-protected access,
+- multicultural category tree management,
+- ritual and Fard management,
+- smart Panjika import by tradition,
+- KYC dashboard,
+- priest verification and live-state control,
+- booking governance configuration,
+- blackout date configuration,
+- dynamic pricing and festival multiplier control,
+- payout management,
+- trust / review moderation,
+- WhatsApp confirmation triggers,
+- admin override for forced bookings.
+
+### Booking Governance Controls
+
+Admin must control:
+
+- `min_booking_gap` between priest bookings,
+- `max_booking_window` in days,
+- `festival_rush_blocking` / blackout dates,
+- manual forced-booking override,
+- privacy reveal timing,
 - advance payment percentage,
-- referral percentages,
-- contact reveal timing controls within the 48 to 72 hour pre-ritual window,
-- serviceable area defaults,
-- feature flags for rollout control.
+- district and zone fee rules.
 
-### Ritual and Fard Requirement
+## 11. Priest Platform Scope
 
-- Admin must be able to manage and attach a dynamic JSON-based Item List (Fard) for every ritual.
-- The ritual Fard should be stored as structured data so it can be rendered in the UI and exported to PDF.
-- The Fard template must be snapshotted into the booking record at confirmation time and remain immutable for that booking.
-- Users should be able to view or download the ritual checklist after a booking is confirmed.
+The priest side must support:
 
-### Hierarchical Category Requirement
+- self-registration,
+- profile creation,
+- KYC upload,
+- culture and language tagging,
+- cascading ritual selection,
+- availability management,
+- off-day configuration,
+- working hours management,
+- booking inbox,
+- OTP completion,
+- payout-readiness data such as UPI details.
 
-- Ritual categories must support unlimited nesting through a parent-child tree model.
-- Admin must be able to add, edit, and move categories and sub-categories through a dedicated category tree interface.
-- Category management must remain smooth enough to support future expansion without flattening the catalog.
+## 12. User Platform Scope
 
-## 8.3 Priest Portal
+The user side must support:
 
-### Required in MVP after admin foundation
+- culture-first ritual discovery,
+- top rituals per culture on the homepage,
+- location-aware priest search,
+- shubha muhurta aware booking intent,
+- advance payment,
+- Fard view / download after confirmation,
+- delayed phone reveal,
+- verified review submission after completion.
 
-- onboarding form,
-- profile management,
-- KYC document upload,
-- home location pinning using OSM,
-- travel radius configuration,
-- service selection through cascading category selection,
-- booking acceptance and status updates,
-- OTP completion input.
+## 13. Multi-Panjika Smart Import
 
-### Cascading Service Selection
+The Panjika import flow must support multiple sources.
 
-- Priest service onboarding should not use a flat ritual list.
-- Priests must first select a main category, then drill down through sub-categories, then choose the rituals they perform.
-- The priest-facing category picker must be driven by the same admin-managed category tree used in the super admin module.
+Supported input families:
 
-## 8.4 User Portal
+- Bengali Panjika
+- North Indian Panchang
+- Odia Kohinoor
+- Gujarati Janmabhoomi
 
-### Required in MVP after admin foundation
+### Admin Logic
 
-- location-aware priest discovery,
-- filter/search by area and ritual,
-- booking initiation,
-- advance payment step,
-- hidden contact details before payment and delayed phone reveal based on ritual start time,
-- booking tracking,
-- confirmed-booking Fard view or PDF download,
-- review submission after completion.
+- Admin must first choose the target tradition.
+- Raw pasted text must be parsed within the context of that tradition.
+- Parsed output must retain:
+  - tithi,
+  - shubha muhurta,
+  - source,
+  - culture type,
+  - raw text snapshot,
+  - parsed structured payload.
 
-## 9. Marketplace Service Structure
+This is necessary because date logic and auspicious windows vary by tradition.
 
-The official 4-tier service structure is:
+## 14. Booking Governance and Availability
 
-1. Tier 1: Essential Home - small, frequent rituals such as Satyanarayan and Lakshmi Puja
-2. Tier 2: Grand Event - high-ticket milestones such as Weddings, Sacred Thread, and House-warming
-3. Tier 3: Barwari / Public - community events such as Durga Puja and Kali Puja
-4. Tier 4: Monthly Trustee - subscription-based recurring priest management
+### 14.1 Booking Rules
 
-This structure should still be configurable through admin-managed service catalog data rather than hardcoded assumptions.
+The marketplace must support governance rules for:
 
-## 10. Trust and Anti-Leakage System
+- minimum gap between bookings,
+- maximum advance booking window,
+- festival blackout periods,
+- manual admin override.
 
-These features are central to the business model and should be treated as core, not optional.
+### 14.2 Auto-Blocking
 
-### Trust Features
+When a booking is confirmed, the priest slot must be blocked automatically across the system.
 
-- post-completion star ratings,
-- written reviews,
-- verified priest badge,
-- punctuality tracking,
-- trust score visibility or ranking logic.
+This is mandatory to prevent double booking.
 
-### Anti-Leakage Features
+### 14.3 Priest Availability
 
-- contact details hidden until advance payment is confirmed,
-- phone numbers revealed only within 48 to 72 hours before the scheduled ritual start time,
-- OTP-based booking completion,
-- referral loop kept inside the platform with completion-based reward release,
-- replacement flow to reduce off-platform fallback behavior.
+Priests must manage:
 
-### Referral Workflow
+- working hours,
+- off-days,
+- temporary time off,
+- future availability changes.
 
-- The referee, meaning the new user, receives a discount on their first completed booking journey.
-- The referrer receives reward credit only after the referee's ritual is marked as `completed` through the OTP-based completion flow.
-- Referral accounting must be auditable from admin.
+Search and booking must respect those rules.
 
-### Payout Workflow
+## 15. Pricing and Commercial Logic
 
-- All customer payments in MVP flow into the admin-controlled Razorpay individual account setup.
-- Marketplace split payout automation is out of scope for MVP to avoid registration and compliance complexity.
-- Priest payouts are handled manually by admin in MVP.
-- The architecture must still be ready for a future Razorpay Route-style automated payout migration.
-- Admin must have a payout management screen showing completed rituals, priest payout details, payout state, and manual mark-as-paid controls.
+Pricing must support dynamic structure, not a flat quoted amount only.
 
-## 11. Booking Lifecycle
+### Required Split
 
-Initial working lifecycle for MVP:
+- `dakshina_amount`
+- `samagri_add_ons`
+- `zone_wise_travel_fee`
 
-1. User discovers priest
-2. User views details and initiates booking
-3. Advance payment is requested
-4. Advance payment is confirmed
-5. Booking is confirmed and the ritual Fard becomes available in UI or PDF form
-6. Contact details remain protected and phone numbers are revealed only within the configured 48 to 72 hour window before the scheduled ritual
-7. Ritual is performed
-8. Completion OTP is entered
-9. Final completion is recorded
-10. Review becomes available, payout becomes eligible, and referral reward logic can settle
+### Dynamic Pricing Requirements
 
-Admin needs full visibility across this lifecycle.
+- festival / peak multipliers,
+- district-aware or zone-aware travel fees,
+- culture-aware ritual pricing,
+- admin override when required.
 
-Exact status names should be finalized during schema design.
+MVP still routes all customer payments into the admin-controlled Razorpay individual account.
 
-## 12. Replacement Guarantee
+## 16. Privacy and Security Rules
 
-If a priest cancels or becomes unavailable, the platform should support rapid reassignment to a nearby verified priest.
+These rules remain hard requirements.
 
-MVP approach:
+### Contact Reveal
 
-- start with admin-assisted replacement,
-- design data structures so automation can be added later,
-- maintain auditability for cancellations and reassignment events.
+Phone numbers must be revealed only when both conditions are true:
 
-## 13. Technical Requirements
+1. at least 20% advance payment is confirmed,
+2. current time is within the 48 to 72 hour pre-ritual reveal window.
+
+### Referral Credit Release
+
+Referral credits must be released only after ritual completion through OTP verification.
+
+## 17. Operational Tools
+
+### 17.1 KYC Dashboard
+
+Admin must verify priest KYC before a priest goes live.
+
+Core document types:
+
+- Aadhaar
+- Voter ID
+- supporting address or identity proof when required
+
+### 17.2 WhatsApp Confirmation Trigger
+
+Admin booking details must provide a manual `Send WhatsApp Confirmation` trigger.
+
+The system must store communication audit state even if message sending remains manual or semi-manual in MVP.
+
+## 18. Reputation and Review Logic
+
+Reviews must be verified reviews.
+
+Rules:
+
+- only a user with a completed booking can submit a rating/review,
+- one completed booking maps to one review record,
+- review rows must remain tied to the original booking, priest, and user.
+
+## 19. Fard Logic
+
+The Fard model remains critical.
+
+Requirements:
+
+- rituals store a structured `fard_template`,
+- admin manages it per ritual,
+- the exact Fard is snapshotted into the booking upon confirmation,
+- the booking copy must remain immutable for that booking,
+- users must be able to view or download that locked checklist.
+
+## 20. Search and Discovery
+
+Search results must combine:
+
+- location proximity using PostGIS,
+- culture filtering,
+- ritual matching,
+- active priest availability,
+- requested time-slot compatibility,
+- live / verified priest state.
+
+Homepage logic must feature the top 8 demand-driven rituals per culture.
+
+## 21. Technical Architecture
 
 ### Infrastructure
 
-- Hosting: Vercel free tier
+- Hosting: Vercel
 - Backend: Supabase
-- Database: PostgreSQL with PostGIS
-- Auth: Supabase Auth
+- Database: PostgreSQL + PostGIS
+- Auth: Supabase Email OTP / Magic Links
 - Storage: Supabase Storage
-- Maps: OpenStreetMap
-- Frontend map library: Leaflet
-- Distribution: Progressive Web App
+- Maps: OpenStreetMap + Leaflet
+- Payments: Razorpay individual account
+- Payout mode: manual in MVP, automation-ready through payout logs
 
-### Architecture
+### Architectural Rules
 
-- Monorepo managed with Turborepo
-- Separate apps for admin, user, and priest experiences
-- Shared packages for UI, database types, config, and utilities
-- Authentication flow must rely on zero-cost email-based Supabase auth patterns, not paid SMS OTP providers
-- Payment collection uses a single admin-controlled Razorpay account in MVP
-- Priest payout release is manual in MVP but should map cleanly to future payout automation
-- Ritual taxonomy must support unlimited sub-category depth from day one
+- all culture-aware logic belongs in first-class schema fields,
+- booking locks must be enforceable in the database layer,
+- availability must be queryable for search,
+- payouts must remain manual-first but future-route-ready,
+- local JSON stores are only interim scaffolding and not the production target.
 
-### UI
-
-- shadcn/ui
-- brand colors centered on Saffron (`#FF9933`) and Cream (`#FFFDD0`)
-- finalized Dakshina logo uses a Saffron/Gold `D` with Anjali Mudra and Lotus
-- layout direction must remain elite, minimalist, and culturally aligned
-
-## 14. SEO and Discoverability
-
-The web experience should support localized SEO for area-specific searches such as:
-
-- best priests in Srirampore
-- purohit in Rishra
-- priest booking in Uttarpara
-- ritual priest in Howrah
-
-SEO should be built into the architecture, not added as an afterthought.
-
-## 15. Operational Constraints
-
-- MVP should target near-zero recurring infrastructure cost.
-- Stable package versions should be preferred over fast-moving releases.
-- Security-sensitive modules require stricter implementation review.
-- Each completed task must be self-verified before being marked done.
-
-## 16. Risks
+## 22. Risks
 
 ### Product Risks
 
-- service tier definitions may remain too vague,
-- pricing logic may become inconsistent without early rules,
-- replacement guarantee may be operationally expensive,
-- manual workflows may become bottlenecks if adoption grows quickly.
+- ritual taxonomy may become messy without strict cultural segregation,
+- pricing may drift without strong admin controls,
+- festival demand spikes may overload supply.
 
 ### Technical Risks
 
-- geospatial search quality depends on clean location data,
-- auth and role handling must be strict from day one,
-- file upload and KYC storage require careful access control,
-- payment integration may complicate otherwise simple MVP flows.
+- Panjika parsing quality may vary by source formatting,
+- availability locking must not allow race conditions,
+- privacy timing must not leak contact data early,
+- local-store scaffolding must be replaced before production.
 
-## 17. Open Decisions
+## 23. Open Decisions
 
-These items require product confirmation later:
+Remaining decisions still requiring product confirmation:
 
-1. Exact payment provider and payout flow
-2. Final booking status model
-3. Trust score formula
-4. Pricing ownership model: admin-fixed, priest-defined, or hybrid
-5. Mandatory KYC fields and documents
-6. Exact launch geographies within the first market
-7. Whether first release includes direct auto-matching or admin-assisted assignment
+1. exact payout automation migration timing,
+2. trust score formula,
+3. geo granularity below district level,
+4. final WhatsApp sending mechanism,
+5. exact homepage demand-ranking formula.
 
 Resolved architectural decisions:
 
-- authentication is Supabase Email OTP / Magic Link only for all roles in MVP,
-- payments route to admin in MVP using Razorpay individual account settings,
-- priest payouts are manual in MVP with future automation readiness,
-- ritual categories must support hierarchical nesting,
-- ritual Fard must snapshot into bookings on confirmation.
+- multicultural support is first-class, not additive,
+- category tree is culture-aware,
+- priest tagging is multi-culture and multi-language,
+- auth is email-only Supabase OTP / Magic Link,
+- payments flow to admin in MVP,
+- manual payout logs are the MVP settlement model,
+- reviews require completed booking,
+- confirmed bookings auto-block priest slots.
 
-## 18. Delivery Plan
+## 24. Delivery Sequence
 
-### Phase 1: Product and Data Foundation
+### Phase 1: Documentation and Schema Refactor
 
-- finalize PRD,
-- define schema,
-- define role model,
-- define booking statuses,
-- define service catalog model.
+- rewrite PRD,
+- rewrite project plan,
+- refactor SQL schema for multicultural marketplace logic.
 
-### Phase 2: Admin MVP
+### Phase 2: Production Data Layer Refactor
 
-- scaffold monorepo,
-- set up admin app,
-- implement auth and protection,
-- implement settings,
-- implement priest management,
-- implement KYC review,
-- implement service catalog,
-- implement booking oversight.
+- replace local JSON stores with Supabase-backed persistence,
+- wire culture-aware category and pricing models,
+- wire slot blocking and availability rules.
 
-### Phase 3: Priest MVP
+### Phase 3: Priest and User Flows
 
-- onboarding,
-- profile,
-- location and radius,
-- booking management,
-- completion flow.
+- priest self-registration,
+- user self-registration,
+- culture-first search,
+- booking and payment flow.
 
-### Phase 4: User MVP
+### Phase 4: Operational Hardening
 
-- discovery,
-- booking,
-- advance payment,
-- completion review flow.
+- KYC enforcement,
+- payout operations,
+- communication audit,
+- release readiness.
 
-## 19. Immediate Next Steps
+## 25. Immediate Next Steps
 
-1. Create the database schema document
-2. Define booking status transitions
-3. Scaffold the monorepo and admin app
-4. Begin admin authentication and settings module
+1. Refactor the SQL schema to reflect all multicultural marketplace rules.
+2. Replace interim local data contracts with Supabase-backed contracts.
+3. Update admin data models to honor culture, pricing, availability, and governance.
+4. Continue priest and user module implementation on top of the new contract.
+

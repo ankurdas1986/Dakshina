@@ -1,4 +1,4 @@
-# Dakshina UAT Checklist
+﻿# Dakshina UAT Checklist
 
 This file records user acceptance checks for each module. A module should not be marked complete until its UAT checks pass.
 
@@ -97,3 +97,11 @@ Legend:
 - `[ ]` CI runs lint, typecheck, and build
 - `[ ]` Cross-module search experience replaces module-scoped filtering
 - `[ ]` Supabase middleware warning is removed from build output
+
+## Documentation and Schema Refactor
+
+- `[x]` PRD reflects multicultural hyper-local marketplace logic
+- `[x]` Project plan reflects culture-aware hierarchy, pricing, governance, and availability
+- `[x]` SQL schema includes culture tags, language tags, Panjika imports, pricing split, slot blocking, verified reviews, and payout logs
+- `[x]` SQL schema includes hierarchical and PostGIS-supporting indexes for search and booking integrity
+

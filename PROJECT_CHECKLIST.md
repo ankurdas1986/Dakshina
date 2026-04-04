@@ -1,4 +1,4 @@
-# Dakshina Delivery Checklist
+﻿# Dakshina Delivery Checklist
 
 This file is the execution checklist for the full marketplace build. It is the operational source of truth for what is done, what is under active development, and what remains pending.
 
@@ -14,6 +14,8 @@ Legend:
 - `[x]` project plan documented with admin-first execution strategy
 - `[x]` booking lifecycle and anti-leakage rules documented
 - `[x]` database schema drafted with PostGIS and Fard JSON support
+- `[x]` multicultural marketplace refactor documented across PRD, plan, and schema
+- `[x]` culture-aware category, pricing, Panjika, availability, and review rules captured in the backend contract
 - `[x]` multi-user and multi-priest registration is supported at the schema level
 - `[x]` project-wide execution checklist maintained and updated per module
 - `[ ]` open product decisions resolved for payments, pricing ownership, trust score, and launch geo granularity
@@ -158,3 +160,4 @@ Legend:
 - `[x]` Module 5: Payout management workflow
 - `[x]` Module 6: Trust and Referral admin workflows
 - `[~]` Priest app foundation after super-admin completion
+
