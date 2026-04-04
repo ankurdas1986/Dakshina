@@ -394,10 +394,10 @@ export function AdminShell({
 
           <footer className="rounded-[20px] border border-border bg-white/80 px-4 py-3 text-sm text-muted-foreground shadow-soft backdrop-blur">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="font-medium text-foreground">Dakshina Direct Admin</p>
+              <p className="font-medium text-foreground">Dakshina Hub Admin</p>
               <div className="text-right">
                 <p>Designed and developed by Ankur Das</p>
-                <p>Copyright 2026 Dakshina Direct. Admin operations console.</p>
+                <p>Copyright 2026 Dakshina Hub. Admin operations console.</p>
               </div>
             </div>
           </footer>

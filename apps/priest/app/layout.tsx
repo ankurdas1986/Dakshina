@@ -11,7 +11,7 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Dakshina Priest",
-  description: "Priest onboarding and operations portal for Dakshina Direct.",
+  description: "Priest onboarding and operations portal for Dakshina Hub.",
   icons: {
     icon: "/brand/favico.png",
     shortcut: "/brand/favico.png",

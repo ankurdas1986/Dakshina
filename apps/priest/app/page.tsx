@@ -32,7 +32,7 @@ export default async function PriestSignInPage({ searchParams }: PriestSignInPag
           <CardContent className="flex h-full flex-col justify-between gap-8 p-8 lg:p-10">
             <div className="space-y-8">
               <Image
-                alt="Dakshina Direct"
+                alt="Dakshina Hub"
                 className="h-auto w-full max-w-[280px]"
                 height={420}
                 priority

@@ -35,7 +35,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         <CardContent className="space-y-6 p-6 md:p-8">
           <div className="flex flex-col items-center text-center">
             <Image
-              alt="Dakshina Direct logo"
+              alt="Dakshina Hub logo"
               className="h-auto w-full max-w-[280px]"
               height={420}
               priority

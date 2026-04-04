@@ -11,7 +11,7 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Dakshina Admin",
-  description: "Admin command center for Dakshina Direct.",
+  description: "Admin command center for Dakshina Hub.",
   icons: {
     icon: "/brand/favico.png",
     shortcut: "/brand/favico.png",
