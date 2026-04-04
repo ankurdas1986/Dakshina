@@ -3,7 +3,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bell,
   BookCheck,
@@ -108,12 +108,30 @@ export function AdminShell({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationMenuOpen, setNotificationMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(true);
   const initials = useMemo(() => getInitials(userEmail), [userEmail]);
   const currentSearch = searchConfig[active];
 
+  useEffect(() => {
+    let previousScroll = window.scrollY;
+
+    const handleScroll = () => {
+      const nextScroll = window.scrollY;
+      const isNearTop = nextScroll < 24;
+      const isScrollingUp = nextScroll < previousScroll;
+
+      setHeaderVisible(isNearTop || isScrollingUp);
+      previousScroll = nextScroll;
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <main className="min-h-screen overflow-x-hidden bg-transparent p-3 md:p-4">
-      <div className="xl:grid xl:grid-cols-[260px_minmax(0,1fr)] xl:gap-4">
+      <div className="relative">
         <button
           aria-hidden={!sidebarOpen}
           className={cn(
@@ -126,7 +144,7 @@ export function AdminShell({
 
         <aside
           className={cn(
-            "fixed inset-y-3 left-3 z-40 w-[260px] max-w-[calc(100vw-1.5rem)] transition-transform xl:sticky xl:top-3 xl:self-start xl:w-auto xl:max-w-none xl:translate-x-0",
+            "fixed inset-y-3 left-3 z-40 w-[260px] max-w-[calc(100vw-1.5rem)] transition-transform xl:translate-x-0",
             sidebarOpen ? "translate-x-0" : "-translate-x-[110%]"
           )}
         >
@@ -187,9 +205,12 @@ export function AdminShell({
           </Card>
         </aside>
 
-        <section className="min-w-0 space-y-4 overflow-x-hidden">
-          <div className="sticky top-3 z-20 rounded-[24px] border border-border bg-white shadow-soft">
-            <div className="flex flex-col gap-3 border-b border-border px-4 py-3 md:flex-row md:items-center md:justify-between">
+        <section className="min-w-0 space-y-4 overflow-x-hidden pt-[76px] xl:ml-[276px]">
+          <div className={cn(
+            "fixed left-3 right-3 top-3 z-30 rounded-[24px] border border-border bg-white shadow-soft transition-transform duration-200 md:left-4 md:right-4 md:top-4 xl:left-[288px]",
+            headerVisible ? "translate-y-0" : "-translate-y-[140%]"
+          )}>
+            <div className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
               <div className="flex min-w-0 items-center gap-3">
                 <button
                   className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white text-muted-foreground xl:hidden"
@@ -344,7 +365,9 @@ export function AdminShell({
                 </div>
               </div>
             </div>
+          </div>
 
+          <div className="rounded-[24px] border border-border bg-white shadow-soft">
             <div className="flex flex-col gap-3 px-4 py-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0 space-y-1">
                 <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">

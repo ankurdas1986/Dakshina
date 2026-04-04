@@ -118,7 +118,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <Badge variant="success">Editable</Badge>
             </div>
           </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-2">
             {launchMetrics.map((metric) => {
               const Icon = metric.icon;
               return (
