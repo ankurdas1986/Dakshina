@@ -162,7 +162,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             <Button className="h-11 rounded-lg" type="submit">Apply</Button>
           </form>
         </CardHeader>
-        <CardContent className="surface-scroll overflow-y-auto p-0 xl:max-h-[860px]">
+        <CardContent className="surface-scroll overflow-x-auto overflow-y-auto p-0 xl:max-h-[860px]">
           <div className="min-w-[1260px]">
             <div className="grid grid-cols-[1.3fr_0.95fr_1fr_0.95fr_0.85fr_0.95fr_0.75fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>Booking</span>

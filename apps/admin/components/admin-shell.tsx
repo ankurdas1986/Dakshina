@@ -112,7 +112,7 @@ export function AdminShell({
   const currentSearch = searchConfig[active];
 
   return (
-    <main className="min-h-screen bg-transparent p-3 md:p-4">
+    <main className="min-h-screen overflow-x-hidden bg-transparent p-3 md:p-4">
       <div className="xl:grid xl:grid-cols-[260px_minmax(0,1fr)] xl:gap-4">
         <button
           aria-hidden={!sidebarOpen}
@@ -187,8 +187,8 @@ export function AdminShell({
           </Card>
         </aside>
 
-        <section className="min-w-0 space-y-4 xl:pl-4">
-          <div className="rounded-[24px] border border-border bg-white shadow-soft">
+        <section className="min-w-0 space-y-4 overflow-x-hidden">
+          <div className="sticky top-3 z-20 rounded-[24px] border border-border bg-white shadow-soft">
             <div className="flex flex-col gap-3 border-b border-border px-4 py-3 md:flex-row md:items-center md:justify-between">
               <div className="flex min-w-0 items-center gap-3">
                 <button

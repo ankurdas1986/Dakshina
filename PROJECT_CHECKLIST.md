@@ -37,6 +37,7 @@ Legend:
 - `[x]` dev fallback login flow implemented for local review
 - `[x]` direct login on `/`
 - `[x]` responsive admin shell with fixed header and left navigation
+- `[x]` sticky admin header and page-level horizontal overflow fix applied
 - `[x]` sidebar toggle and header controls cleaned up for real interaction
 - `[x]` left panel vertical scroll behavior implemented
 - `[x]` long cards constrained with internal scroll
@@ -163,7 +164,8 @@ Legend:
 - `[x]` Module 4: Booking operations with queue and case detail routes
 - `[x]` Module 5: Payout management workflow
 - `[x]` Module 6: Trust and Referral admin workflows
-- `[~]` Super-admin multicultural refactor and Bengali-first rollout alignment
+- `[x]` Super-admin multicultural refactor and Bengali-first rollout alignment
+
 
 
 

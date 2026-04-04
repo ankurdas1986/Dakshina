@@ -22,6 +22,7 @@ Legend:
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
+- `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
 - `[ ]` Production persistence moved from local file to Supabase
 
 ## Module 2: Priest Management
@@ -38,6 +39,7 @@ Legend:
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
+- `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
 
 ## Runtime Notes
 
@@ -54,6 +56,7 @@ Legend:
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
+- `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
 
 ## Module 4: Bookings
 
@@ -67,6 +70,7 @@ Legend:
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
+- `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
 
 ## Module 5: Trust and Referral
 
@@ -77,6 +81,7 @@ Legend:
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
+- `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
 
 ## Module 6: Payout Management
 
@@ -86,6 +91,7 @@ Legend:
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
+- `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
 
 ## Remaining Non-Admin Work
 

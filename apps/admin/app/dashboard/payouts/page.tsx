@@ -129,7 +129,7 @@ export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
             <Button className="h-11 rounded-[22px]" type="submit">Apply</Button>
           </form>
         </CardHeader>
-        <CardContent className="surface-scroll overflow-y-auto p-0 xl:max-h-[860px]">
+        <CardContent className="surface-scroll overflow-x-auto overflow-y-auto p-0 xl:max-h-[860px]">
           <div className="min-w-[940px]">
             <div className="grid grid-cols-[1.15fr_1.1fr_0.8fr_0.8fr_0.8fr_0.8fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>Booking</span>
