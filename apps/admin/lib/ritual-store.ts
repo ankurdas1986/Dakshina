@@ -2,11 +2,13 @@ import "server-only";
 
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import type { CultureType } from "./settings";
 
 export type TierStatus = "active" | "planned";
 export type RitualStatus = "active" | "draft";
 export type DeliveryMode = "ui_only" | "ui_and_pdf";
 export type PricingMode = "admin-guided" | "hybrid" | "contract";
+export type CategoryNodeType = "tradition" | "service_type" | "sub_type";
 
 export type RitualTier = {
   id: string;
@@ -21,20 +23,39 @@ export type RitualCategory = {
   id: string;
   parentId: string | null;
   tierId: string;
+  cultureType: CultureType;
+  nodeType: CategoryNodeType;
   name: string;
   slug: string;
   description: string;
   displayOrder: number;
 };
 
+export type PanjikaResearch = {
+  cultureType: CultureType;
+  sources: string[];
+  adminInstruction: string;
+  sampleRituals: string[];
+};
+
 export type RitualRecord = {
   id: string;
   name: string;
   tierId: string;
+  cultureType: CultureType;
   categoryId: string;
   status: RitualStatus;
   deliveryMode: DeliveryMode;
   pricingMode: PricingMode;
+  durationMinutes: number;
+  homepageRank: number | null;
+  demandLabel: string;
+  pricing: {
+    dakshinaAmount: number;
+    samagriAddOns: number;
+    zoneWiseTravelFee: number;
+    peakMultiplier: number;
+  };
   fardTemplate: Record<string, unknown>;
 };
 
@@ -43,6 +64,7 @@ export type RitualStore = {
   tiers: RitualTier[];
   categories: RitualCategory[];
   rituals: RitualRecord[];
+  panjikaResearch: PanjikaResearch[];
 };
 
 const ritualFilePath = path.join(process.cwd(), "data", "rituals.json");
@@ -88,128 +110,93 @@ const fallbackStore: RitualStore = {
     }
   ],
   categories: [
-    {
-      id: "cat_001",
-      parentId: null,
-      tierId: "tier_1",
-      name: "Home Puja",
-      slug: "home-puja",
-      description: "Recurring household puja categories.",
-      displayOrder: 1
-    },
-    {
-      id: "cat_002",
-      parentId: "cat_001",
-      tierId: "tier_1",
-      name: "Prosperity Puja",
-      slug: "prosperity-puja",
-      description: "Lakshmi and wealth-related puja services.",
-      displayOrder: 1
-    },
-    {
-      id: "cat_003",
-      parentId: "cat_001",
-      tierId: "tier_1",
-      name: "Household Rituals",
-      slug: "household-rituals",
-      description: "Routine family ritual services.",
-      displayOrder: 2
-    },
-    {
-      id: "cat_004",
-      parentId: null,
-      tierId: "tier_2",
-      name: "Family Milestones",
-      slug: "family-milestones",
-      description: "Large family event categories.",
-      displayOrder: 1
-    },
-    {
-      id: "cat_005",
-      parentId: "cat_004",
-      tierId: "tier_2",
-      name: "Marriage Ceremonies",
-      slug: "marriage-ceremonies",
-      description: "Wedding and marriage-related rituals.",
-      displayOrder: 1
-    },
-    {
-      id: "cat_006",
-      parentId: "cat_004",
-      tierId: "tier_2",
-      name: "Life-cycle Events",
-      slug: "life-cycle-events",
-      description: "Thread ceremony, annaprashan, and family milestones.",
-      displayOrder: 2
-    },
-    {
-      id: "cat_007",
-      parentId: null,
-      tierId: "tier_3",
-      name: "Community Puja",
-      slug: "community-puja",
-      description: "Public and barwari puja operations.",
-      displayOrder: 1
-    },
-    {
-      id: "cat_008",
-      parentId: "cat_007",
-      tierId: "tier_3",
-      name: "Festival Committees",
-      slug: "festival-committees",
-      description: "Large committee-managed festival rituals.",
-      displayOrder: 1
-    }
+    { id: "cat_001", parentId: null, tierId: "tier_1", cultureType: "Bengali", nodeType: "tradition", name: "Bengali", slug: "bengali", description: "Primary Bengali tradition tree.", displayOrder: 1 },
+    { id: "cat_002", parentId: "cat_001", tierId: "tier_1", cultureType: "Bengali", nodeType: "service_type", name: "Home Puja", slug: "bengali-home-puja", description: "Bengali household pujas.", displayOrder: 1 },
+    { id: "cat_003", parentId: "cat_002", tierId: "tier_1", cultureType: "Bengali", nodeType: "sub_type", name: "Prosperity Puja", slug: "bengali-prosperity-puja", description: "Lakshmi, Kojagari, and prosperity rituals.", displayOrder: 1 },
+    { id: "cat_004", parentId: null, tierId: "tier_2", cultureType: "Bengali", nodeType: "tradition", name: "Bengali Marriage", slug: "bengali-marriage", description: "Bengali wedding and lifecycle rituals.", displayOrder: 2 },
+    { id: "cat_005", parentId: "cat_004", tierId: "tier_2", cultureType: "Bengali", nodeType: "service_type", name: "Marriage", slug: "bengali-marriage-service", description: "Bengali marriage event blocks.", displayOrder: 1 },
+    { id: "cat_006", parentId: "cat_005", tierId: "tier_2", cultureType: "Bengali", nodeType: "sub_type", name: "Wedding Rituals", slug: "bengali-wedding-rituals", description: "Gaye Holud, Bou Bhat, Sindoor Daan style Bengali flows.", displayOrder: 1 },
+    { id: "cat_007", parentId: null, tierId: "tier_2", cultureType: "North_Indian", nodeType: "tradition", name: "North Indian", slug: "north-indian", description: "UP/Bihar rooted ritual tree.", displayOrder: 1 },
+    { id: "cat_008", parentId: "cat_007", tierId: "tier_2", cultureType: "North_Indian", nodeType: "service_type", name: "Marriage", slug: "north-indian-marriage", description: "North Indian marriage services.", displayOrder: 1 },
+    { id: "cat_009", parentId: "cat_008", tierId: "tier_2", cultureType: "North_Indian", nodeType: "sub_type", name: "Sindoor Daan", slug: "north-indian-sindoor-daan", description: "Marriage ritual specialization.", displayOrder: 1 },
+    { id: "cat_010", parentId: null, tierId: "tier_2", cultureType: "Odia", nodeType: "tradition", name: "Odia", slug: "odia", description: "Odia ritual tree.", displayOrder: 1 },
+    { id: "cat_011", parentId: "cat_010", tierId: "tier_2", cultureType: "Odia", nodeType: "service_type", name: "Marriage", slug: "odia-marriage", description: "Odia marriage service group.", displayOrder: 1 },
+    { id: "cat_012", parentId: "cat_011", tierId: "tier_2", cultureType: "Odia", nodeType: "sub_type", name: "Hastagranthi", slug: "odia-hastagranthi", description: "Odia marriage ritual specialization.", displayOrder: 1 },
+    { id: "cat_013", parentId: null, tierId: "tier_2", cultureType: "Gujarati", nodeType: "tradition", name: "Gujarati", slug: "gujarati", description: "Gujarati ritual tree.", displayOrder: 1 },
+    { id: "cat_014", parentId: "cat_013", tierId: "tier_2", cultureType: "Gujarati", nodeType: "service_type", name: "Home Ritual", slug: "gujarati-home-ritual", description: "Gujarati home and vastu rituals.", displayOrder: 1 },
+    { id: "cat_015", parentId: "cat_014", tierId: "tier_2", cultureType: "Gujarati", nodeType: "sub_type", name: "Vastu Shanti", slug: "gujarati-vastu-shanti", description: "Vastu and griha rituals in Gujarati style.", displayOrder: 1 },
+    { id: "cat_016", parentId: null, tierId: "tier_2", cultureType: "Marwadi", nodeType: "tradition", name: "Marwadi", slug: "marwadi", description: "Marwadi ritual tree.", displayOrder: 1 },
+    { id: "cat_017", parentId: "cat_016", tierId: "tier_2", cultureType: "Marwadi", nodeType: "service_type", name: "Marriage", slug: "marwadi-marriage", description: "Marwadi family event rituals.", displayOrder: 1 },
+    { id: "cat_018", parentId: "cat_017", tierId: "tier_2", cultureType: "Marwadi", nodeType: "sub_type", name: "Mayra", slug: "marwadi-mayra", description: "Marwadi pre-wedding ritual block.", displayOrder: 1 }
   ],
   rituals: [
     {
       id: "ritual_001",
       name: "Lakshmi Puja",
       tierId: "tier_1",
-      categoryId: "cat_002",
+      cultureType: "Bengali",
+      categoryId: "cat_003",
       status: "active",
       deliveryMode: "ui_and_pdf",
       pricingMode: "admin-guided",
-      fardTemplate: {
-        items: [
-          { label: "Ghot", quantity: "1" },
-          { label: "Mango leaves", quantity: "5" },
-          { label: "Flowers", quantity: "As required" }
-        ]
-      }
+      durationMinutes: 120,
+      homepageRank: 1,
+      demandLabel: "Top 8 Bengali launch ritual",
+      pricing: { dakshinaAmount: 2200, samagriAddOns: 350, zoneWiseTravelFee: 150, peakMultiplier: 1.15 },
+      fardTemplate: { items: [{ label: "Ghot", quantity: "1" }, { label: "Mango leaves", quantity: "5" }, { label: "Flowers", quantity: "As required" }] }
     },
     {
       id: "ritual_002",
-      name: "Wedding Ritual",
+      name: "Gaye Holud",
       tierId: "tier_2",
-      categoryId: "cat_005",
+      cultureType: "Bengali",
+      categoryId: "cat_006",
       status: "active",
       deliveryMode: "ui_and_pdf",
       pricingMode: "hybrid",
-      fardTemplate: {
-        items: [
-          { label: "Topor", quantity: "1" },
-          { label: "Mala", quantity: "2" },
-          { label: "Puja samagri set", quantity: "1" }
-        ]
-      }
+      durationMinutes: 180,
+      homepageRank: 2,
+      demandLabel: "Top 8 Bengali launch ritual",
+      pricing: { dakshinaAmount: 8500, samagriAddOns: 2200, zoneWiseTravelFee: 300, peakMultiplier: 1.2 },
+      fardTemplate: { items: [{ label: "Haldi tray", quantity: "1" }, { label: "Flowers", quantity: "Bulk" }, { label: "Mangal dravya", quantity: "1 set" }] }
     },
     {
       id: "ritual_003",
-      name: "Durga Puja",
+      name: "Chhath Puja",
       tierId: "tier_3",
-      categoryId: "cat_008",
+      cultureType: "North_Indian",
+      categoryId: "cat_009",
       status: "draft",
       deliveryMode: "ui_only",
       pricingMode: "admin-guided",
-      fardTemplate: {
-        items: [
-          { label: "Dhaak arrangement", quantity: "1" },
-          { label: "Pushpanjali flowers", quantity: "Bulk" },
-          { label: "Bhog ingredients", quantity: "Bulk" }
-        ]
-      }
+      durationMinutes: 240,
+      homepageRank: 1,
+      demandLabel: "North Indian seeded ritual",
+      pricing: { dakshinaAmount: 3200, samagriAddOns: 700, zoneWiseTravelFee: 250, peakMultiplier: 1.35 },
+      fardTemplate: { items: [{ label: "Soop", quantity: "2" }, { label: "Fruits", quantity: "Bulk" }, { label: "Arghya setup", quantity: "1" }] }
+    },
+    {
+      id: "ritual_004",
+      name: "Hastagranthi",
+      tierId: "tier_2",
+      cultureType: "Odia",
+      categoryId: "cat_012",
+      status: "draft",
+      deliveryMode: "ui_and_pdf",
+      pricingMode: "hybrid",
+      durationMinutes: 180,
+      homepageRank: 1,
+      demandLabel: "Odia seeded ritual",
+      pricing: { dakshinaAmount: 7600, samagriAddOns: 2100, zoneWiseTravelFee: 280, peakMultiplier: 1.1 },
+      fardTemplate: { items: [{ label: "Marriage samagri", quantity: "1 set" }, { label: "Hastagranthi thread", quantity: "1" }] }
     }
+  ],
+  panjikaResearch: [
+    { cultureType: "Bengali", sources: ["Gupta Press", "Bishuddha Siddhanta"], adminInstruction: "Select Bengali before pasting raw Panjika text so tithi and shubha muhurta are parsed in Bengali tradition context.", sampleRituals: ["Gaye Holud", "Bou Bhat", "Annaprashan"] },
+    { cultureType: "North_Indian", sources: ["Thakur Prasad", "Vikram Samvat"], adminInstruction: "Use North Indian context for Panchang parsing before publishing muhurta guidance.", sampleRituals: ["Chhath Puja", "Satyanarayan Katha", "Sindoor Daan"] },
+    { cultureType: "Marwadi", sources: ["Marwari Panchang"], adminInstruction: "Use Marwadi Panchang context for event timing and marriage ritual naming.", sampleRituals: ["Mayra", "Bhaat", "Phera Styles"] },
+    { cultureType: "Odia", sources: ["Kohinoor", "Bhagyadaya Panjika"], adminInstruction: "Select Odia before parsing Kohinoor or Bhagyadaya text.", sampleRituals: ["Boita Bandana", "Sankranti", "Hastagranthi"] },
+    { cultureType: "Gujarati", sources: ["Janmabhoomi", "Gujarati Panchang"], adminInstruction: "Select Gujarati before parsing Janmabhoomi calendar text.", sampleRituals: ["Vastu Shanti", "Mangal Phera", "Garba Pujan"] }
   ]
 };
 
@@ -222,10 +209,33 @@ async function writeStore(store: RitualStore) {
   await writeFile(ritualFilePath, `${JSON.stringify(store, null, 2)}\n`, "utf8");
 }
 
+function normalizeStore(parsed: Partial<RitualStore>): RitualStore {
+  return {
+    fardRules: parsed.fardRules ?? fallbackStore.fardRules,
+    tiers: parsed.tiers ?? fallbackStore.tiers,
+    categories: (parsed.categories ?? fallbackStore.categories).map((category, index) => ({
+      ...fallbackStore.categories[index % fallbackStore.categories.length],
+      ...category,
+      cultureType: category.cultureType ?? "Bengali",
+      nodeType: category.nodeType ?? (category.parentId ? "sub_type" : "tradition")
+    })),
+    rituals: (parsed.rituals ?? fallbackStore.rituals).map((ritual, index) => ({
+      ...fallbackStore.rituals[index % fallbackStore.rituals.length],
+      ...ritual,
+      cultureType: ritual.cultureType ?? fallbackStore.rituals[index % fallbackStore.rituals.length].cultureType,
+      durationMinutes: ritual.durationMinutes ?? 120,
+      homepageRank: ritual.homepageRank ?? null,
+      demandLabel: ritual.demandLabel ?? "Seeded ritual",
+      pricing: ritual.pricing ?? fallbackStore.rituals[index % fallbackStore.rituals.length].pricing
+    })),
+    panjikaResearch: parsed.panjikaResearch ?? fallbackStore.panjikaResearch
+  };
+}
+
 export async function getRitualStore() {
   try {
     const raw = await readFile(ritualFilePath, "utf8");
-    return JSON.parse(raw) as RitualStore;
+    return normalizeStore(JSON.parse(raw) as Partial<RitualStore>);
   } catch {
     await writeStore(fallbackStore);
     return fallbackStore;
@@ -234,10 +244,7 @@ export async function getRitualStore() {
 
 export async function updateTier(input: RitualTier) {
   const current = await getRitualStore();
-  const next: RitualStore = {
-    ...current,
-    tiers: current.tiers.map((tier) => (tier.id === input.id ? input : tier))
-  };
+  const next: RitualStore = { ...current, tiers: current.tiers.map((tier) => (tier.id === input.id ? input : tier)) };
   await writeStore(next);
   return next;
 }
@@ -247,9 +254,7 @@ export async function updateCategory(input: RitualCategory) {
   const next: RitualStore = {
     ...current,
     categories: current.categories.map((category) => (category.id === input.id ? input : category)),
-    rituals: current.rituals.map((ritual) =>
-      ritual.categoryId === input.id ? { ...ritual, tierId: input.tierId } : ritual
-    )
+    rituals: current.rituals.map((ritual) => (ritual.categoryId === input.id ? { ...ritual, tierId: input.tierId, cultureType: input.cultureType } : ritual))
   };
   await writeStore(next);
   return next;
@@ -258,26 +263,14 @@ export async function updateCategory(input: RitualCategory) {
 export async function addCategory(input: Omit<RitualCategory, "id">) {
   const current = await getRitualStore();
   const nextId = `cat_${String(current.categories.length + 1).padStart(3, "0")}`;
-  const next: RitualStore = {
-    ...current,
-    categories: [
-      ...current.categories,
-      {
-        id: nextId,
-        ...input
-      }
-    ]
-  };
+  const next: RitualStore = { ...current, categories: [...current.categories, { id: nextId, ...input }] };
   await writeStore(next);
   return next;
 }
 
 export async function updateRitual(input: RitualRecord) {
   const current = await getRitualStore();
-  const next: RitualStore = {
-    ...current,
-    rituals: current.rituals.map((ritual) => (ritual.id === input.id ? input : ritual))
-  };
+  const next: RitualStore = { ...current, rituals: current.rituals.map((ritual) => (ritual.id === input.id ? input : ritual)) };
   await writeStore(next);
   return next;
 }
@@ -285,16 +278,7 @@ export async function updateRitual(input: RitualRecord) {
 export async function addRitual(input: Omit<RitualRecord, "id">) {
   const current = await getRitualStore();
   const nextId = `ritual_${String(current.rituals.length + 1).padStart(3, "0")}`;
-  const next: RitualStore = {
-    ...current,
-    rituals: [
-      ...current.rituals,
-      {
-        id: nextId,
-        ...input
-      }
-    ]
-  };
+  const next: RitualStore = { ...current, rituals: [...current.rituals, { id: nextId, ...input }] };
   await writeStore(next);
   return next;
 }
@@ -331,9 +315,7 @@ export function getCategoryDepth(categoryId: string, categories: RitualCategory[
 }
 
 export function getChildCategories(parentId: string | null, categories: RitualCategory[]) {
-  return categories
-    .filter((category) => category.parentId === parentId)
-    .sort((a, b) => a.displayOrder - b.displayOrder || a.name.localeCompare(b.name));
+  return categories.filter((category) => category.parentId === parentId).sort((a, b) => a.displayOrder - b.displayOrder || a.name.localeCompare(b.name));
 }
 
 export function getLeafCategoryOptions(categories: RitualCategory[]) {
@@ -341,10 +323,23 @@ export function getLeafCategoryOptions(categories: RitualCategory[]) {
   return categories
     .filter((category) => !parentIds.has(category.id))
     .sort((a, b) => a.displayOrder - b.displayOrder || a.name.localeCompare(b.name))
-    .map((category) => ({
-      value: category.id,
-      label: buildCategoryLabel(category.id, categories)
-    }));
+    .map((category) => ({ value: category.id, label: `${category.cultureType}: ${buildCategoryLabel(category.id, categories)}` }));
+}
+
+export function getCategoriesByCulture(categories: RitualCategory[]) {
+  return categories.reduce<Record<CultureType, RitualCategory[]>>(
+    (acc, category) => {
+      acc[category.cultureType].push(category);
+      return acc;
+    },
+    { Bengali: [], North_Indian: [], Marwadi: [], Odia: [], Gujarati: [] }
+  );
+}
+
+export function getTopDemandRituals(store: RitualStore) {
+  return store.rituals
+    .filter((ritual) => ritual.homepageRank !== null)
+    .sort((a, b) => (a.homepageRank ?? 99) - (b.homepageRank ?? 99));
 }
 
 export function getRitualMetrics(store: RitualStore) {
@@ -352,6 +347,7 @@ export function getRitualMetrics(store: RitualStore) {
     serviceTiers: store.tiers.length,
     categoryCount: store.categories.length,
     ritualCount: store.rituals.length,
-    fardTemplates: store.rituals.filter((ritual) => getFardItemCount(ritual.fardTemplate) > 0).length
+    fardTemplates: store.rituals.filter((ritual) => getFardItemCount(ritual.fardTemplate) > 0).length,
+    culturesCovered: new Set(store.categories.map((category) => category.cultureType)).size
   };
 }

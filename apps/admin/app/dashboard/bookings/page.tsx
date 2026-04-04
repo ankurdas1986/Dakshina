@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { AlertTriangle, Clock3, RefreshCcw, Search, Wallet } from "lucide-react";
+import { CalendarRange, Clock3, MessageCircleMore, RefreshCcw, Search, Wallet } from "lucide-react";
+import { getBookingStatusVariant } from "../../../components/bookings/booking-detail-panel";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
@@ -8,7 +9,7 @@ import { Input } from "../../../components/ui/input";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getBookingMetrics, getBookingStore } from "../../../lib/booking-store";
-import { getBookingStatusVariant } from "../../../components/bookings/booking-detail-panel";
+import type { CultureType } from "../../../lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,15 @@ const errorMap: Record<string, string> = {
   missing_booking_id: "Booking id is missing.",
   invalid_booking_id: "Booking id is invalid."
 };
+
+const cultureOptions: Array<{ value: string; label: string }> = [
+  { value: "all", label: "All cultures" },
+  { value: "Bengali", label: "Bengali" },
+  { value: "North_Indian", label: "North Indian" },
+  { value: "Marwadi", label: "Marwadi" },
+  { value: "Odia", label: "Odia" },
+  { value: "Gujarati", label: "Gujarati" }
+];
 
 function readParam(params: Record<string, string | string[] | undefined>, key: string) {
   const value = params[key];
@@ -44,28 +54,28 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
   const statusFilter = readParam(resolvedSearchParams, "status") ?? "all";
   const riskFilter = readParam(resolvedSearchParams, "risk") ?? "all";
   const replacementFilter = readParam(resolvedSearchParams, "replacement") ?? "all";
+  const cultureFilter = readParam(resolvedSearchParams, "culture") ?? "all";
 
   const filteredBookings = store.cases.filter((booking) => {
     const matchesQuery =
       !query ||
-      [booking.bookingCode, booking.ritual, booking.district, booking.assignedPriest]
+      [booking.bookingCode, booking.ritual, booking.district, booking.assignedPriest, booking.cultureType]
         .join(" ")
         .toLowerCase()
         .includes(query);
     const matchesStatus = statusFilter === "all" || booking.status === statusFilter;
     const matchesRisk = riskFilter === "all" || booking.risk === riskFilter;
-    const matchesReplacement =
-      replacementFilter === "all" ||
-      (replacementFilter === "required" ? booking.replacementRequired : !booking.replacementRequired);
+    const matchesReplacement = replacementFilter === "all" || (replacementFilter === "required" ? booking.replacementRequired : !booking.replacementRequired);
+    const matchesCulture = cultureFilter === "all" || booking.cultureType === (cultureFilter as CultureType);
 
-    return matchesQuery && matchesStatus && matchesRisk && matchesReplacement;
+    return matchesQuery && matchesStatus && matchesRisk && matchesReplacement && matchesCulture;
   });
 
   const metrics = [
     { label: "Active bookings", value: metricsSnapshot.activeBookings, icon: Clock3 },
     { label: "Advance pending", value: metricsSnapshot.paymentPending, icon: Wallet },
     { label: "Replacement cases", value: metricsSnapshot.replacementCases, icon: RefreshCcw },
-    { label: "Completion pending", value: metricsSnapshot.completionPending, icon: AlertTriangle }
+    { label: "Cultures served", value: metricsSnapshot.culturesCovered, icon: CalendarRange }
   ];
 
   return (
@@ -74,15 +84,15 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
       notificationCount={notificationCount}
       notificationEnabled={notificationEnabled}
       notifications={notifications}
-      subtitle="Use the booking queue to triage payment, reveal timing, replacement risk, and completion OTP status. Open a case to handle the full workflow in a dedicated detail page."
+      subtitle="Use the booking queue to triage culture fit, pricing, governance, replacement risk, and OTP status. Open a case to handle the full workflow in a dedicated detail page."
       title="Bookings"
       userEmail={user.email}
       subnav={
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="success">Queue view</Badge>
-          <Badge variant="outline">Status control</Badge>
+          <Badge variant="outline">Governance</Badge>
+          <Badge variant="outline">WhatsApp</Badge>
           <Badge variant="outline">OTP oversight</Badge>
-          <Badge variant="outline">Replacement workflow</Badge>
         </div>
       }
     >
@@ -122,11 +132,16 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             <CardTitle className="text-lg">Booking operations queue</CardTitle>
             <CardDescription>Table-first workflow. Keep the queue dense here and move into a dedicated case page to edit the booking.</CardDescription>
           </div>
-          <form className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_0.95fr_0.85fr_0.95fr_auto]">
+          <form className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_0.9fr_0.85fr_0.95fr_0.95fr_auto]">
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input className="h-11 rounded-[22px] pl-9" defaultValue={query} name="q" placeholder="Search booking, ritual, district, priest..." />
+              <Input className="h-11 rounded-lg pl-9" defaultValue={query} name="q" placeholder="Search booking, ritual, district, priest..." />
             </label>
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={cultureFilter} name="culture">
+              {cultureOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
             <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={statusFilter} name="status">
               <option value="all">All statuses</option>
               {store.statuses.map((status) => (
@@ -144,24 +159,24 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
               <option value="required">replacement required</option>
               <option value="clear">no replacement</option>
             </select>
-            <Button className="h-11 rounded-[22px]" type="submit">Apply</Button>
+            <Button className="h-11 rounded-lg" type="submit">Apply</Button>
           </form>
         </CardHeader>
         <CardContent className="surface-scroll overflow-y-auto p-0 xl:max-h-[860px]">
-          <div className="min-w-[980px]">
-            <div className="grid grid-cols-[1.35fr_0.95fr_0.8fr_0.8fr_0.75fr_0.85fr_0.75fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="min-w-[1260px]">
+            <div className="grid grid-cols-[1.3fr_0.95fr_1fr_0.95fr_0.85fr_0.95fr_0.75fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>Booking</span>
               <span>Status</span>
-              <span>Advance</span>
-              <span>Risk</span>
+              <span>Culture / pricing</span>
+              <span>Governance</span>
               <span>OTP</span>
-              <span>Contact</span>
+              <span>WhatsApp / contact</span>
               <span>Priest</span>
               <span className="text-right">Action</span>
             </div>
             {filteredBookings.length ? filteredBookings.map((booking) => (
               <Link
-                className="grid grid-cols-[1.35fr_0.95fr_0.8fr_0.8fr_0.75fr_0.85fr_0.75fr_0.7fr] gap-3 border-b border-border px-5 py-4 transition-colors hover:bg-secondary/35"
+                className="grid grid-cols-[1.3fr_0.95fr_1fr_0.95fr_0.85fr_0.95fr_0.75fr_0.7fr] gap-3 border-b border-border px-5 py-4 transition-colors hover:bg-secondary/35"
                 href={`/dashboard/bookings/${booking.id}`}
                 key={booking.id}
               >
@@ -170,10 +185,27 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
                   <p className="mt-1 text-sm text-muted-foreground">{booking.district} | {booking.eventDate}</p>
                 </div>
                 <div className="flex items-start"><Badge variant={getBookingStatusVariant(booking.status, booking.replacementRequired)}>{booking.status}</Badge></div>
-                <p className="text-sm text-foreground">{booking.advanceState}</p>
-                <p className="text-sm text-foreground">{booking.risk}</p>
-                <p className="text-sm text-foreground">{booking.completionOtpStatus}</p>
-                <p className="text-sm text-foreground">{booking.contactReveal}</p>
+                <div className="space-y-1 text-sm">
+                  <p className="font-medium text-foreground">{booking.cultureType.replace("_", " ")}</p>
+                  <p className="text-muted-foreground">Rs {booking.pricing.dakshinaAmount + booking.pricing.samagriAddOns + booking.pricing.zoneWiseTravelFee}</p>
+                  <p className="text-xs text-muted-foreground">Peak x{booking.pricing.peakMultiplier}</p>
+                </div>
+                <div className="space-y-1 text-sm">
+                  <p className="text-foreground">Gap {booking.governance.minBookingGapHours}h</p>
+                  <p className="text-muted-foreground">Window {booking.governance.maxBookingWindowDays}d</p>
+                  {booking.governance.forcedBookingOverride ? <Badge variant="outline">Force override</Badge> : null}
+                </div>
+                <div className="space-y-1 text-sm">
+                  <p className="text-foreground">{booking.completionOtpStatus}</p>
+                  <p className="text-muted-foreground">Advance {booking.advanceState}</p>
+                </div>
+                <div className="space-y-1 text-sm">
+                  <div className="flex items-center gap-1.5 text-foreground">
+                    <MessageCircleMore className="h-3.5 w-3.5 text-primary" />
+                    <span>{booking.governance.whatsappConfirmationState}</span>
+                  </div>
+                  <p className="text-muted-foreground">Contact {booking.contactReveal}</p>
+                </div>
                 <p className="truncate text-sm text-foreground">{booking.assignedPriest}</p>
                 <div className="flex justify-end"><span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">Open</span></div>
               </Link>
@@ -200,4 +232,3 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
     </AdminShell>
   );
 }
-

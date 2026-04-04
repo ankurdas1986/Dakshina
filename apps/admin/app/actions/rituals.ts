@@ -5,19 +5,34 @@ import { redirect } from "next/navigation";
 import {
   addCategory,
   addRitual,
+  type CategoryNodeType,
   type DeliveryMode,
   getRitualStore,
   type PricingMode,
   type RitualCategory,
+  type RitualRecord,
   type RitualStatus,
   type RitualTier,
   updateCategory,
   updateRitual,
   updateTier
 } from "../../lib/ritual-store";
+import type { CultureType } from "../../lib/settings";
 
 function normalizeText(value: FormDataEntryValue | null, fallback = "") {
   return typeof value === "string" ? value.trim() : fallback;
+}
+
+function normalizeNumber(value: FormDataEntryValue | null, fallback: number) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function normalizeCulture(value: FormDataEntryValue | null, fallback: CultureType): CultureType {
+  const next = normalizeText(value, fallback);
+  return ["Bengali", "North_Indian", "Marwadi", "Odia", "Gujarati"].includes(next)
+    ? (next as CultureType)
+    : fallback;
 }
 
 function parseFardTemplate(value: FormDataEntryValue | null) {
@@ -88,17 +103,28 @@ export async function saveRitual(formData: FormData) {
     redirect("/dashboard/rituals?error=invalid_category_id");
   }
 
-  await updateRitual({
+  const nextRitual: RitualRecord = {
     ...ritual,
     name: normalizeText(formData.get("name"), ritual.name),
     tierId: category.tierId,
+    cultureType: normalizeCulture(formData.get("cultureType"), category.cultureType),
     categoryId,
     status: normalizeText(formData.get("status"), ritual.status) as RitualStatus,
     deliveryMode: normalizeText(formData.get("deliveryMode"), ritual.deliveryMode) as DeliveryMode,
     pricingMode: normalizeText(formData.get("pricingMode"), ritual.pricingMode) as PricingMode,
+    durationMinutes: normalizeNumber(formData.get("durationMinutes"), ritual.durationMinutes),
+    homepageRank: normalizeText(formData.get("homepageRank")) ? normalizeNumber(formData.get("homepageRank"), ritual.homepageRank ?? 0) : null,
+    demandLabel: normalizeText(formData.get("demandLabel"), ritual.demandLabel),
+    pricing: {
+      dakshinaAmount: normalizeNumber(formData.get("dakshinaAmount"), ritual.pricing.dakshinaAmount),
+      samagriAddOns: normalizeNumber(formData.get("samagriAddOns"), ritual.pricing.samagriAddOns),
+      zoneWiseTravelFee: normalizeNumber(formData.get("zoneWiseTravelFee"), ritual.pricing.zoneWiseTravelFee),
+      peakMultiplier: normalizeNumber(formData.get("peakMultiplier"), ritual.pricing.peakMultiplier)
+    },
     fardTemplate: parseFardTemplate(formData.get("fardTemplate"))
-  });
+  };
 
+  await updateRitual(nextRitual);
   redirectSuccess("ritual_saved");
 }
 
@@ -115,10 +141,20 @@ export async function createRitual(formData: FormData) {
   await addRitual({
     name: normalizeText(formData.get("name"), "Untitled Ritual"),
     tierId: category.tierId,
+    cultureType: normalizeCulture(formData.get("cultureType"), category.cultureType),
     categoryId,
     status: normalizeText(formData.get("status"), "draft") as RitualStatus,
     deliveryMode: normalizeText(formData.get("deliveryMode"), "ui_and_pdf") as DeliveryMode,
     pricingMode: normalizeText(formData.get("pricingMode"), "admin-guided") as PricingMode,
+    durationMinutes: normalizeNumber(formData.get("durationMinutes"), 120),
+    homepageRank: normalizeText(formData.get("homepageRank")) ? normalizeNumber(formData.get("homepageRank"), 1) : null,
+    demandLabel: normalizeText(formData.get("demandLabel"), "Seeded ritual"),
+    pricing: {
+      dakshinaAmount: normalizeNumber(formData.get("dakshinaAmount"), 0),
+      samagriAddOns: normalizeNumber(formData.get("samagriAddOns"), 0),
+      zoneWiseTravelFee: normalizeNumber(formData.get("zoneWiseTravelFee"), 0),
+      peakMultiplier: normalizeNumber(formData.get("peakMultiplier"), 1)
+    },
     fardTemplate: parseFardTemplate(formData.get("fardTemplate"))
   });
 
@@ -158,6 +194,8 @@ export async function saveCategory(formData: FormData) {
     ...category,
     parentId,
     tierId: parent?.tierId ?? tierId,
+    cultureType: normalizeCulture(formData.get("cultureType"), parent?.cultureType ?? category.cultureType),
+    nodeType: normalizeText(formData.get("nodeType"), category.nodeType) as CategoryNodeType,
     name: normalizeText(formData.get("name"), category.name),
     slug: slugify(normalizeText(formData.get("slug"), category.slug || category.name)),
     description: normalizeText(formData.get("description"), category.description),
@@ -184,6 +222,8 @@ export async function createCategory(formData: FormData) {
   await addCategory({
     parentId,
     tierId,
+    cultureType: normalizeCulture(formData.get("cultureType"), parent?.cultureType ?? "Bengali"),
+    nodeType: normalizeText(formData.get("nodeType"), parentId ? "sub_type" : "tradition") as CategoryNodeType,
     name,
     slug: slugify(normalizeText(formData.get("slug"), name)),
     description: normalizeText(formData.get("description")),

@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   type PriestKycStatus,
+  type PriestLanguage,
   type PriestVerificationStatus,
   updatePriestReview
 } from "../../lib/priest-store";
 import { getRitualStore } from "../../lib/ritual-store";
+import type { CultureType } from "../../lib/settings";
 
 function normalizeText(value: FormDataEntryValue | null, fallback = "") {
   return typeof value === "string" ? value.trim() : fallback;
@@ -16,6 +18,13 @@ function normalizeText(value: FormDataEntryValue | null, fallback = "") {
 function normalizeNumber(value: FormDataEntryValue | null, fallback: number) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function parseList(value: FormDataEntryValue | null) {
+  return normalizeText(value)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
 export async function savePriestReview(formData: FormData) {
@@ -27,29 +36,24 @@ export async function savePriestReview(formData: FormData) {
   }
 
   const currentRitualStore = await getRitualStore();
-  const ritualIds = normalizeText(formData.get("ritualIds"))
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
+  const ritualIds = parseList(formData.get("ritualIds"));
   const mainCategoryId = normalizeText(formData.get("mainCategoryId")) || null;
   const serviceCategoryId = normalizeText(formData.get("serviceCategoryId")) || null;
-  const services = currentRitualStore.rituals
-    .filter((ritual) => ritualIds.includes(ritual.id))
-    .map((ritual) => ritual.name);
+  const services = currentRitualStore.rituals.filter((ritual) => ritualIds.includes(ritual.id)).map((ritual) => ritual.name);
 
   await updatePriestReview({
     id,
     kycStatus: normalizeText(formData.get("kycStatus"), "pending") as PriestKycStatus,
-    verificationStatus: normalizeText(
-      formData.get("verificationStatus"),
-      "unverified"
-    ) as PriestVerificationStatus,
+    verificationStatus: normalizeText(formData.get("verificationStatus"), "unverified") as PriestVerificationStatus,
     radiusKm: normalizeNumber(formData.get("radiusKm"), 0),
     notes: normalizeText(formData.get("notes")),
     mainCategoryId,
     serviceCategoryId,
     ritualIds,
-    services
+    services,
+    cultureTags: parseList(formData.get("cultureTags")) as CultureType[],
+    languageTags: parseList(formData.get("languageTags")) as PriestLanguage[],
+    availabilitySummary: normalizeText(formData.get("availabilitySummary"))
   });
 
   revalidatePath("/dashboard/priests");

@@ -1,4 +1,4 @@
-﻿# Dakshina UAT Checklist
+# Dakshina UAT Checklist
 
 This file records user acceptance checks for each module. A module should not be marked complete until its UAT checks pass.
 
@@ -33,6 +33,7 @@ Legend:
 - `[x]` Cascading category selection maps priests to leaf categories and ritual checklists
 - `[x]` Changes persist in `apps/admin/data/priests.json`
 - `[x]` Search and filter workflow added
+- `[x]` Culture and language queue refinements are validated in a runtime-enabled shell
 - `[x]` District coverage cards drill back into the filtered queue
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
@@ -46,6 +47,7 @@ Legend:
 
 - `[x]` Ritual CRUD works
 - `[x]` Hierarchical category tree CRUD works
+- `[x]` Culture-aware category tree, demand ranking, and Panjika research UI are validated in a runtime-enabled shell
 - `[x]` Fard JSON editor validates correctly
 - `[x]` Booking Fard snapshot rules hold after ritual edits
 - `[x]` Booking Fard snapshot rules are visible in the admin UI
@@ -56,6 +58,7 @@ Legend:
 ## Module 4: Bookings
 
 - `[x]` Booking queue supports list-first review with dedicated detail page
+- `[x]` Booking queue culture, pricing, and governance summary are validated in a runtime-enabled shell
 - `[x]` Booking status changes follow allowed transitions
 - `[x]` Replacement flow is auditable
 - `[x]` Contact reveal timing follows configured window
@@ -104,4 +107,9 @@ Legend:
 - `[x]` Project plan reflects culture-aware hierarchy, pricing, governance, and availability
 - `[x]` SQL schema includes culture tags, language tags, Panjika imports, pricing split, slot blocking, verified reviews, and payout logs
 - `[x]` SQL schema includes hierarchical and PostGIS-supporting indexes for search and booking integrity
+- `[~]` Admin data stores and key workflows are being aligned to the multicultural contract
+
+
+
+
 

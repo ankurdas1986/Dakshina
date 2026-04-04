@@ -1,14 +1,25 @@
+export type CultureType = 'Bengali' | 'North_Indian' | 'Marwadi' | 'Odia' | 'Gujarati';
+
 export type DistrictCommissionOverride = {
   district: string;
   commissionPercent: number;
   serviceClusters: string[];
-  status: "active" | "review";
+  zoneTravelFee: number;
+  status: 'active' | 'review';
+};
+
+export type PanjikaResearchEntry = {
+  cultureType: CultureType;
+  sources: string[];
+  sampleRituals: string[];
+  isLaunchPriority: boolean;
 };
 
 export type SettingsSnapshot = {
   platform: {
     launchRegion: string;
     currency: string;
+    defaultCulture: CultureType;
     bookingAdvancePercent: number;
     defaultCommissionPercent: number;
     revealWindowHours: {
@@ -17,13 +28,18 @@ export type SettingsSnapshot = {
     };
     refereeDiscountPercent: number;
     referrerRewardCredit: number;
+    minBookingGapHours: number;
+    maxBookingWindowDays: number;
+    festivalRushBlockingEnabled: boolean;
+    forceBookingOverrideEnabled: boolean;
   };
   districts: DistrictCommissionOverride[];
   serviceTiers: Array<{
     name: string;
     focus: string;
-    status: "active" | "planned";
+    status: 'active' | 'planned';
   }>;
+  cultureResearch: PanjikaResearchEntry[];
   controls: Array<{
     label: string;
     description: string;
@@ -48,8 +64,9 @@ export type SettingsSnapshot = {
 
 export const settingsSnapshot: SettingsSnapshot = {
   platform: {
-    launchRegion: "Howrah, Hooghly, North 24 Parganas",
-    currency: "INR",
+    launchRegion: 'Howrah, Hooghly, North 24 Parganas',
+    currency: 'INR',
+    defaultCulture: 'Bengali',
     bookingAdvancePercent: 20,
     defaultCommissionPercent: 12,
     revealWindowHours: {
@@ -57,70 +74,114 @@ export const settingsSnapshot: SettingsSnapshot = {
       max: 72
     },
     refereeDiscountPercent: 10,
-    referrerRewardCredit: 150
+    referrerRewardCredit: 150,
+    minBookingGapHours: 3,
+    maxBookingWindowDays: 60,
+    festivalRushBlockingEnabled: true,
+    forceBookingOverrideEnabled: true
   },
   districts: [
     {
-      district: "Howrah",
+      district: 'Howrah',
       commissionPercent: 12,
-      serviceClusters: ["Bally", "Domjur", "Uluberia"],
-      status: "active"
+      serviceClusters: ['Bally', 'Domjur', 'Uluberia'],
+      zoneTravelFee: 150,
+      status: 'active'
     },
     {
-      district: "Hooghly",
+      district: 'Hooghly',
       commissionPercent: 10,
-      serviceClusters: ["Uttarpara", "Rishra", "Srirampore"],
-      status: "active"
+      serviceClusters: ['Uttarpara', 'Rishra', 'Srirampore'],
+      zoneTravelFee: 180,
+      status: 'active'
     },
     {
-      district: "North 24 Parganas",
+      district: 'North 24 Parganas',
       commissionPercent: 11,
-      serviceClusters: ["Madhyamgram", "Barasat", "Dum Dum fringe"],
-      status: "review"
+      serviceClusters: ['Madhyamgram', 'Barasat', 'Dum Dum fringe'],
+      zoneTravelFee: 220,
+      status: 'review'
     }
   ],
   serviceTiers: [
     {
-      name: "Tier 1: Essential Home",
-      focus: "Recurring household rituals such as Lakshmi and Satyanarayan puja.",
-      status: "active"
+      name: 'Tier 1: Essential Home',
+      focus: 'Recurring household rituals such as Lakshmi and Satyanarayan puja.',
+      status: 'active'
     },
     {
-      name: "Tier 2: Grand Event",
-      focus: "Weddings, sacred thread, grihoprobesh, and milestone rituals.",
-      status: "active"
+      name: 'Tier 2: Grand Event',
+      focus: 'Weddings, sacred thread, grihoprobesh, and milestone rituals.',
+      status: 'active'
     },
     {
-      name: "Tier 3: Barwari / Public",
-      focus: "Community Durga, Kali, and locality-level puja management.",
-      status: "active"
+      name: 'Tier 3: Barwari / Public',
+      focus: 'Community Durga, Kali, and locality-level puja management.',
+      status: 'active'
     },
     {
-      name: "Tier 4: Monthly Trustee",
-      focus: "Recurring temple, society, and complex priest scheduling.",
-      status: "planned"
+      name: 'Tier 4: Monthly Trustee',
+      focus: 'Recurring temple, society, and complex priest scheduling.',
+      status: 'planned'
+    }
+  ],
+  cultureResearch: [
+    {
+      cultureType: 'Bengali',
+      sources: ['Gupta Press', 'Bishuddha Siddhanta'],
+      sampleRituals: ['Gaye Holud', 'Bou Bhat', 'Annaprashan'],
+      isLaunchPriority: true
+    },
+    {
+      cultureType: 'North_Indian',
+      sources: ['Thakur Prasad', 'Vikram Samvat'],
+      sampleRituals: ['Chhath Puja', 'Satyanarayan Katha', 'Sindoor Daan'],
+      isLaunchPriority: false
+    },
+    {
+      cultureType: 'Marwadi',
+      sources: ['Marwari Panchang'],
+      sampleRituals: ['Mayra', 'Bhaat', 'Phera Styles'],
+      isLaunchPriority: false
+    },
+    {
+      cultureType: 'Odia',
+      sources: ['Kohinoor', 'Bhagyadaya Panjika'],
+      sampleRituals: ['Boita Bandana', 'Sankranti', 'Hastagranthi'],
+      isLaunchPriority: false
+    },
+    {
+      cultureType: 'Gujarati',
+      sources: ['Janmabhoomi', 'Gujarati Panchang'],
+      sampleRituals: ['Vastu Shanti', 'Mangal Phera', 'Garba Pujan'],
+      isLaunchPriority: false
     }
   ],
   controls: [
     {
-      label: "Manual KYC approval",
-      description: "Priest verification stays human-reviewed before any live visibility.",
+      label: 'Manual KYC approval',
+      description: 'Priest verification stays human-reviewed before any live visibility.',
       enabled: true
     },
     {
-      label: "OTP-based completion",
-      description: "Final completion and referral settlement depend on OTP verification.",
+      label: 'OTP-based completion',
+      description: 'Final completion and referral settlement depend on OTP verification.',
       enabled: true
     },
     {
-      label: "Replacement guarantee flow",
-      description: "Admin-assisted reassignment is available for verified priest failure cases.",
+      label: 'Festival rush blocking',
+      description: 'Bookings can be blocked or tightened during high-demand cultural festival periods.',
       enabled: true
     },
     {
-      label: "Public listing auto-approval",
-      description: "New priests are published automatically after signup.",
-      enabled: false
+      label: 'Forced admin booking override',
+      description: 'Super admin can bypass governance rules for manually approved exceptions.',
+      enabled: true
+    },
+    {
+      label: 'Strict verified reviews',
+      description: 'Only users with completed bookings can leave a review.',
+      enabled: true
     }
   ],
   notificationSettings: {
@@ -133,18 +194,18 @@ export const settingsSnapshot: SettingsSnapshot = {
   },
   auditLog: [
     {
-      id: "audit_001",
-      action: "Platform settings updated",
-      detail: "Default commission and reveal timing were aligned to launch-market policy.",
-      actor: "Admin operator",
-      createdAt: "2026-04-03 09:30"
+      id: 'audit_001',
+      action: 'Multicultural rollout policy updated',
+      detail: 'Bengali is marked as the default launch culture while North Indian, Marwadi, Odia, and Gujarati remain active in the schema.',
+      actor: 'Admin operator',
+      createdAt: '2026-04-04 09:10'
     },
     {
-      id: "audit_002",
-      action: "District override revised",
-      detail: "North 24 Parganas commission remains under review until launch coverage stabilizes.",
-      actor: "Admin operator",
-      createdAt: "2026-04-03 08:10"
+      id: 'audit_002',
+      action: 'Booking governance aligned',
+      detail: 'Minimum booking gap, booking window, and festival blocking defaults were aligned to the new marketplace contract.',
+      actor: 'Admin operator',
+      createdAt: '2026-04-04 08:45'
     }
   ]
 };

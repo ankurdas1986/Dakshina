@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { BadgeCheck, FileCheck2, MapPinned, Search, Users } from "lucide-react";
+import { BadgeCheck, FileCheck2, Globe2, Languages, Search, Users } from "lucide-react";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
+import { getPriestStatusVariant } from "../../../components/priests/priest-detail-panel";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getPriestMetrics, getPriestStore } from "../../../lib/priest-store";
 import { buildCategoryLabel, getRitualStore } from "../../../lib/ritual-store";
-import { getPriestStatusVariant } from "../../../components/priests/priest-detail-panel";
+import type { CultureType } from "../../../lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,15 @@ type PriestsPageProps = {
 const messageMap: Record<string, string> = {
   priest_review_saved: "Priest review updated and stored for local UAT."
 };
+
+const cultureOptions: Array<{ value: string; label: string }> = [
+  { value: "all", label: "All cultures" },
+  { value: "Bengali", label: "Bengali" },
+  { value: "North_Indian", label: "North Indian" },
+  { value: "Marwadi", label: "Marwadi" },
+  { value: "Odia", label: "Odia" },
+  { value: "Gujarati", label: "Gujarati" }
+];
 
 function readParam(params: Record<string, string | string[] | undefined>, key: string) {
   const value = params[key];
@@ -39,6 +49,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
   const districtFilter = readParam(resolvedSearchParams, "district") ?? "all";
   const kycFilter = readParam(resolvedSearchParams, "kyc") ?? "all";
   const verificationFilter = readParam(resolvedSearchParams, "verification") ?? "all";
+  const cultureFilter = readParam(resolvedSearchParams, "culture") ?? "all";
 
   const districts = [...new Set(store.priests.map((priest) => priest.district))].sort();
   const districtSummaries = districts.map((district) => {
@@ -55,6 +66,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
       averageRadius
     };
   });
+
   const filteredPriests = store.priests.filter((priest) => {
     const matchesQuery =
       !query ||
@@ -63,24 +75,26 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
         priest.locality,
         priest.district,
         priest.services.join(" "),
-        priest.phone
+        priest.phone,
+        priest.cultureTags.join(" "),
+        priest.languageTags.join(" ")
       ]
         .join(" ")
         .toLowerCase()
         .includes(query);
     const matchesDistrict = districtFilter === "all" || priest.district === districtFilter;
     const matchesKyc = kycFilter === "all" || priest.kycStatus === kycFilter;
-    const matchesVerification =
-      verificationFilter === "all" || priest.verificationStatus === verificationFilter;
+    const matchesVerification = verificationFilter === "all" || priest.verificationStatus === verificationFilter;
+    const matchesCulture = cultureFilter === "all" || priest.cultureTags.includes(cultureFilter as CultureType);
 
-    return matchesQuery && matchesDistrict && matchesKyc && matchesVerification;
+    return matchesQuery && matchesDistrict && matchesKyc && matchesVerification && matchesCulture;
   });
 
   const metrics = [
     { label: "Total priests", value: metricsSnapshot.totalPriests, icon: Users },
     { label: "Verified", value: metricsSnapshot.verifiedPriests, icon: BadgeCheck },
     { label: "Pending KYC", value: metricsSnapshot.pendingKyc, icon: FileCheck2 },
-    { label: "Districts covered", value: metricsSnapshot.districtsCovered, icon: MapPinned }
+    { label: "Cultures covered", value: metricsSnapshot.culturesCovered, icon: Globe2 }
   ];
 
   return (
@@ -89,15 +103,15 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
       notificationCount={notificationCount}
       notificationEnabled={notificationEnabled}
       notifications={notifications}
-      subtitle="Use the queue to scan KYC state, coverage, and service mapping. Open a priest record to complete the full review workflow in a dedicated detail page."
+      subtitle="Use the queue to scan KYC state, district coverage, and culture-language fit. Open a priest record to complete the full review workflow in a dedicated detail page."
       title="Priest Management"
       userEmail={user.email}
       subnav={
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="success">Queue view</Badge>
-          <Badge variant="outline">Search and filter</Badge>
+          <Badge variant="outline">Culture filters</Badge>
           <Badge variant="outline">KYC review</Badge>
-          <Badge variant="outline">Service mapping</Badge>
+          <Badge variant="outline">Language mapping</Badge>
         </div>
       }
     >
@@ -154,15 +168,20 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
             <CardTitle className="text-lg">Priest operations queue</CardTitle>
             <CardDescription>Table-first review flow. Use filters here, then open a single priest record to take action.</CardDescription>
           </div>
-          <form className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_0.9fr_0.8fr_0.9fr_auto]">
+          <form className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_0.95fr_0.95fr_0.85fr_0.95fr_auto]">
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input className="h-11 rounded-[22px] pl-9" defaultValue={query} name="q" placeholder="Search priest, district, service, phone..." />
+              <Input className="h-11 rounded-lg pl-9" defaultValue={query} name="q" placeholder="Search priest, district, language, service..." />
             </label>
             <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={districtFilter} name="district">
               <option value="all">All districts</option>
               {districts.map((district) => (
                 <option key={district} value={district}>{district}</option>
+              ))}
+            </select>
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={cultureFilter} name="culture">
+              {cultureOptions.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
             <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue={kycFilter} name="kyc">
@@ -178,23 +197,23 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
               <option value="review">review</option>
               <option value="verified">verified</option>
             </select>
-            <Button className="h-11 rounded-[22px]" type="submit">Apply</Button>
+            <Button className="h-11 rounded-lg" type="submit">Apply</Button>
           </form>
         </CardHeader>
         <CardContent className="surface-scroll overflow-y-auto p-0 xl:max-h-[860px]">
-          <div className="min-w-[940px]">
-            <div className="grid grid-cols-[1.45fr_1.1fr_0.8fr_0.9fr_0.8fr_0.7fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="min-w-[1180px]">
+            <div className="grid grid-cols-[1.3fr_1.15fr_1fr_0.85fr_0.95fr_0.75fr_0.75fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>Priest</span>
               <span>Service path</span>
+              <span>Culture / language</span>
               <span>KYC</span>
               <span>Verification</span>
               <span>Radius</span>
-              <span>Submitted</span>
               <span className="text-right">Action</span>
             </div>
             {filteredPriests.length ? filteredPriests.map((priest) => (
               <Link
-                className="grid grid-cols-[1.45fr_1.1fr_0.8fr_0.9fr_0.8fr_0.7fr_0.7fr] gap-3 border-b border-border px-5 py-4 transition-colors hover:bg-secondary/35"
+                className="grid grid-cols-[1.3fr_1.15fr_1fr_0.85fr_0.95fr_0.75fr_0.75fr] gap-3 border-b border-border px-5 py-4 transition-colors hover:bg-secondary/35"
                 href={`/dashboard/priests/${priest.id}`}
                 key={priest.id}
               >
@@ -208,10 +227,22 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">{priest.ritualIds.length} rituals</p>
                 </div>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-1.5 text-xs text-foreground">
+                    <Globe2 className="mt-0.5 h-3.5 w-3.5 text-primary" />
+                    <span className="line-clamp-2">{priest.cultureTags.join(", ")}</span>
+                  </div>
+                  <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                    <Languages className="mt-0.5 h-3.5 w-3.5 text-primary" />
+                    <span className="line-clamp-2">{priest.languageTags.join(", ")}</span>
+                  </div>
+                </div>
                 <div className="flex items-start"><Badge variant={getPriestStatusVariant(priest.kycStatus)}>{priest.kycStatus}</Badge></div>
                 <div className="flex items-start"><Badge variant={getPriestStatusVariant(priest.verificationStatus)}>{priest.verificationStatus}</Badge></div>
-                <p className="text-sm text-foreground">{priest.radiusKm} km</p>
-                <p className="text-sm text-foreground">{priest.submittedAt}</p>
+                <div>
+                  <p className="text-sm text-foreground">{priest.radiusKm} km</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{priest.submittedAt}</p>
+                </div>
                 <div className="flex justify-end"><span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground">Open</span></div>
               </Link>
             )) : (
@@ -223,4 +254,3 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
     </AdminShell>
   );
 }
-

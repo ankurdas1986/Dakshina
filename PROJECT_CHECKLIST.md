@@ -1,4 +1,4 @@
-﻿# Dakshina Delivery Checklist
+# Dakshina Delivery Checklist
 
 This file is the execution checklist for the full marketplace build. It is the operational source of truth for what is done, what is under active development, and what remains pending.
 
@@ -63,13 +63,16 @@ Legend:
 - `[x]` cascading category and ritual selection flow
 - `[x]` priest list index and dedicated detail route
 - `[x]` priest table with search/filter
+- `[x]` culture and language filters surfaced in the priest queue
 - `[x]` district/radius operations summary with queue drill-down
 
 ### 3.4 Rituals and Fard
 
 - `[x]` module route and responsive shell page
 - `[x]` hierarchical ritual category CRUD
+- `[x]` culture-aware category tree grouped by tradition and Bengali-first launch priority
 - `[x]` ritual CRUD
+- `[x]` culture-aware ritual pricing, demand ranking, and Panjika source visibility
 - `[x]` 4-tier service model management
 - `[x]` JSON-based Fard editor
 - `[x]` Fard snapshot preview rules
@@ -78,6 +81,7 @@ Legend:
 
 - `[x]` module route and responsive shell page
 - `[x]` booking list with status filters
+- `[x]` booking queue shows culture, pricing split, and governance summary
 - `[x]` booking detail route with dedicated workspace
 - `[x]` booking queue with table-first operating view
 - `[x]` reassignment and replacement controls
@@ -159,5 +163,8 @@ Legend:
 - `[x]` Module 4: Booking operations with queue and case detail routes
 - `[x]` Module 5: Payout management workflow
 - `[x]` Module 6: Trust and Referral admin workflows
-- `[~]` Priest app foundation after super-admin completion
+- `[~]` Super-admin multicultural refactor and Bengali-first rollout alignment
+
+
+
 
