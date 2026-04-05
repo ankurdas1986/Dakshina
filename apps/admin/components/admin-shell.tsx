@@ -8,6 +8,7 @@ import {
   Bell,
   BookCheck,
   CalendarRange,
+  CalendarSync,
   ChevronRight,
   CircleUserRound,
   Handshake,
@@ -17,6 +18,7 @@ import {
   Menu,
   Search,
   Settings2,
+  Wallet,
   X
 } from "lucide-react";
 import { signOut } from "../app/actions/auth";
@@ -29,7 +31,7 @@ import { DakshinaLogo } from "./dakshina-logo";
 import type { AdminNotification } from "../lib/notification-store";
 
 type AdminShellProps = {
-  active: "settings" | "priests" | "rituals" | "bookings" | "payouts" | "trust";
+  active: "settings" | "priests" | "users" | "rituals" | "bookings" | "subscriptions" | "payouts" | "trust";
   children: ReactNode;
   userEmail?: string | null;
   title: string;
@@ -44,8 +46,10 @@ type AdminShellProps = {
 const iconMap = {
   settings: Settings2,
   priests: BookCheck,
+  users: CircleUserRound,
   rituals: CalendarRange,
   bookings: MapPinned,
+  subscriptions: CalendarSync,
   payouts: Landmark,
   trust: Handshake
 } as const;
@@ -59,6 +63,10 @@ const searchConfig = {
     action: "/dashboard/priests",
     placeholder: "Search priests, districts, rituals..."
   },
+  users: {
+    action: "/dashboard/users",
+    placeholder: "Search users, phones, areas, traditions..."
+  },
   rituals: {
     action: "/dashboard/rituals",
     placeholder: "Search tiers, categories, rituals..."
@@ -66,6 +74,10 @@ const searchConfig = {
   bookings: {
     action: "/dashboard/bookings",
     placeholder: "Search bookings, rituals, priests..."
+  },
+  subscriptions: {
+    action: "/dashboard/subscriptions",
+    placeholder: "Search temples, offices, factories..."
   },
   payouts: {
     action: "/dashboard/payouts",
@@ -180,7 +192,7 @@ export function AdminShell({
                             ? "border-primary/20 bg-primary/10 text-foreground"
                             : "border-transparent text-muted-foreground hover:border-border hover:bg-secondary/45 hover:text-foreground"
                         )}
-                        href={item.href}
+                        href={item.href as Route}
                         key={item.key}
                         onClick={() => setSidebarOpen(false)}
                       >
@@ -281,6 +293,12 @@ export function AdminShell({
                                 <MapPinned className="h-4 w-4" />
                               ) : item.type === "kyc" ? (
                                 <Settings2 className="h-4 w-4" />
+                              ) : item.type === "refund" ? (
+                                <Wallet className="h-4 w-4" />
+                              ) : item.type === "subscription" ? (
+                                <CalendarSync className="h-4 w-4" />
+                              ) : item.type === "wallet" ? (
+                                <Landmark className="h-4 w-4" />
                               ) : (
                                 <Handshake className="h-4 w-4" />
                               )}

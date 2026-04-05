@@ -1,0 +1,49 @@
+{
+  "users": [
+    {
+      "id": "user_001",
+      "fullName": "Sourav Banerjee",
+      "email": "sourav@dakshina.local",
+      "phone": "+91 98300 11001",
+      "address": "12 Bally Ghat Road",
+      "district": "Howrah",
+      "locality": "Bally",
+      "traditionPreference": "Bengali",
+      "walletBalance": 1250,
+      "accountStatus": "active",
+      "createdAt": "2026-04-03",
+      "bookingIds": ["booking_001"],
+      "notes": "High-retention Bengali family account."
+    },
+    {
+      "id": "user_002",
+      "fullName": "Ria Banerjee",
+      "email": "ria@dakshina.local",
+      "phone": "+91 98300 11002",
+      "address": "44 Uttarpara Main Road",
+      "district": "Hooghly",
+      "locality": "Uttarpara",
+      "traditionPreference": "Bengali",
+      "walletBalance": 780,
+      "accountStatus": "active",
+      "createdAt": "2026-04-02",
+      "bookingIds": ["booking_002"],
+      "notes": "Wedding-event user with active referral history."
+    },
+    {
+      "id": "user_003",
+      "fullName": "Smruti Mohanty",
+      "email": "smruti@dakshina.local",
+      "phone": "+91 98300 11003",
+      "address": "8 Madhyamgram Station Road",
+      "district": "North 24 Parganas",
+      "locality": "Madhyamgram",
+      "traditionPreference": "Odia",
+      "walletBalance": 420,
+      "accountStatus": "blocked",
+      "createdAt": "2026-03-29",
+      "bookingIds": ["booking_003"],
+      "notes": "Temporarily blocked after repeated booking disputes."
+    }
+  ]
+}

@@ -9,7 +9,10 @@ export type AdminNotificationType =
   | "user_registration"
   | "booking"
   | "kyc"
-  | "referral";
+  | "referral"
+  | "refund"
+  | "subscription"
+  | "wallet";
 
 export type AdminNotification = {
   id: string;
@@ -126,4 +129,13 @@ export async function getAdminNotificationInbox(settings: SettingsSnapshot["noti
     notifications,
     unreadCount
   };
+}
+
+export async function appendAdminNotification(input: AdminNotification) {
+  const current = await getNotificationStore();
+  const next: NotificationStore = {
+    notifications: [input, ...current.notifications].slice(0, 40)
+  };
+  await writeStore(next);
+  return next;
 }

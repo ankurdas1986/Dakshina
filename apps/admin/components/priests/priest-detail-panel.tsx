@@ -66,6 +66,7 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
   return (
     <form action={savePriestReview} className="space-y-5">
       <input name="id" type="hidden" value={priest.id} />
+      <input name="pendingPayout" type="hidden" value={priest.pendingPayout} />
       <input name="returnTo" type="hidden" value={returnTo} />
 
       <div className="space-y-3">
@@ -88,6 +89,7 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
         <InfoRow icon={Globe2} label="Cultures" value={priest.cultureTags.join(", ")} />
         <InfoRow icon={Languages} label="Languages" value={priest.languageTags.join(", ")} />
         <InfoRow icon={PhoneCall} label="Contact" value={priest.phone} />
+        <InfoRow icon={FileImage} label="Pending payout" value={`Rs ${priest.pendingPayout}`} />
         <InfoRow icon={MapPinned} label="Availability" value={priest.availabilitySummary} />
       </div>
 

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
+  getPriestStore,
   type PriestKycStatus,
   type PriestLanguage,
   type PriestVerificationStatus,
@@ -35,6 +36,13 @@ export async function savePriestReview(formData: FormData) {
     redirect("/dashboard/priests?error=missing_priest_id");
   }
 
+  const currentPriestStore = await getPriestStore();
+  const currentPriest = currentPriestStore.priests.find((item) => item.id === id);
+
+  if (!currentPriest) {
+    redirect("/dashboard/priests?error=invalid_priest_id");
+  }
+
   const currentRitualStore = await getRitualStore();
   const ritualIds = parseList(formData.get("ritualIds"));
   const mainCategoryId = normalizeText(formData.get("mainCategoryId")) || null;
@@ -46,14 +54,15 @@ export async function savePriestReview(formData: FormData) {
     kycStatus: normalizeText(formData.get("kycStatus"), "pending") as PriestKycStatus,
     verificationStatus: normalizeText(formData.get("verificationStatus"), "unverified") as PriestVerificationStatus,
     radiusKm: normalizeNumber(formData.get("radiusKm"), 0),
-    notes: normalizeText(formData.get("notes")),
+    pendingPayout: normalizeNumber(formData.get("pendingPayout"), currentPriest.pendingPayout),
+    notes: normalizeText(formData.get("notes"), currentPriest.notes),
     mainCategoryId,
     serviceCategoryId,
     ritualIds,
     services,
     cultureTags: parseList(formData.get("cultureTags")) as CultureType[],
     languageTags: parseList(formData.get("languageTags")) as PriestLanguage[],
-    availabilitySummary: normalizeText(formData.get("availabilitySummary"))
+    availabilitySummary: normalizeText(formData.get("availabilitySummary"), currentPriest.availabilitySummary)
   });
 
   revalidatePath("/dashboard/priests");

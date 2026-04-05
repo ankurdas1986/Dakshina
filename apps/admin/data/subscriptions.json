@@ -1,0 +1,61 @@
+{
+  "subscriptions": [
+    {
+      "id": "sub_001",
+      "entityType": "temple",
+      "entityName": "Bally Kali Mandir",
+      "cultureType": "Bengali",
+      "district": "Howrah",
+      "locality": "Bally",
+      "priestId": "priest_001",
+      "priestName": "Pandit Arindam Bhattacharya",
+      "ritual": "Temple Seva Rotation",
+      "frequency": "daily",
+      "durationMonths": 3,
+      "startsOn": "2026-04-10",
+      "endsOn": "2026-07-09",
+      "nextGenerationDate": "2026-04-10",
+      "status": "active",
+      "generatedBookingCodes": ["SUB-DK-2001", "SUB-DK-2002", "SUB-DK-2003"],
+      "notes": "Daily temple opening and evening seva coverage."
+    },
+    {
+      "id": "sub_002",
+      "entityType": "office",
+      "entityName": "Howrah Trade Towers",
+      "cultureType": "North_Indian",
+      "district": "Howrah",
+      "locality": "Shibpur",
+      "priestId": "priest_002",
+      "priestName": "Pandit Subhajit Chakraborty",
+      "ritual": "Monthly office puja",
+      "frequency": "monthly",
+      "durationMonths": 6,
+      "startsOn": "2026-05-01",
+      "endsOn": "2026-10-31",
+      "nextGenerationDate": "2026-05-01",
+      "status": "draft",
+      "generatedBookingCodes": [],
+      "notes": "Monthly prosperity and inauguration cycle."
+    },
+    {
+      "id": "sub_003",
+      "entityType": "factory",
+      "entityName": "Barasat Foods Unit",
+      "cultureType": "Odia",
+      "district": "North 24 Parganas",
+      "locality": "Barasat",
+      "priestId": "priest_003",
+      "priestName": "Pandit Debasish Goswami",
+      "ritual": "Weekly sankranti maintenance",
+      "frequency": "weekly",
+      "durationMonths": 12,
+      "startsOn": "2026-04-12",
+      "endsOn": "2027-04-11",
+      "nextGenerationDate": "2026-04-12",
+      "status": "active",
+      "generatedBookingCodes": ["SUB-DK-3201", "SUB-DK-3202"],
+      "notes": "Pre-blocked weekly shift to avoid festival-month conflict."
+    }
+  ]
+}

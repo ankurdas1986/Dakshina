@@ -16,6 +16,13 @@ export const moduleStatus = [
     summary: "Onboarding queue, manual KYC review, verification decisions, and service radius visibility."
   },
   {
+    key: "users",
+    title: "User Management",
+    href: "/dashboard/users",
+    status: "live",
+    summary: "Profile editing, booking history, wallet ledger visibility, and account lifecycle control."
+  },
+  {
     key: "rituals",
     title: "Rituals and Fard",
     href: "/dashboard/rituals",
@@ -28,6 +35,13 @@ export const moduleStatus = [
     href: "/dashboard/bookings",
     status: "live",
     summary: "Booking status control, district dispatch, delayed contact reveal, and replacement workflow."
+  },
+  {
+    key: "subscriptions",
+    title: "Subscriptions",
+    href: "/dashboard/subscriptions",
+    status: "live",
+    summary: "Temple, office, and factory contracts with recurring booking generation and priest pre-blocking."
   },
   {
     key: "payouts",

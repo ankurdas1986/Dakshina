@@ -33,6 +33,7 @@ export type PriestRecord = {
   verificationStatus: PriestVerificationStatus;
   submittedAt: string;
   phone: string;
+  pendingPayout: number;
   documents: string[];
   documentRecords: PriestDocumentRecord[];
   notes: string;
@@ -72,6 +73,7 @@ const fallbackPriests: PriestStore = {
       verificationStatus: "unverified",
       submittedAt: "2026-04-01",
       phone: "+91 90070 10001",
+      pendingPayout: 2500,
       documents: ["govt_id", "address_proof", "profile_photo"],
       documentRecords: [
         { id: "doc_001", type: "aadhaar", side: "front", status: "pending" },
@@ -98,6 +100,7 @@ const fallbackPriests: PriestStore = {
       verificationStatus: "review",
       submittedAt: "2026-03-31",
       phone: "+91 90070 10002",
+      pendingPayout: 8500,
       documents: ["govt_id", "address_proof", "profile_photo", "service_specialization"],
       documentRecords: [
         { id: "doc_004", type: "voter_id", side: "front", status: "review" },
@@ -124,6 +127,7 @@ const fallbackPriests: PriestStore = {
       verificationStatus: "verified",
       submittedAt: "2026-03-29",
       phone: "+91 90070 10003",
+      pendingPayout: 0,
       documents: ["govt_id", "address_proof", "profile_photo", "service_specialization", "home_pin"],
       documentRecords: [
         { id: "doc_007", type: "aadhaar", side: "front", status: "approved" },
@@ -149,6 +153,7 @@ function normalizePriest(priest: Partial<PriestRecord>, fallback: PriestRecord):
     ...fallback,
     ...priest,
     email: priest.email ?? fallback.email ?? `${fallback.id}@dakshina.local`,
+    pendingPayout: priest.pendingPayout ?? fallback.pendingPayout,
     cultureTags: priest.cultureTags ?? fallback.cultureTags,
     languageTags: priest.languageTags ?? fallback.languageTags,
     availabilitySummary: priest.availabilitySummary ?? fallback.availabilitySummary,
@@ -177,6 +182,7 @@ export async function updatePriestReview(input: {
   kycStatus: PriestKycStatus;
   verificationStatus: PriestVerificationStatus;
   radiusKm: number;
+  pendingPayout: number;
   notes: string;
   mainCategoryId: string | null;
   serviceCategoryId: string | null;
@@ -197,6 +203,7 @@ export async function updatePriestReview(input: {
       kycStatus: input.kycStatus,
       verificationStatus: input.verificationStatus,
       radiusKm: input.radiusKm,
+      pendingPayout: input.pendingPayout,
       notes: input.notes,
       mainCategoryId: input.mainCategoryId,
       serviceCategoryId: input.serviceCategoryId,

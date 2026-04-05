@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
-import { savePayoutEntry } from "../../app/actions/payouts";
+import { MessageCircleMore } from "lucide-react";
+import { confirmManualPayout, savePayoutEntry } from "../../app/actions/payouts";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import type { PayoutEntry } from "../../lib/payout-store";
+import { buildWhatsAppLink } from "../../lib/utils";
 
 export function getPayoutVariant(status: string) {
   if (status === "paid") {
@@ -23,6 +25,11 @@ type PayoutDetailPanelProps = {
 };
 
 export function PayoutDetailPanel({ entry, returnTo }: PayoutDetailPanelProps) {
+  const waLink = buildWhatsAppLink(
+    "+919000000000",
+    `Dakshina Hub admin update: manual payout for ${entry.bookingCode} (${entry.ritual}) is being processed for ${entry.priest}.`
+  );
+
   return (
     <form action={savePayoutEntry} className="space-y-5">
       <input name="id" type="hidden" value={entry.id} />
@@ -38,6 +45,15 @@ export function PayoutDetailPanel({ entry, returnTo }: PayoutDetailPanelProps) {
           </p>
         </div>
         <Badge variant={getPayoutVariant(entry.status)}>{entry.status}</Badge>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <Button asChild type="button" variant="secondary">
+          <a href={waLink} rel="noreferrer" target="_blank">
+            <MessageCircleMore className="h-4 w-4 text-primary" />
+            WhatsApp payout note
+          </a>
+        </Button>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
@@ -77,6 +93,20 @@ export function PayoutDetailPanel({ entry, returnTo }: PayoutDetailPanelProps) {
           name="payoutNotes"
         />
       </label>
+
+      <div className="rounded-[20px] border border-border bg-secondary/20 p-4 text-sm text-muted-foreground">
+        <p className="font-semibold text-foreground">Confirm manual payout</p>
+        <p className="mt-2 leading-6">After you complete the UPI transfer, click confirm to mark this payout as settled and append a ledger entry for priest settlement.</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-95"
+            formAction={confirmManualPayout}
+            type="submit"
+          >
+            Confirm manual payout
+          </button>
+        </div>
+      </div>
 
       <div className="flex justify-end">
         <Button type="submit">Save payout</Button>

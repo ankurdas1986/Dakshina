@@ -17,7 +17,8 @@ type PayoutDetailPageProps = {
 };
 
 const messageMap: Record<string, string> = {
-  payout_saved: "Payout entry updated and stored for local UAT."
+  payout_saved: "Payout entry updated and stored for local UAT.",
+  payout_confirmed: "Manual payout confirmed and the settlement was written to the local ledger."
 };
 
 const errorMap: Record<string, string> = {

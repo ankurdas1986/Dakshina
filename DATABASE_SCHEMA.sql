@@ -104,6 +104,42 @@ do $$ begin
 end $$;
 
 do $$ begin
+  if not exists (select 1 from pg_type where typname = 'subscription_entity_type' and typnamespace = 'app'::regnamespace) then
+    create type app.subscription_entity_type as enum ('temple', 'office', 'factory');
+  end if;
+end $$;
+
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'subscription_frequency' and typnamespace = 'app'::regnamespace) then
+    create type app.subscription_frequency as enum ('daily', 'weekly', 'monthly');
+  end if;
+end $$;
+
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'subscription_status' and typnamespace = 'app'::regnamespace) then
+    create type app.subscription_status as enum ('draft', 'active', 'paused', 'completed', 'cancelled');
+  end if;
+end $$;
+
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'user_account_status' and typnamespace = 'app'::regnamespace) then
+    create type app.user_account_status as enum ('active', 'blocked', 'deactivated');
+  end if;
+end $$;
+
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'wallet_transaction_type' and typnamespace = 'app'::regnamespace) then
+    create type app.wallet_transaction_type as enum ('wallet_topup', 'advance_payment', 'refund_credit', 'referral_credit', 'manual_adjustment', 'priest_settlement');
+  end if;
+end $$;
+
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'wallet_transaction_status' and typnamespace = 'app'::regnamespace) then
+    create type app.wallet_transaction_status as enum ('pending', 'completed', 'failed', 'reversed');
+  end if;
+end $$;
+
+do $$ begin
   if not exists (select 1 from pg_type where typname = 'document_side' and typnamespace = 'app'::regnamespace) then
     create type app.document_side as enum ('front', 'back', 'single');
   end if;
@@ -134,6 +170,12 @@ create table if not exists app.profiles (
   updated_at timestamptz not null default now()
 );
 
+create index if not exists profiles_name_idx
+  on app.profiles (full_name);
+
+create index if not exists profiles_phone_idx
+  on app.profiles (phone);
+
 create table if not exists app.districts (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -161,6 +203,23 @@ create table if not exists app.localities (
 );
 
 create index if not exists localities_center_gix on app.localities using gist (center);
+
+create table if not exists app.user_profiles (
+  profile_id uuid primary key references app.profiles (id) on delete cascade,
+  address_line text,
+  district_id uuid references app.districts (id),
+  locality_id uuid references app.localities (id),
+  tradition_preference app.culture_type,
+  wallet_balance numeric(10,2) not null default 0,
+  account_status app.user_account_status not null default 'active',
+  admin_notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (wallet_balance >= 0)
+);
+
+create index if not exists user_profiles_governance_idx
+  on app.user_profiles (account_status, district_id, locality_id, tradition_preference);
 
 create table if not exists app.platform_settings (
   id boolean primary key default true,
@@ -322,6 +381,7 @@ create table if not exists app.priest_profiles (
   home_address_line text,
   home_location geography(point, 4326),
   travel_radius_km numeric(8,2) not null default 10,
+  pending_payout numeric(10,2) not null default 0,
   payout_details jsonb not null default '{}'::jsonb,
   kyc_status app.kyc_status not null default 'pending',
   verification_status app.verification_status not null default 'unverified',
@@ -330,6 +390,7 @@ create table if not exists app.priest_profiles (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check (travel_radius_km >= 0),
+  check (pending_payout >= 0),
   check (jsonb_typeof(payout_details) = 'object')
 );
 
@@ -452,6 +513,36 @@ create table if not exists app.panjika_entries (
 create index if not exists panjika_entries_lookup_idx
   on app.panjika_entries (culture_type, shubha_muhurta_start);
 
+create table if not exists app.subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  entity_type app.subscription_entity_type not null,
+  entity_name text not null,
+  culture_type app.culture_type not null,
+  district_id uuid references app.districts (id),
+  locality_id uuid references app.localities (id),
+  ritual_id uuid not null references app.rituals (id),
+  priest_profile_id uuid not null references app.priest_profiles (profile_id),
+  frequency app.subscription_frequency not null,
+  duration_months int not null,
+  starts_on date not null,
+  ends_on date not null,
+  next_generation_date date,
+  booking_window_days int not null default 30,
+  status app.subscription_status not null default 'draft',
+  contract_notes text,
+  metadata jsonb not null default '{}'::jsonb,
+  created_by uuid references app.profiles (id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (duration_months in (3, 6, 12)),
+  check (ends_on >= starts_on),
+  check (booking_window_days >= 1),
+  check (jsonb_typeof(metadata) = 'object')
+);
+
+create index if not exists subscriptions_lookup_idx
+  on app.subscriptions (status, entity_type, culture_type, next_generation_date);
+
 create table if not exists app.referrals (
   id uuid primary key default gen_random_uuid(),
   referrer_profile_id uuid not null references app.profiles (id),
@@ -469,6 +560,7 @@ create table if not exists app.bookings (
   user_profile_id uuid not null references app.profiles (id),
   priest_profile_id uuid not null references app.priest_profiles (profile_id),
   ritual_id uuid not null references app.rituals (id),
+  subscription_id uuid references app.subscriptions (id),
   culture_type app.culture_type not null,
   district_id uuid references app.districts (id),
   locality_id uuid references app.localities (id),
@@ -489,6 +581,8 @@ create table if not exists app.bookings (
   final_amount numeric(10,2) not null default 0,
   commission_percent numeric(5,2) not null,
   commission_policy_id uuid references app.commission_policies (id),
+  policy_snapshot jsonb not null default '{}'::jsonb,
+  pending_refund_amount numeric(10,2) not null default 0,
   contact_reveal_at timestamptz,
   contact_reveal_min_hours int not null,
   contact_reveal_max_hours int not null,
@@ -504,10 +598,12 @@ create table if not exists app.bookings (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check (scheduled_end_at >= scheduled_start_at),
+  check (jsonb_typeof(policy_snapshot) = 'object'),
   check (jsonb_typeof(fard_snapshot) = 'array'),
   check (festival_multiplier > 0),
   check (advance_payment_percent >= 0 and advance_payment_percent <= 100),
   check (contact_reveal_min_hours <= contact_reveal_max_hours),
+  check (pending_refund_amount >= 0),
   check (dakshina_amount >= 0 and samagri_add_ons >= 0 and zone_wise_travel_fee >= 0 and quoted_total_amount >= 0)
 );
 
@@ -522,6 +618,10 @@ create index if not exists bookings_priest_status_idx
 
 create index if not exists bookings_culture_status_idx
   on app.bookings (culture_type, status, scheduled_start_at desc);
+
+create index if not exists bookings_subscription_idx
+  on app.bookings (subscription_id, scheduled_start_at desc)
+  where subscription_id is not null;
 
 create index if not exists bookings_completed_idx
   on app.bookings (status, completed_at desc)
@@ -812,6 +912,52 @@ create index if not exists payout_logs_status_idx
 
 create index if not exists payout_logs_priest_status_idx
   on app.payout_logs (priest_profile_id, status, created_at desc);
+
+create table if not exists app.wallet_transactions (
+  id uuid primary key default gen_random_uuid(),
+  user_profile_id uuid references app.user_profiles (profile_id) on delete cascade,
+  priest_profile_id uuid references app.priest_profiles (profile_id) on delete cascade,
+  booking_id uuid references app.bookings (id) on delete set null,
+  payout_log_id uuid references app.payout_logs (id) on delete set null,
+  transaction_type app.wallet_transaction_type not null,
+  status app.wallet_transaction_status not null default 'pending',
+  direction text not null,
+  amount numeric(10,2) not null,
+  description text,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (direction in ('credit', 'debit')),
+  check (amount >= 0),
+  check (jsonb_typeof(metadata) = 'object')
+);
+
+create index if not exists wallet_transactions_user_idx
+  on app.wallet_transactions (user_profile_id, created_at desc);
+
+create index if not exists wallet_transactions_priest_idx
+  on app.wallet_transactions (priest_profile_id, created_at desc);
+
+create index if not exists wallet_transactions_booking_idx
+  on app.wallet_transactions (booking_id, created_at desc);
+
+create table if not exists app.in_app_notifications (
+  id uuid primary key default gen_random_uuid(),
+  recipient_profile_id uuid not null references app.profiles (id) on delete cascade,
+  recipient_role app.role_type not null,
+  title text not null,
+  body text not null,
+  href text,
+  is_read boolean not null default false,
+  channel_key text not null default 'platform_notifications',
+  payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  read_at timestamptz,
+  check (jsonb_typeof(payload) = 'object')
+);
+
+create index if not exists in_app_notifications_lookup_idx
+  on app.in_app_notifications (recipient_profile_id, is_read, created_at desc);
 
 create table if not exists app.admin_audit_logs (
   id uuid primary key default gen_random_uuid(),

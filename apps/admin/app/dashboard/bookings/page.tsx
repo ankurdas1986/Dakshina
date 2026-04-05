@@ -18,7 +18,8 @@ type BookingsPageProps = {
 };
 
 const messageMap: Record<string, string> = {
-  booking_saved: "Booking case updated and stored for local UAT."
+  booking_saved: "Booking case updated and stored for local UAT.",
+  refund_initiated: "Refund amount calculated from the booking snapshot. Complete the manual Razorpay refund and store the reference."
 };
 
 const errorMap: Record<string, string> = {
@@ -59,7 +60,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
   const filteredBookings = store.cases.filter((booking) => {
     const matchesQuery =
       !query ||
-      [booking.bookingCode, booking.ritual, booking.district, booking.assignedPriest, booking.cultureType]
+      [booking.bookingCode, booking.ritual, booking.district, booking.assignedPriest, booking.cultureType, booking.userName]
         .join(" ")
         .toLowerCase()
         .includes(query);
@@ -75,7 +76,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
     { label: "Active bookings", value: metricsSnapshot.activeBookings, icon: Clock3 },
     { label: "Advance pending", value: metricsSnapshot.paymentPending, icon: Wallet },
     { label: "Replacement cases", value: metricsSnapshot.replacementCases, icon: RefreshCcw },
-    { label: "Cultures served", value: metricsSnapshot.culturesCovered, icon: CalendarRange }
+    { label: "Refund cases", value: metricsSnapshot.refundCases, icon: CalendarRange }
   ];
 
   return (

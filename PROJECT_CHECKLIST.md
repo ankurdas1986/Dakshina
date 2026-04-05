@@ -66,8 +66,19 @@ Legend:
 - `[x]` priest table with search/filter
 - `[x]` culture and language filters surfaced in the priest queue
 - `[x]` district/radius operations summary with queue drill-down
+- `[x]` pending payout visibility added to priest detail
 
-### 3.4 Rituals and Fard
+### 3.4 User Management
+
+- `[x]` module route and responsive shell page
+- `[x]` advanced search by name, phone, area, and tradition preference
+- `[x]` user list index and dedicated detail route
+- `[x]` editable profile details
+- `[x]` booking history visibility
+- `[x]` wallet transaction history visibility
+- `[x]` block, deactivate, and reactivate account controls
+
+### 3.5 Rituals and Fard
 
 - `[x]` module route and responsive shell page
 - `[x]` hierarchical ritual category CRUD
@@ -78,7 +89,7 @@ Legend:
 - `[x]` JSON-based Fard editor
 - `[x]` Fard snapshot preview rules
 
-### 3.5 Booking Operations
+### 3.6 Booking Operations
 
 - `[x]` module route and responsive shell page
 - `[x]` booking list with status filters
@@ -89,15 +100,26 @@ Legend:
 - `[x]` contact reveal timing enforcement UI
 - `[x]` OTP completion oversight
 - `[x]` booking-side Fard snapshot preview
+- `[x]` booking policy snapshot visibility
+- `[x]` refund intelligence and manual refund initiation flow
+- `[x]` booking-level WhatsApp deep-link triggers
 
-### 3.6 Payout Management
+### 3.7 Subscriptions
+
+- `[x]` module route and responsive shell page
+- `[x]` institutional contract queue with search/filter
+- `[x]` subscription detail route with generated-booking visibility
+- `[x]` recurring frequency and duration management
+
+### 3.8 Payout Management
 
 - `[x]` module route and responsive shell page
 - `[x]` payout queue with search/filter
 - `[x]` payout detail route with manual settlement workspace
 - `[x]` UPI payout details and mark-as-paid controls
+- `[x]` confirm manual payout action with wallet-ledger append
 
-### 3.7 Trust and Referral
+### 3.9 Trust and Referral
 
 - `[x]` module route and responsive shell page
 - `[x]` review moderation UI
@@ -108,8 +130,10 @@ Legend:
 ### 3.8 Super Admin Completion Status
 
 - `[x]` super-admin module surface is complete across settings, priests, rituals, bookings, payouts, and trust
+- `[x]` additive governance update covers users, subscriptions, refunds, wallet ledger, and dual-notification triggers
 - `[x]` responsive list/detail workflow is implemented for the high-density operational modules
 - `[x]` admin notification inbox covers new priest and user registration visibility
+- `[x]` admin notification inbox now covers refund, subscription, and wallet events
 - `[ ]` Supabase persistence replacement for local JSON admin stores
 - `[ ]` global cross-module search results experience beyond per-module filtering
 - `[ ]` middleware/Supabase Edge runtime warning cleanup

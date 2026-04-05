@@ -50,6 +50,36 @@ The marketplace now revolves around these data axes:
 
 Every admin, priest, and user workflow should read from those same contracts.
 
+## Incremental Update: Governance and Money Movement
+
+The next additive implementation block extends the existing super-admin without disturbing multicultural rollout or booking governance.
+
+### New backend contracts
+
+- booking-level `policy_snapshot` and `pending_refund_amount`
+- institutional `subscriptions`
+- `user_profiles` governance layer for user lifecycle control
+- wallet and credit ledger
+- payout confirmation workflow
+- Realtime-ready in-app notification model plus `wa.me` deep links
+
+### New admin responsibilities
+
+- refund initiation and manual Razorpay processing guidance
+- long-term contract visibility and generated booking oversight
+- full user lifecycle control
+- wallet and payout settlement monitoring
+- manual notification triggers through WhatsApp deep links
+
+### Execution order for this increment
+
+1. Update PRD, plan, and schema
+2. Extend booking and payout data contracts
+3. Add `User Management` module with list/detail flow
+4. Add `Subscriptions` module with generated-booking visibility
+5. Add wallet ledger visibility across users, bookings, and payouts
+6. Re-run UAT on admin
+
 ## Marketplace Hierarchy Model
 
 The catalog must support this shape:

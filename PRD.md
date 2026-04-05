@@ -76,6 +76,62 @@ These remain out of scope unless explicitly pulled forward:
 - multilingual marketing content automation,
 - temple ERP / trust accounting.
 
+## Incremental Update: Refunds, Subscriptions, User Governance, Wallet, and Notifications
+
+This update is additive. It does not replace the existing multicultural hierarchy, booking governance, delayed contact reveal logic, or priest availability model.
+
+### A. Policy Snapshotting and Refund Intelligence
+
+- Every booking must persist a `policy_snapshot` JSON contract at the moment the booking is confirmed.
+- The snapshot must include the refund policy that was active when the booking was accepted.
+- Refund calculations must use the booking snapshot, not the latest platform policy.
+- Admin must be able to trigger a manual refund workflow from booking operations with clear Razorpay-manual instructions and a visible `pending_refund_amount`.
+
+### B. Institutional Subscription Contracts
+
+- Dakshina must support recurring institutional contracts for:
+  - temples
+  - offices
+  - factories
+- Contracts must support:
+  - daily
+  - weekly
+  - monthly
+  recurrence.
+- Contract durations must support:
+  - 3 months
+  - 6 months
+  - 12 months
+- Subscription generation must create booking records ahead of time so priest calendars are pre-blocked and dispatch remains operationally visible in admin.
+
+### C. Full User Governance in Super Admin
+
+- Super Admin must have a dedicated `User Management` module.
+- Admin must be able to:
+  - view and edit user profile details,
+  - inspect booking history,
+  - inspect wallet / transaction history,
+  - block, deactivate, or reactivate accounts,
+  - filter by name, phone, area, location, and tradition preference.
+- User governance must be treated as first-class admin capability, not a secondary reporting view.
+
+### D. Internal Wallet and Credit Ledger
+
+- Users must support internal wallet balance tracking for wallet-assisted advance payments.
+- Priests must support `pending_payout` tracking while payout remains manual.
+- All wallet and credit movement must be journaled in `wallet_transactions`.
+- Admin must be able to confirm manual priest payout after UPI transfer.
+
+### E. Dual Notification Model
+
+- In-app notifications should be designed around Supabase Realtime channels for production.
+- During development, the same event model should remain visible through the admin inbox.
+- WhatsApp communication should use `wa.me` deep links with prefilled templates for:
+  - admin
+  - user
+  - priest
+- These links are operational triggers, not automated message delivery.
+
 ## 6. User Types
 
 ### 6.1 Super Admin

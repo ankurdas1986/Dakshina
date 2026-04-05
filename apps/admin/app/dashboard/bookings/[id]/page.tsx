@@ -17,7 +17,8 @@ type BookingDetailPageProps = {
 };
 
 const messageMap: Record<string, string> = {
-  booking_saved: "Booking case updated and stored for local UAT."
+  booking_saved: "Booking case updated and stored for local UAT.",
+  refund_initiated: "Refund amount calculated from the booking snapshot. Complete the manual Razorpay refund and store the reference."
 };
 
 const errorMap: Record<string, string> = {

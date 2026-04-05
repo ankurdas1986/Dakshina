@@ -1,0 +1,36 @@
+{
+  "transactions": [
+    {
+      "id": "wallet_001",
+      "userId": "user_001",
+      "bookingId": "booking_001",
+      "type": "advance_payment",
+      "status": "completed",
+      "direction": "debit",
+      "amount": 550,
+      "description": "20% advance paid from internal wallet for Satyanarayan Puja.",
+      "createdAt": "2026-04-03 09:12"
+    },
+    {
+      "id": "wallet_002",
+      "userId": "user_002",
+      "type": "referral_credit",
+      "status": "completed",
+      "direction": "credit",
+      "amount": 150,
+      "description": "Referral reward released after completed ritual verification.",
+      "createdAt": "2026-04-02 18:00"
+    },
+    {
+      "id": "wallet_003",
+      "priestId": "priest_003",
+      "payoutId": "payout_003",
+      "type": "priest_settlement",
+      "status": "completed",
+      "direction": "credit",
+      "amount": 2100,
+      "description": "Manual UPI payout confirmed by admin for Lakshmi Puja.",
+      "createdAt": "2026-03-30 10:15"
+    }
+  ]
+}

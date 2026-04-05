@@ -7,6 +7,8 @@ export type PayoutStatus = "pending" | "scheduled" | "paid" | "failed";
 
 export type PayoutEntry = {
   id: string;
+  bookingId: string;
+  priestId: string;
   bookingCode: string;
   ritual: string;
   priest: string;
@@ -34,6 +36,8 @@ const fallbackStore: PayoutStore = {
   entries: [
     {
       id: "payout_001",
+      bookingId: "booking_001",
+      priestId: "priest_001",
       bookingCode: "DK-1042",
       ritual: "Satyanarayan Puja",
       priest: "Pandit Arindam Bhattacharya",
@@ -52,6 +56,8 @@ const fallbackStore: PayoutStore = {
     },
     {
       id: "payout_002",
+      bookingId: "booking_002",
+      priestId: "priest_002",
       bookingCode: "DK-1038",
       ritual: "Wedding Ritual",
       priest: "Pandit Subhajit Chakraborty",
@@ -70,6 +76,8 @@ const fallbackStore: PayoutStore = {
     },
     {
       id: "payout_003",
+      bookingId: "booking_003",
+      priestId: "priest_003",
       bookingCode: "DK-1027",
       ritual: "Lakshmi Puja",
       priest: "Pandit Debasish Goswami",
@@ -101,7 +109,17 @@ async function writeStore(store: PayoutStore) {
 export async function getPayoutStore() {
   try {
     const raw = await readFile(payoutFilePath, "utf8");
-    return JSON.parse(raw) as PayoutStore;
+    const parsed = JSON.parse(raw) as PayoutStore;
+    return {
+      entries: parsed.entries.map((entry, index) => ({
+        ...fallbackStore.entries[index % fallbackStore.entries.length],
+        ...entry,
+        payoutDetails: {
+          ...fallbackStore.entries[index % fallbackStore.entries.length].payoutDetails,
+          ...entry.payoutDetails
+        }
+      }))
+    };
   } catch {
     await writeStore(fallbackStore);
     return fallbackStore;

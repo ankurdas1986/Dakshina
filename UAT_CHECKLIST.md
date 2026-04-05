@@ -67,10 +67,24 @@ Legend:
 - `[x]` Contact reveal timing follows configured window
 - `[x]` OTP completion oversight is visible and editable in the booking workspace
 - `[x]` Booking detail page shows the locked Fard snapshot
+- `[x]` Booking detail page shows policy snapshot and pending refund amount
+- `[x]` Manual refund initiation action works and keeps refund decisions tied to the booking snapshot
+- `[x]` WhatsApp deep-link actions render in booking detail
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
 - `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
+
+## Module 4A: User Management
+
+- `[x]` User queue supports advanced search by name, phone, area, and tradition preference
+- `[x]` User queue supports list-first review with dedicated detail page
+- `[x]` User detail page edits profile data and account status
+- `[x]` User detail page shows booking history and wallet transaction logs
+- `[x]` Typecheck passes in a runtime-enabled shell
+- `[x]` Lint passes in a runtime-enabled shell
+- `[x]` Production build passes in a runtime-enabled shell
+- `[x]` Protected-route smoke checks pass in a runtime-enabled shell
 
 ## Module 5: Trust and Referral
 
@@ -88,10 +102,22 @@ Legend:
 - `[x]` Payout queue supports search and status filtering
 - `[x]` Payout detail page shows UPI details and settlement state
 - `[x]` Manual payout status and reference are editable
+- `[x]` Manual payout confirmation appends a wallet-ledger entry
+- `[x]` WhatsApp deep-link action renders in payout detail
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
 - `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
+
+## Module 6A: Subscriptions
+
+- `[x]` Subscription queue supports search and status filtering
+- `[x]` Subscription detail page edits entity, frequency, duration, and generated booking codes
+- `[x]` Generated booking visibility is present in the contract detail page
+- `[x]` Typecheck passes in a runtime-enabled shell
+- `[x]` Lint passes in a runtime-enabled shell
+- `[x]` Production build passes in a runtime-enabled shell
+- `[x]` Protected-route smoke checks pass in a runtime-enabled shell
 
 ## Remaining Non-Admin Work
 
@@ -112,8 +138,9 @@ Legend:
 - `[x]` PRD reflects multicultural hyper-local marketplace logic
 - `[x]` Project plan reflects culture-aware hierarchy, pricing, governance, and availability
 - `[x]` SQL schema includes culture tags, language tags, Panjika imports, pricing split, slot blocking, verified reviews, and payout logs
+- `[x]` SQL schema includes booking policy snapshots, subscriptions, wallet ledger, and in-app notification tables
 - `[x]` SQL schema includes hierarchical and PostGIS-supporting indexes for search and booking integrity
-- `[~]` Admin data stores and key workflows are being aligned to the multicultural contract
+- `[x]` Admin data stores and key workflows are aligned to the incremental refund, subscription, user-control, wallet, and notification contract
 
 
 

@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import { MessageCircleMore } from "lucide-react";
-import { saveBookingCase } from "../../app/actions/bookings";
+import { initiateBookingRefund, saveBookingCase } from "../../app/actions/bookings";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import type { BookingCase } from "../../lib/booking-store";
+import { buildWhatsAppLink } from "../../lib/utils";
 
 const checkboxClassName =
   "mt-1 h-4 w-4 accent-[hsl(var(--primary))] rounded border-border focus:ring-primary";
@@ -36,6 +37,15 @@ type BookingDetailPanelProps = {
 };
 
 export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetailPanelProps) {
+  const userWaLink = buildWhatsAppLink(
+    booking.userPhone,
+    `Namaskar ${booking.userName}, your ${booking.bookingCode} booking for ${booking.ritual} is under admin review at Dakshina Hub.`
+  );
+  const priestWaLink = buildWhatsAppLink(
+    "+919000000000",
+    `Namaskar, admin update for booking ${booking.bookingCode} regarding ${booking.ritual}. Please review your assignment instructions in Dakshina Hub.`
+  );
+
   return (
     <form action={saveBookingCase} className="space-y-5">
       <input name="id" type="hidden" value={booking.id} />
@@ -47,8 +57,24 @@ export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetai
           <p className="mt-1 text-sm text-muted-foreground">
             {booking.cultureType.replace("_", " ")} | {booking.district} | Event date {booking.eventDate} | {booking.scheduledWindow}
           </p>
+          <p className="mt-1 text-sm text-muted-foreground">User: {booking.userName} | {booking.userPhone}</p>
         </div>
         <Badge variant={getBookingStatusVariant(booking.status, booking.replacementRequired)}>{booking.status}</Badge>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <Button asChild type="button" variant="secondary">
+          <a href={userWaLink} rel="noreferrer" target="_blank">
+            <MessageCircleMore className="h-4 w-4 text-primary" />
+            WhatsApp user
+          </a>
+        </Button>
+        <Button asChild type="button" variant="secondary">
+          <a href={priestWaLink} rel="noreferrer" target="_blank">
+            <MessageCircleMore className="h-4 w-4 text-primary" />
+            WhatsApp priest
+          </a>
+        </Button>
       </div>
 
       <Field label="Assigned priest">
@@ -136,6 +162,44 @@ export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetai
           <Field label="Issued at"><Input defaultValue={booking.completionOtpIssuedAt} name="completionOtpIssuedAt" /></Field>
           <Field label="Verified at"><Input defaultValue={booking.completionOtpVerifiedAt} name="completionOtpVerifiedAt" /></Field>
           <div className="md:col-span-2"><TextAreaField defaultValue={booking.completionOtpLastEvent} label="OTP event note" name="completionOtpLastEvent" /></div>
+        </div>
+      </div>
+
+      <div className="rounded-[24px] border border-border bg-secondary/25 p-4">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Policy snapshot and refund intelligence</p>
+            <p className="text-sm leading-6 text-muted-foreground">Refund decisions stay locked to the booking snapshot captured at confirmation time.</p>
+          </div>
+          <Badge variant={booking.pendingRefundAmount > 0 ? "secondary" : "outline"}>{booking.refundState}</Badge>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-[20px] border border-border bg-white p-4">
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Captured policy</p>
+            <p className="mt-2 text-sm text-foreground">Advance {booking.policySnapshot.advancePaymentPercent}%</p>
+            <p className="mt-1 text-sm text-muted-foreground">72h+ refund: {booking.policySnapshot.refundRules.moreThan72HoursPercent}%</p>
+            <p className="mt-1 text-sm text-muted-foreground">24-72h refund: {booking.policySnapshot.refundRules.between24And72HoursPercent}%</p>
+            <p className="mt-1 text-sm text-muted-foreground">&lt;24h refund: {booking.policySnapshot.refundRules.lessThan24HoursPercent}%</p>
+          </div>
+          <div className="rounded-[20px] border border-border bg-white p-4">
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Pending refund</p>
+            <p className="mt-2 text-2xl font-extrabold tracking-tight text-foreground">Rs {booking.pendingRefundAmount}</p>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              {booking.refundReason || "No refund has been initiated yet."}
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-95"
+                formAction={initiateBookingRefund}
+                type="submit"
+              >
+                Initiate refund
+              </button>
+            </div>
+            <p className="mt-3 text-xs leading-5 text-muted-foreground">
+              Manual Razorpay mode: calculate from snapshot, process the refund in Razorpay, then store the reference in admin notes or payment logs.
+            </p>
+          </div>
         </div>
       </div>
 
