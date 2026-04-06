@@ -5,6 +5,7 @@ import { KycDocumentGallery } from "./kyc-document-gallery";
 import { PriestServiceSelector } from "../priest-service-selector";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import { FieldHint } from "../ui/field-hint";
 import { Input } from "../ui/input";
 import type { PriestRecord } from "../../lib/priest-store";
 import { buildCategoryLabel, type RitualStore } from "../../lib/ritual-store";
@@ -205,7 +206,7 @@ type SelectFieldProps = {
 function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" defaultValue={defaultValue} name={name}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>
@@ -223,7 +224,7 @@ type FieldProps = {
 function Field({ label, children }: FieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       {children}
     </label>
   );

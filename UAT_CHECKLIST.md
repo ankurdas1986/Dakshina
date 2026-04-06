@@ -78,6 +78,7 @@ Legend:
 - `[x]` Production build passes in a runtime-enabled shell
 - `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
 - `[x]` Queue and detail pages have a responsive mobile-first fallback without fake horizontal layout breakage
+- `[x]` Field-level info hints are present on complex admin forms and do not break responsive layouts
 
 ## Module 4A: User Management
 

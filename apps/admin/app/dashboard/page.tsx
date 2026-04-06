@@ -10,6 +10,7 @@ import { SectionNav } from "../../components/section-nav";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { FieldHint } from "../../components/ui/field-hint";
 import { Input } from "../../components/ui/input";
 import { getAdminShellData } from "../../lib/admin-shell-data";
 import { moduleStatus } from "../../lib/admin-data";
@@ -379,7 +380,7 @@ type FieldProps = {
 function Field({ label, name, defaultValue }: FieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       <Input defaultValue={defaultValue} name={name} required />
     </label>
   );
@@ -394,7 +395,7 @@ type NumberFieldProps = {
 function NumberField({ label, name, defaultValue }: NumberFieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       <Input defaultValue={defaultValue} min={0} name={name} required type="number" />
     </label>
   );
@@ -410,7 +411,7 @@ type SelectFieldProps = {
 function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" defaultValue={defaultValue} name={name}>
         {options.map((option) => (
           <option key={option.value} value={option.value}>{option.label}</option>
@@ -429,7 +430,7 @@ type TextAreaFieldProps = {
 function TextAreaField({ label, name, defaultValue }: TextAreaFieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       <textarea className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20" defaultValue={defaultValue} name={name} />
     </label>
   );

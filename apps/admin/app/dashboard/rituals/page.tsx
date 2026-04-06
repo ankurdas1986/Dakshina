@@ -6,6 +6,7 @@ import { SectionNav } from "../../../components/section-nav";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { FieldHint } from "../../../components/ui/field-hint";
 import { Input } from "../../../components/ui/input";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
@@ -290,7 +291,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
             </div>
           </CardHeader>
           <CardContent>
-            <form action={createCategory} className="grid gap-3 sm:grid-cols-2">
+              <form action={createCategory} className="grid gap-3 md:grid-cols-2">
               <Field label="Category name"><Input name="name" placeholder="Example: Marriage" required /></Field>
               <Field label="Slug"><Input name="slug" placeholder="marriage" /></Field>
               <SelectField label="Culture" name="cultureType" defaultValue={cultureFilter === "all" ? "Bengali" : cultureFilter} options={cultureOptions.filter((option) => option.value !== "all")} />
@@ -344,7 +345,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
               </div>
             </CardHeader>
             <CardContent>
-              <form action={createRitual} className="grid gap-3 sm:grid-cols-2">
+              <form action={createRitual} className="grid gap-3 md:grid-cols-2">
                 <Field label="Ritual name"><Input name="name" placeholder="Example: Annaprashan" required /></Field>
                 <SelectField label="Culture" name="cultureType" defaultValue={cultureFilter === "all" ? "Bengali" : cultureFilter} options={cultureOptions.filter((option) => option.value !== "all")} />
                 <SelectField label="Leaf category" name="categoryId" defaultValue={leafCategoryOptions[0]?.value ?? ""} options={leafCategoryOptions} />
@@ -426,7 +427,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                 </div>
                 <Badge variant={ritual.status === "active" ? "success" : "secondary"}>{ritual.status}</Badge>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-2">
                 <Field label="Ritual name"><Input defaultValue={ritual.name} name="name" required /></Field>
                 <SelectField label="Culture" name="cultureType" defaultValue={ritual.cultureType} options={cultureOptions.filter((option) => option.value !== "all")} />
                 <SelectField label="Leaf category" name="categoryId" defaultValue={ritual.categoryId} options={leafCategoryOptions} />
@@ -435,13 +436,13 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                 <SelectField label="Pricing mode" name="pricingMode" defaultValue={ritual.pricingMode} options={[{ value: "admin-guided", label: "admin-guided" }, { value: "hybrid", label: "hybrid" }, { value: "contract", label: "contract" }]} />
                 <Field label="Duration (minutes)"><Input defaultValue={ritual.durationMinutes} min={30} name="durationMinutes" type="number" /></Field>
                 <Field label="Homepage rank"><Input defaultValue={ritual.homepageRank ?? 1} min={1} name="homepageRank" type="number" /></Field>
-                <div className="sm:col-span-2 xl:col-span-4"><Field label="Demand label"><Input defaultValue={ritual.demandLabel} name="demandLabel" /></Field></div>
+                <div className="md:col-span-2 xl:col-span-2"><Field label="Demand label"><Input defaultValue={ritual.demandLabel} name="demandLabel" /></Field></div>
                 <Field label="Dakshina amount"><Input defaultValue={ritual.pricing.dakshinaAmount} min={0} name="dakshinaAmount" type="number" /></Field>
                 <Field label="Samagri add-ons"><Input defaultValue={ritual.pricing.samagriAddOns} min={0} name="samagriAddOns" type="number" /></Field>
                 <Field label="Zone-wise travel fee"><Input defaultValue={ritual.pricing.zoneWiseTravelFee} min={0} name="zoneWiseTravelFee" type="number" /></Field>
                 <Field label="Peak multiplier"><Input defaultValue={ritual.pricing.peakMultiplier} min={1} name="peakMultiplier" step="0.01" type="number" /></Field>
-                <div className="sm:col-span-2 xl:col-span-4"><TextAreaField label="Fard JSON" name="fardTemplate" defaultValue={JSON.stringify(ritual.fardTemplate, null, 2)} /></div>
-                <div className="flex justify-end sm:col-span-2 xl:col-span-4"><Button type="submit" variant="secondary">Save ritual</Button></div>
+                <div className="md:col-span-2 xl:col-span-2"><TextAreaField label="Fard JSON" name="fardTemplate" defaultValue={JSON.stringify(ritual.fardTemplate, null, 2)} /></div>
+                <div className="flex justify-end md:col-span-2 xl:col-span-2"><Button type="submit" variant="secondary">Save ritual</Button></div>
               </div>
             </form>
           ))}
@@ -479,7 +480,7 @@ function CategoryBranch({ categoryId, store }: CategoryBranchProps) {
             <Badge variant={children.length > 0 ? "outline" : "secondary"}>{children.length > 0 ? `${children.length} sub-categories` : "leaf category"}</Badge>
           </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-2">
           <Field label="Category name"><Input defaultValue={category.name} name="name" required /></Field>
           <Field label="Slug"><Input defaultValue={category.slug} name="slug" /></Field>
           <SelectField label="Culture" name="cultureType" defaultValue={category.cultureType} options={cultureOptions.filter((option) => option.value !== "all")} />
@@ -487,13 +488,13 @@ function CategoryBranch({ categoryId, store }: CategoryBranchProps) {
           <SelectField label="Parent category" name="parentId" defaultValue={category.parentId ?? ""} options={[{ value: "", label: "No parent (root category)" }, ...store.categories.filter((item) => item.id !== category.id).map((item) => ({ value: item.id, label: `${formatCulture(item.cultureType)}: ${buildCategoryLabel(item.id, store.categories)}` }))]} />
           <SelectField label="Tier" name="tierId" defaultValue={category.tierId} options={store.tiers.map((tierItem) => ({ value: tierItem.id, label: `${tierItem.name}: ${tierItem.title}` }))} />
           <Field label="Display order"><Input defaultValue={category.displayOrder} min={1} name="displayOrder" type="number" /></Field>
-          <div className="sm:col-span-2 xl:col-span-4"><TextAreaField label="Description" name="description" defaultValue={category.description} /></div>
+          <div className="md:col-span-2 xl:col-span-2"><TextAreaField label="Description" name="description" defaultValue={category.description} /></div>
           {linkedRituals.length > 0 ? (
-            <div className="rounded-[20px] border border-dashed border-border bg-primary/5 px-4 py-3 text-sm text-muted-foreground sm:col-span-2 xl:col-span-4">
+            <div className="rounded-[20px] border border-dashed border-border bg-primary/5 px-4 py-3 text-sm text-muted-foreground md:col-span-2 xl:col-span-2">
               Linked rituals: {linkedRituals.map((ritual) => `${ritual.name} (${formatCulture(ritual.cultureType)})`).join(", ")}
             </div>
           ) : null}
-          <div className="flex justify-end sm:col-span-2 xl:col-span-4"><Button type="submit" variant="secondary">Save category</Button></div>
+          <div className="flex justify-end md:col-span-2 xl:col-span-2"><Button type="submit" variant="secondary">Save category</Button></div>
         </div>
       </form>
       {children.length > 0 ? (
@@ -515,7 +516,7 @@ type FieldProps = {
 function Field({ label, children }: FieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       {children}
     </label>
   );
@@ -530,7 +531,7 @@ type TextAreaFieldProps = {
 function TextAreaField({ label, name, defaultValue }: TextAreaFieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       <textarea
         className="min-h-28 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
         defaultValue={defaultValue}
@@ -550,7 +551,7 @@ type SelectFieldProps = {
 function SelectField({ label, name, defaultValue, options }: SelectFieldProps) {
   return (
     <label className="grid gap-2 text-sm font-semibold text-foreground">
-      <span>{label}</span>
+      <span className="flex items-start justify-between gap-2"><span className="min-w-0">{label}</span><FieldHint label={label} className="shrink-0" /></span>
       <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" defaultValue={defaultValue} name={name}>
         {options.map((option) => (
           <option key={option.value || "__empty"} value={option.value}>{option.label}</option>
