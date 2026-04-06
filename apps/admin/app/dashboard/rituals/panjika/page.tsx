@@ -2,6 +2,7 @@ import { savePanjikaResearch, deletePanjikaResearch } from "../../../actions/rit
 import { CalendarSearch } from "lucide-react";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
+import { ConfirmSubmitButton } from "../../../../components/ui/confirm-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
 import { Input } from "../../../../components/ui/input";
@@ -83,13 +84,13 @@ export default async function RitualPanjikaPage() {
                   <Input defaultValue={entry.sampleRituals.join(", ")} name="sampleRituals" />
                 </RitualField>
                 <FormActions>
-                  <button
-                    className="inline-flex h-10 items-center justify-center rounded-xl border border-destructive/30 px-4 text-sm font-semibold text-destructive transition hover:bg-destructive/5"
+                  <ConfirmSubmitButton
+                    confirmLabel="Delete source"
+                    description="This removes the Panjika source, admin instruction, and seed ritual mapping for this tradition from the research workspace."
                     formAction={deletePanjikaResearch}
-                    type="submit"
-                  >
-                    Delete source
-                  </button>
+                    label="Delete source"
+                    title="Delete this Panjika source?"
+                  />
                   <Button type="submit">Save source</Button>
                 </FormActions>
               </div>

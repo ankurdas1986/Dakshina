@@ -1,6 +1,7 @@
 import { createRitual, deleteRitual, saveRitual } from "../../../actions/rituals";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
+import { ConfirmSubmitButton } from "../../../../components/ui/confirm-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
 import { Input } from "../../../../components/ui/input";
@@ -96,7 +97,13 @@ export default async function RitualLibraryPage() {
                 <RitualField label="Peak multiplier"><Input defaultValue={ritual.pricing.peakMultiplier} min={1} name="peakMultiplier" step="0.01" type="number" /></RitualField>
                 <div className="md:col-span-2 xl:col-span-2"><RitualTextAreaField label="Fard JSON" name="fardTemplate" defaultValue={JSON.stringify(ritual.fardTemplate, null, 2)} /></div>
                 <FormActions className="md:col-span-2 xl:col-span-2">
-                  <button className="inline-flex h-10 items-center justify-center rounded-xl border border-destructive/30 px-4 text-sm font-semibold text-destructive transition hover:bg-destructive/5" formAction={deleteRitual} type="submit">Delete ritual</button>
+                  <ConfirmSubmitButton
+                    confirmLabel="Delete ritual"
+                    description="This will permanently remove the ritual template and its editable pricing and Fard definition from the library."
+                    formAction={deleteRitual}
+                    label="Delete ritual"
+                    title="Delete this ritual?"
+                  />
                   <Button type="submit">Save ritual</Button>
                 </FormActions>
               </div>

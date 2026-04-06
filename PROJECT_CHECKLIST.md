@@ -49,6 +49,8 @@ Legend:
 - `[x]` field-level info hints added across complex admin forms for operator guidance
 - `[x]` overloaded settings and rituals modules split into dedicated route-based workspaces to reduce mixed-page density
 - `[x]` sidebar now exposes the dense module workspaces as nested navigation under the main module links
+- `[x]` destructive CRUD actions now require an explicit confirmation dialog
+- `[x]` default browser scrollbar styling replaced with a consistent app-level scrollbar theme
 
 ### 3.2 Global Settings
 

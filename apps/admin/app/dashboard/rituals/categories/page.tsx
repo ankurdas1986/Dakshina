@@ -1,6 +1,7 @@
 import { createCategory, deleteCategory, saveCategory } from "../../../actions/rituals";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
+import { ConfirmSubmitButton } from "../../../../components/ui/confirm-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
 import { Input } from "../../../../components/ui/input";
@@ -153,9 +154,13 @@ function CategoryBranch({ categoryId, store }: { categoryId: string; store: Ritu
             </div>
           ) : null}
           <FormActions className="md:col-span-2 xl:col-span-2">
-            <button className="inline-flex h-10 items-center justify-center rounded-xl border border-destructive/30 px-4 text-sm font-semibold text-destructive transition hover:bg-destructive/5" formAction={deleteCategory} type="submit">
-              Delete category
-            </button>
+            <ConfirmSubmitButton
+              confirmLabel="Delete category"
+              description="This will permanently remove the category node. Deletion is blocked when rituals or child categories still depend on it."
+              formAction={deleteCategory}
+              label="Delete category"
+              title="Delete this category?"
+            />
             <Button type="submit">Save category</Button>
           </FormActions>
         </div>

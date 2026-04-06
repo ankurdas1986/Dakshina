@@ -1,6 +1,7 @@
 import { createFardRule, deleteFardRule, saveFardRule } from "../../../actions/rituals";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
+import { ConfirmSubmitButton } from "../../../../components/ui/confirm-submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
 import { RitualTextAreaField } from "../../../../components/rituals/fields";
@@ -44,13 +45,13 @@ export default async function RitualFardPage() {
                 <input name="index" type="hidden" value={index} />
                 <RitualTextAreaField label={`Rule ${index + 1}`} name="rule" defaultValue={rule} />
                 <FormActions>
-                  <button
-                    className="inline-flex h-10 items-center justify-center rounded-xl border border-destructive/30 px-4 text-sm font-semibold text-destructive transition hover:bg-destructive/5"
+                  <ConfirmSubmitButton
+                    confirmLabel="Delete rule"
+                    description="This removes the rule from the Fard operating policy list. Existing booking snapshots remain unchanged."
                     formAction={deleteFardRule}
-                    type="submit"
-                  >
-                    Delete rule
-                  </button>
+                    label="Delete rule"
+                    title="Delete this Fard rule?"
+                  />
                   <Button type="submit">Save rule</Button>
                 </FormActions>
               </form>
