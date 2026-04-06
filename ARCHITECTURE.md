@@ -76,3 +76,20 @@ Current route pattern:
 - `/dashboard/bookings/[id]` -> booking case workspace
 
 This is the default pattern to extend into future admin modules such as payouts and trust operations.
+
+Large singleton modules are now being split into route-based workspaces as well:
+
+- `/dashboard` -> Global Settings overview
+- `/dashboard/settings/culture` -> culture rollout workspace
+- `/dashboard/settings/commercial` -> commercial rules workspace
+- `/dashboard/settings/governance` -> governance workspace
+- `/dashboard/settings/districts` -> district overrides workspace
+- `/dashboard/settings/notifications` -> notification workspace
+- `/dashboard/rituals` -> Rituals and Fard overview
+- `/dashboard/rituals/categories` -> category tree workspace
+- `/dashboard/rituals/library` -> ritual template library
+- `/dashboard/rituals/create` -> creation workspace
+- `/dashboard/rituals/panjika` -> Panjika research workspace
+- `/dashboard/rituals/fard` -> Fard rules and snapshot workspace
+
+This keeps create, edit, research, and policy surfaces separate so operators do not have to manage one very long mixed page.

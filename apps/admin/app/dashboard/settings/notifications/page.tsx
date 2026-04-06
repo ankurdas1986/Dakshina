@@ -1,0 +1,55 @@
+import { saveNotificationSettings } from "../../../actions/settings";
+import { Button } from "../../../../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { FormActions } from "../../../../components/ui/form-actions";
+import { SettingsPageShell } from "../../../../components/settings/settings-page-shell";
+import { settingsCheckboxClassName } from "../../../../lib/settings-form-data";
+import { getAdminShellData } from "../../../../lib/admin-shell-data";
+
+export const dynamic = "force-dynamic";
+
+export default async function NotificationSettingsPage() {
+  const { settings, notificationCount } = await getAdminShellData();
+
+  return (
+    <SettingsPageShell
+      activeHref="/dashboard/settings/notifications"
+      subtitle="Alert scope, inbox behavior, and digest settings are isolated here so notification tuning does not clutter the main settings page."
+      title="Notifications"
+    >
+      <Card className="rounded-[28px] border-border/80 bg-white">
+        <CardHeader>
+          <CardTitle className="text-lg">Admin inbox and digest rules</CardTitle>
+          <CardDescription>Control which operational events reach the inbox and which stay in the daily digest.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={saveNotificationSettings} className="space-y-3">
+            {[
+              ["adminInboxEnabled", "Admin inbox enabled", "Enable the top-right notification inbox icon for operators."],
+              ["registrationAlertsEnabled", "Registration alerts", "Notify admin when a new priest or user registration is submitted."],
+              ["bookingAlertsEnabled", "Booking alerts", "Notify admin for confirmations, failures, replacement risks, and timing issues."],
+              ["kycAlertsEnabled", "KYC alerts", "Notify admin when new priest documents or verification tasks require review."],
+              ["referralAlertsEnabled", "Referral alerts", "Notify admin when referral rewards become eligible for settlement."],
+              ["dailyDigestEnabled", "Daily digest", "Keep a daily summary for bookings, KYC queue, and trust operations."]
+            ].map(([name, label, detail]) => (
+              <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4" key={name}>
+                <input className={settingsCheckboxClassName} defaultChecked={Boolean(settings.notificationSettings[name as keyof typeof settings.notificationSettings])} name={name} type="checkbox" />
+                <span>
+                  <span className="block text-sm font-semibold text-foreground">{label}</span>
+                  <span className="block text-sm leading-6 text-muted-foreground">{detail}</span>
+                </span>
+              </label>
+            ))}
+            <div className="rounded-[22px] border border-border bg-secondary/20 px-4 py-3">
+              <p className="text-sm font-semibold text-foreground">Current unread notifications</p>
+              <p className="mt-1 text-sm text-muted-foreground">Current unread count: {notificationCount}.</p>
+            </div>
+            <FormActions>
+              <Button type="submit">Save notification settings</Button>
+            </FormActions>
+          </form>
+        </CardContent>
+      </Card>
+    </SettingsPageShell>
+  );
+}

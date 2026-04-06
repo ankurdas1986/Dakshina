@@ -158,3 +158,5 @@ Legend:
 
 
 
+
+- [x] route-based settings and rituals workspaces verified via build/lint and responsive layout pass

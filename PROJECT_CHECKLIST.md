@@ -47,6 +47,7 @@ Legend:
 - `[x]` misleading fake section tabs removed or converted into real section-anchor navigation
 - `[x]` responsive UX pass completed for queue pages and detail pages with mobile card fallbacks and scroll cleanup
 - `[x]` field-level info hints added across complex admin forms for operator guidance
+- `[x]` overloaded settings and rituals modules split into dedicated route-based workspaces to reduce mixed-page density
 
 ### 3.2 Global Settings
 

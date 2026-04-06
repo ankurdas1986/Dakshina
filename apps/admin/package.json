@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "pnpm exec tsc --noEmit"
   },
   "dependencies": {
     "@dakshina/config": "workspace:*",
