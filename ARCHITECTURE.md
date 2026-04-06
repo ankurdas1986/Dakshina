@@ -1,5 +1,21 @@
 # Dakshina Monorepo Baseline
 
+## Deployment Architecture
+
+- Use separate Vercel projects for each app surface:
+  - `dakshina-web` -> `apps/web`
+  - `dakshina-admin` -> `apps/admin`
+  - `dakshina-priest` -> `apps/priest`
+- Use one shared Supabase project for the full Dakshina platform:
+  - shared auth
+  - shared database
+  - shared storage
+  - shared realtime/notifications
+- Do not split Supabase by app. Admin, priest, and user-facing apps must operate on the same marketplace records.
+- If environment separation is needed later, split Supabase by lifecycle, not by app:
+  - `dakshina-dev`
+  - `dakshina-production`
+
 ## Current Scaffold
 
 This repository is scaffolded as an admin-first Turborepo workspace with these top-level areas:
@@ -17,6 +33,10 @@ This repository is scaffolded as an admin-first Turborepo workspace with these t
 - Supabase Email OTP or Magic Link auth is the only MVP authentication direction reflected in the scaffold.
 - MVP admin persistence still uses local JSON stores for rapid iteration before Supabase-backed data flows are wired.
 - The new priest app currently shares the same local data plane as admin for registration visibility before full Supabase persistence is wired.
+- Current planning assumption:
+  - build product surfaces first with local persistence
+  - migrate persistence to Supabase before real production launch
+  - keep store/action boundaries clean so the migration does not force UI rewrites
 
 ## Current Auth Baseline
 

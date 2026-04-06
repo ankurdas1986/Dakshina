@@ -6,6 +6,7 @@ import {
   saveTrustControl
 } from "../../actions/trust";
 import { AdminShell } from "../../../components/admin-shell";
+import { SectionNav } from "../../../components/section-nav";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
@@ -87,12 +88,14 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
       title="Trust and Referral"
       userEmail={user.email}
       subnav={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Review moderation</Badge>
-          <Badge variant="outline">Referral ledger</Badge>
-          <Badge variant="outline">Completion gate</Badge>
-          <Badge variant="outline">Trust score</Badge>
-        </div>
+        <SectionNav
+          items={[
+            { href: "#trust-controls", label: "Completion gate", primary: true },
+            { href: "#trust-score", label: "Trust score" },
+            { href: "#referral-ledger", label: "Referral ledger" },
+            { href: "#review-moderation", label: "Review moderation" }
+          ]}
+        />
       }
     >
       {bannerMessage ? (
@@ -132,12 +135,12 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
       </form>
 
       <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
-        <Card className="rounded-[28px] border-border/80 bg-white">
+        <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="trust-controls">
           <CardHeader>
             <CardTitle className="text-lg">Trust controls</CardTitle>
             <CardDescription>Completion gates, review policy, and quality operations remain admin-managed.</CardDescription>
           </CardHeader>
-          <CardContent className="surface-scroll max-h-[720px] space-y-4 overflow-y-auto pr-2">
+          <CardContent className="space-y-4">
             {filteredControls.map((control) => (
               <form action={saveTrustControl} className="rounded-[24px] border border-border bg-white p-4" key={control.id}>
                 <input name="id" type="hidden" value={control.id} />
@@ -165,12 +168,12 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
         </Card>
 
         <div className="space-y-5">
-          <Card className="rounded-[28px] border-border/80 bg-white">
+          <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="trust-score">
             <CardHeader>
               <CardTitle className="text-lg">Trust score operations</CardTitle>
               <CardDescription>Admin can tune the visible score using rating, punctuality, completion quality, verification, and a controlled adjustment.</CardDescription>
             </CardHeader>
-            <CardContent className="surface-scroll max-h-[420px] space-y-4 overflow-y-auto pr-2">
+            <CardContent className="space-y-4">
               {filteredScorecards.map((entry) => (
                 <form action={saveTrustScoreEntry} className="rounded-[24px] border border-border bg-white p-4" key={entry.id}>
                   <input name="id" type="hidden" value={entry.id} />
@@ -207,12 +210,12 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[28px] border-border/80 bg-white">
+          <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="referral-ledger">
             <CardHeader>
               <CardTitle className="text-lg">Referral ledger</CardTitle>
               <CardDescription>Reward release remains auditable and depends on completion state.</CardDescription>
             </CardHeader>
-            <CardContent className="surface-scroll max-h-[420px] space-y-4 overflow-y-auto pr-2">
+            <CardContent className="space-y-4">
               {filteredReferrals.map((entry) => (
                 <form action={saveReferralEntry} className="rounded-[24px] border border-border bg-white p-4" key={entry.id}>
                   <input name="id" type="hidden" value={entry.id} />
@@ -253,12 +256,12 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[28px] border-border/80 bg-white">
+          <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="review-moderation">
             <CardHeader>
               <CardTitle className="text-lg">Review moderation</CardTitle>
               <CardDescription>Reviews should only stay visible after valid completed bookings.</CardDescription>
             </CardHeader>
-            <CardContent className="surface-scroll max-h-[420px] space-y-4 overflow-y-auto pr-2">
+            <CardContent className="space-y-4">
               {filteredReviews.map((review) => (
                 <form action={saveReviewEntry} className="rounded-[24px] border border-border bg-white p-4" key={review.id}>
                   <input name="id" type="hidden" value={review.id} />

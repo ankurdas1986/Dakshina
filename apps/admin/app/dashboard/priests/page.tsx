@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BadgeCheck, FileCheck2, Globe2, Languages, Search, Users } from "lucide-react";
 import { AdminShell } from "../../../components/admin-shell";
+import { SectionNav } from "../../../components/section-nav";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
@@ -107,12 +108,12 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
       title="Priest Management"
       userEmail={user.email}
       subnav={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Queue view</Badge>
-          <Badge variant="outline">Culture filters</Badge>
-          <Badge variant="outline">KYC review</Badge>
-          <Badge variant="outline">Language mapping</Badge>
-        </div>
+        <SectionNav
+          items={[
+            { href: "#coverage-summary", label: "Coverage summary", primary: true },
+            { href: "#priest-queue", label: "Priest queue" }
+          ]}
+        />
       }
     >
       {bannerMessage ? (
@@ -140,7 +141,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
         })}
       </div>
 
-      <Card className="rounded-[28px] border-border/80 bg-white">
+      <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="coverage-summary">
         <CardHeader>
           <CardTitle className="text-lg">District and radius coverage</CardTitle>
           <CardDescription>Use this summary to identify where verified priest coverage is thin before opening individual records.</CardDescription>
@@ -162,7 +163,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
         </CardContent>
       </Card>
 
-      <Card className="rounded-[28px] border-border/80 bg-white">
+      <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="priest-queue">
         <CardHeader className="space-y-4">
           <div>
             <CardTitle className="text-lg">Priest operations queue</CardTitle>
@@ -200,7 +201,35 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
             <Button className="h-11 rounded-lg" type="submit">Apply</Button>
           </form>
         </CardHeader>
-        <CardContent className="surface-scroll overflow-x-auto overflow-y-auto p-0 xl:max-h-[860px]">
+        <CardContent className="p-0">
+          <div className="space-y-3 p-4 xl:hidden">
+            {filteredPriests.length ? filteredPriests.map((priest) => (
+              <Link
+                className="block rounded-[24px] border border-border bg-white p-4 transition-colors hover:bg-secondary/35"
+                href={`/dashboard/priests/${priest.id}`}
+                key={priest.id}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-foreground">{priest.name}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{priest.locality}, {priest.district}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant={getPriestStatusVariant(priest.kycStatus)}>{priest.kycStatus}</Badge>
+                    <Badge variant={getPriestStatusVariant(priest.verificationStatus)}>{priest.verificationStatus}</Badge>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-2 text-sm">
+                  <p className="text-foreground">{priest.serviceCategoryId ? buildCategoryLabel(priest.serviceCategoryId, ritualStore.categories) : "Not assigned"}</p>
+                  <p className="text-muted-foreground">{priest.cultureTags.join(", ")} | {priest.languageTags.join(", ")}</p>
+                  <p className="text-muted-foreground">Radius {priest.radiusKm} km | {priest.ritualIds.length} rituals</p>
+                </div>
+              </Link>
+            )) : (
+              <div className="rounded-[24px] border border-border bg-white px-4 py-10 text-center text-sm text-muted-foreground">No priests match the current filters.</div>
+            )}
+          </div>
+          <div className="hidden overflow-x-auto xl:block">
           <div className="min-w-[1180px]">
             <div className="grid grid-cols-[1.3fr_1.15fr_1fr_0.85fr_0.95fr_0.75fr_0.75fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>Priest</span>
@@ -248,6 +277,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
             )) : (
               <div className="px-5 py-10 text-center text-sm text-muted-foreground">No priests match the current filters.</div>
             )}
+          </div>
           </div>
         </CardContent>
       </Card>

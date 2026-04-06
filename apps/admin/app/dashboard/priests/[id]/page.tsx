@@ -125,7 +125,7 @@ export default async function PriestDetailPage({ params, searchParams }: PriestD
             <CardTitle className="text-lg">Detail workspace</CardTitle>
             <CardDescription>All operational edits for this priest live here.</CardDescription>
           </CardHeader>
-          <CardContent className="surface-scroll overflow-y-auto pr-2 xl:max-h-[980px]">
+          <CardContent className="min-w-0">
             <PriestDetailPanel priest={priest} returnTo={`/dashboard/priests/${priest.id}`} ritualStore={ritualStore} />
           </CardContent>
         </Card>

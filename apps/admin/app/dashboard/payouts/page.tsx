@@ -71,13 +71,6 @@ export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
       subtitle="Manual-first payout console for completed rituals. Admin reviews payout-ready bookings, verifies UPI details, and marks settlements after transfer."
       title="Payout Management"
       userEmail={user.email}
-      subnav={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Manual UPI payouts</Badge>
-          <Badge variant="outline">Completed rituals</Badge>
-          <Badge variant="outline">Settlement status</Badge>
-        </div>
-      }
     >
       {bannerMessage ? (
         <div className="rounded-[24px] border border-success/20 bg-success/10 px-4 py-3 text-sm font-medium text-success">
@@ -130,7 +123,32 @@ export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
             <Button className="h-11 rounded-[22px]" type="submit">Apply</Button>
           </form>
         </CardHeader>
-        <CardContent className="surface-scroll overflow-x-auto overflow-y-auto p-0 xl:max-h-[860px]">
+        <CardContent className="p-0">
+          <div className="space-y-3 p-4 xl:hidden">
+            {filteredEntries.length ? filteredEntries.map((entry) => (
+              <Link
+                className="block rounded-[24px] border border-border bg-white p-4 transition-colors hover:bg-secondary/35"
+                href={`/dashboard/payouts/${entry.id}`}
+                key={entry.id}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-foreground">{entry.bookingCode} - {entry.ritual}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{entry.priest} | {entry.district}</p>
+                  </div>
+                  <Badge variant={getPayoutVariant(entry.status)}>{entry.status}</Badge>
+                </div>
+                <div className="mt-3 space-y-2 text-sm">
+                  <p className="text-foreground">Rs {entry.payoutAmount}</p>
+                  <p className="text-muted-foreground">{entry.payoutDetails.upiId}</p>
+                  <p className="text-muted-foreground">Scheduled {entry.payoutScheduledFor}</p>
+                </div>
+              </Link>
+            )) : (
+              <div className="rounded-[24px] border border-border bg-white px-4 py-10 text-center text-sm text-muted-foreground">No payouts match the current filters.</div>
+            )}
+          </div>
+          <div className="hidden overflow-x-auto xl:block">
           <div className="min-w-[940px]">
             <div className="grid grid-cols-[1.15fr_1.1fr_0.8fr_0.8fr_0.8fr_0.8fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>Booking</span>
@@ -164,6 +182,7 @@ export default async function PayoutsPage({ searchParams }: PayoutsPageProps) {
             )) : (
               <div className="px-5 py-10 text-center text-sm text-muted-foreground">No payouts match the current filters.</div>
             )}
+          </div>
           </div>
         </CardContent>
       </Card>

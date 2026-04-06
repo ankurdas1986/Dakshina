@@ -19,6 +19,7 @@ Legend:
 - `[x]` Admin inbox shows new priest and user registration alerts
 - `[x]` Settings audit log records admin changes
 - `[x]` Changes persist in `apps/admin/data/global-settings.json`
+- `[x]` Section chips now work as real anchor navigation instead of fake tabs
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
@@ -36,6 +37,7 @@ Legend:
 - `[x]` Search and filter workflow added
 - `[x]` Culture and language queue refinements are validated in a runtime-enabled shell
 - `[x]` District coverage cards drill back into the filtered queue
+- `[x]` Queue-page sub-navigation is limited to real anchors only
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
@@ -50,6 +52,7 @@ Legend:
 - `[x]` Ritual CRUD works
 - `[x]` Hierarchical category tree CRUD works
 - `[x]` Culture-aware category tree, demand ranking, and Panjika research UI are validated in a runtime-enabled shell
+- `[x]` Section chips now jump to top-demand, Panjika, category-tree, and ritual-library sections
 - `[x]` Fard JSON editor validates correctly
 - `[x]` Booking Fard snapshot rules hold after ritual edits
 - `[x]` Booking Fard snapshot rules are visible in the admin UI
@@ -74,6 +77,7 @@ Legend:
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
 - `[x]` Sticky shell/header and protected-route smoke checks pass in a runtime-enabled shell
+- `[x]` Queue and detail pages have a responsive mobile-first fallback without fake horizontal layout breakage
 
 ## Module 4A: User Management
 
@@ -92,6 +96,7 @@ Legend:
 - `[x]` Referral reward release occurs only after completion
 - `[x]` Trust data reflects booking outcomes correctly
 - `[x]` Trust score operations panel updates visible score inputs
+- `[x]` Trust section chips now jump to real sections instead of acting as fake tabs
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell

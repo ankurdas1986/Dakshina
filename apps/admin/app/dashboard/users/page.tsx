@@ -72,14 +72,6 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
       subtitle="Full user governance console. Search, inspect booking and transaction history, and change account lifecycle state from a clean list-first workflow."
       title="User Management"
       userEmail={user.email}
-      subnav={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">God-mode controls</Badge>
-          <Badge variant="outline">Advanced search</Badge>
-          <Badge variant="outline">Wallet ledger</Badge>
-          <Badge variant="outline">Booking history</Badge>
-        </div>
-      }
     >
       {bannerMessage ? (
         <div className="rounded-[24px] border border-success/20 bg-success/10 px-4 py-3 text-sm font-medium text-success">{bannerMessage}</div>
@@ -138,7 +130,32 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
             <Button className="h-11 rounded-lg" type="submit">Apply</Button>
           </form>
         </CardHeader>
-        <CardContent className="surface-scroll overflow-x-auto overflow-y-auto p-0 xl:max-h-[860px]">
+        <CardContent className="p-0">
+          <div className="space-y-3 p-4 xl:hidden">
+            {filteredUsers.length ? filteredUsers.map((entry) => (
+              <Link
+                className="block rounded-[24px] border border-border bg-white p-4 transition-colors hover:bg-secondary/35"
+                href={`/dashboard/users/${entry.id}` as Route}
+                key={entry.id}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-foreground">{entry.fullName}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{entry.phone}</p>
+                  </div>
+                  <Badge variant={getUserStatusVariant(entry.accountStatus)}>{entry.accountStatus}</Badge>
+                </div>
+                <div className="mt-3 space-y-2 text-sm">
+                  <p className="text-foreground">{entry.locality}, {entry.district}</p>
+                  <p className="text-muted-foreground">{entry.traditionPreference.replace("_", " ")}</p>
+                  <p className="text-muted-foreground">Wallet Rs {entry.walletBalance}</p>
+                </div>
+              </Link>
+            )) : (
+              <div className="rounded-[24px] border border-border bg-white px-4 py-10 text-center text-sm text-muted-foreground">No users match the current filters.</div>
+            )}
+          </div>
+          <div className="hidden overflow-x-auto xl:block">
           <div className="min-w-[1120px]">
             <div className="grid grid-cols-[1.2fr_1.05fr_0.95fr_0.8fr_0.75fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>User</span>
@@ -166,6 +183,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
             )) : (
               <div className="px-5 py-10 text-center text-sm text-muted-foreground">No users match the current filters.</div>
             )}
+          </div>
           </div>
         </CardContent>
       </Card>

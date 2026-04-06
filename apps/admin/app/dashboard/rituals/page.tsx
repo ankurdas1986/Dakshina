@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { CalendarSearch, FileJson2, FolderTree, Globe2, Layers3, PlusCircle, ScrollText } from "lucide-react";
 import { createCategory, createRitual, saveCategory, saveRitual, saveTier } from "../../actions/rituals";
 import { AdminShell } from "../../../components/admin-shell";
+import { SectionNav } from "../../../components/section-nav";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
@@ -143,12 +144,14 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
       title="Rituals and Fard"
       userEmail={user.email}
       subnav={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Bengali-first</Badge>
-          <Badge variant="outline">Culture tree</Badge>
-          <Badge variant="outline">Panjika sources</Badge>
-          <Badge variant="outline">Pricing splits</Badge>
-        </div>
+        <SectionNav
+          items={[
+            { href: "#top-demand", label: "Bengali-first", primary: true },
+            { href: "#category-tree", label: "Culture tree" },
+            { href: "#panjika-sources", label: "Panjika sources" },
+            { href: "#ritual-library", label: "Pricing splits" }
+          ]}
+        />
       }
     >
       {bannerMessage ? (
@@ -193,7 +196,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
-        <Card className="rounded-[28px] border-border/80 bg-white">
+        <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="top-demand">
           <CardHeader>
             <CardTitle className="text-lg">Top demand rituals by culture</CardTitle>
             <CardDescription>Homepage ranking remains seeded Bengali-first while other traditions stay ready for phased rollout.</CardDescription>
@@ -212,7 +215,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
           </CardContent>
         </Card>
 
-        <Card className="rounded-[28px] border-border/80 bg-white">
+        <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="panjika-sources">
           <CardHeader>
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -242,7 +245,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
-        <Card className="rounded-[28px] border-border/80 bg-white">
+        <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="category-tree">
           <CardHeader>
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -405,7 +408,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
         </div>
       </div>
 
-      <Card className="rounded-[28px] border-border/80 bg-white">
+      <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="ritual-library">
         <CardHeader>
           <CardTitle className="text-lg">Ritual template library</CardTitle>
           <CardDescription>Edit culture mapping, duration, demand label, pricing split, and JSON-based Fard templates for each ritual.</CardDescription>

@@ -68,13 +68,6 @@ export default async function SubscriptionsPage({ searchParams }: SubscriptionsP
       subtitle="Institutional contract console for temple, office, and factory subscriptions. Generated bookings remain visible so priest calendars stay pre-blocked."
       title="Subscriptions"
       userEmail={user.email}
-      subnav={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Recurring contracts</Badge>
-          <Badge variant="outline">Generated bookings</Badge>
-          <Badge variant="outline">Calendar pre-blocking</Badge>
-        </div>
-      }
     >
       {bannerMessage ? (
         <div className="rounded-[24px] border border-success/20 bg-success/10 px-4 py-3 text-sm font-medium text-success">{bannerMessage}</div>
@@ -132,7 +125,32 @@ export default async function SubscriptionsPage({ searchParams }: SubscriptionsP
             <Button className="h-11 rounded-lg" type="submit">Apply</Button>
           </form>
         </CardHeader>
-        <CardContent className="surface-scroll overflow-x-auto overflow-y-auto p-0 xl:max-h-[860px]">
+        <CardContent className="p-0">
+          <div className="space-y-3 p-4 xl:hidden">
+            {filteredSubscriptions.length ? filteredSubscriptions.map((entry) => (
+              <Link
+                className="block rounded-[24px] border border-border bg-white p-4 transition-colors hover:bg-secondary/35"
+                href={`/dashboard/subscriptions/${entry.id}` as Route}
+                key={entry.id}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-foreground">{entry.entityName}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{entry.entityType} | {entry.locality}</p>
+                  </div>
+                  <Badge variant={getVariant(entry.status)}>{entry.status}</Badge>
+                </div>
+                <div className="mt-3 space-y-2 text-sm">
+                  <p className="text-foreground">{entry.ritual}</p>
+                  <p className="text-muted-foreground">{entry.priestName}</p>
+                  <p className="text-muted-foreground">{entry.frequency} | {entry.durationMonths} months</p>
+                </div>
+              </Link>
+            )) : (
+              <div className="rounded-[24px] border border-border bg-white px-4 py-10 text-center text-sm text-muted-foreground">No subscriptions match the current filters.</div>
+            )}
+          </div>
+          <div className="hidden overflow-x-auto xl:block">
           <div className="min-w-[1100px]">
             <div className="grid grid-cols-[1.2fr_1fr_0.85fr_0.8fr_0.9fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>Entity</span>
@@ -160,6 +178,7 @@ export default async function SubscriptionsPage({ searchParams }: SubscriptionsP
             )) : (
               <div className="px-5 py-10 text-center text-sm text-muted-foreground">No subscriptions match the current filters.</div>
             )}
+          </div>
           </div>
         </CardContent>
       </Card>

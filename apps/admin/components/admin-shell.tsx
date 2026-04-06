@@ -142,7 +142,7 @@ export function AdminShell({
   }, []);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-transparent p-3 md:p-4">
+    <main className="min-h-screen overflow-x-hidden bg-transparent p-2 sm:p-3 lg:p-4">
       <div className="relative">
         <button
           aria-hidden={!sidebarOpen}
@@ -156,11 +156,11 @@ export function AdminShell({
 
         <aside
           className={cn(
-            "fixed inset-y-3 left-3 z-40 w-[260px] max-w-[calc(100vw-1.5rem)] transition-transform xl:translate-x-0",
+            "fixed inset-y-2 left-2 z-40 w-[260px] max-w-[calc(100vw-1rem)] transition-transform sm:inset-y-3 sm:left-3 sm:max-w-[calc(100vw-1.5rem)] lg:inset-y-4 lg:left-4 lg:max-w-[calc(100vw-2rem)] xl:translate-x-0",
             sidebarOpen ? "translate-x-0" : "-translate-x-[110%]"
           )}
         >
-          <Card className="h-[calc(100vh-1.5rem)] rounded-[24px] border-border/80 bg-white shadow-soft xl:h-[calc(100vh-2rem)]">
+          <Card className="h-[calc(100vh-1rem)] rounded-[24px] border-border/80 bg-white shadow-soft sm:h-[calc(100vh-1.5rem)] lg:h-[calc(100vh-2rem)]">
             <CardContent className="flex h-full flex-col gap-5 overflow-hidden p-4">
               <div className="flex items-center justify-between xl:hidden">
                 <p className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground">Navigation</p>
@@ -217,9 +217,9 @@ export function AdminShell({
           </Card>
         </aside>
 
-        <section className="min-w-0 space-y-4 overflow-x-hidden pt-[76px] xl:ml-[276px]">
+        <section className="min-w-0 space-y-4 overflow-x-hidden pt-[76px] xl:ml-[280px]">
           <div className={cn(
-            "fixed left-3 right-3 top-3 z-30 rounded-[24px] border border-border bg-white shadow-soft transition-transform duration-200 md:left-4 md:right-4 md:top-4 xl:left-[288px]",
+            "fixed left-2 right-2 top-2 z-30 rounded-[24px] border border-border bg-white shadow-soft transition-transform duration-200 sm:left-3 sm:right-3 sm:top-3 lg:left-4 lg:right-4 lg:top-4 xl:left-[296px] xl:right-4",
             headerVisible ? "translate-y-0" : "-translate-y-[140%]"
           )}>
             <div className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
@@ -396,7 +396,7 @@ export function AdminShell({
                 <p className="max-w-3xl text-sm leading-6 text-muted-foreground">{subtitle}</p>
               </div>
 
-              <div className="inline-flex max-w-full items-center gap-2 rounded-xl border border-border bg-secondary/35 px-3 py-2 text-sm text-foreground">
+              <div className="inline-flex w-full max-w-full self-start items-center gap-2 rounded-xl border border-border bg-secondary/35 px-3 py-2 text-sm text-foreground sm:w-auto lg:self-auto">
                 <span className="truncate">Active module: {title}</span>
               </div>
             </div>

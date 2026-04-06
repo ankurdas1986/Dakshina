@@ -44,6 +44,8 @@ Legend:
 - `[x]` top-right notification entry added to the admin header
 - `[x]` admin inbox now includes new priest and user registration notifications
 - `[x]` sub-navigation support added for module pages that need denser workflows
+- `[x]` misleading fake section tabs removed or converted into real section-anchor navigation
+- `[x]` responsive UX pass completed for queue pages and detail pages with mobile card fallbacks and scroll cleanup
 
 ### 3.2 Global Settings
 

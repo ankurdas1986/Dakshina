@@ -129,7 +129,7 @@ export default async function BookingDetailPage({ params, searchParams }: Bookin
             <CardTitle className="text-lg">Detail workspace</CardTitle>
             <CardDescription>All operational edits for this booking case live here.</CardDescription>
           </CardHeader>
-          <CardContent className="surface-scroll overflow-y-auto pr-2 xl:max-h-[980px]">
+          <CardContent className="min-w-0">
             <BookingDetailPanel booking={booking} returnTo={`/dashboard/bookings/${booking.id}`} statuses={store.statuses} />
           </CardContent>
         </Card>

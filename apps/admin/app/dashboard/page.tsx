@@ -6,6 +6,7 @@ import {
   savePlatformSettings
 } from "../actions/settings";
 import { AdminShell } from "../../components/admin-shell";
+import { SectionNav } from "../../components/section-nav";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
@@ -90,13 +91,15 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       title="Global Settings"
       userEmail={user.email}
       subnav={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Culture rollout</Badge>
-          <Badge variant="outline">Commercial rules</Badge>
-          <Badge variant="outline">Governance</Badge>
-          <Badge variant="outline">District overrides</Badge>
-          <Badge variant="outline">Notifications</Badge>
-        </div>
+        <SectionNav
+          items={[
+            { href: "#culture-rollout", label: "Culture rollout", primary: true },
+            { href: "#commercial-rules", label: "Commercial rules" },
+            { href: "#governance", label: "Governance" },
+            { href: "#district-overrides", label: "District overrides" },
+            { href: "#notifications", label: "Notifications" }
+          ]}
+        />
       }
     >
       {bannerMessage ? (
@@ -106,7 +109,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       ) : null}
 
       <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card className="rounded-[28px] border-border/80 bg-white">
+        <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="culture-rollout">
           <CardHeader className="pb-5">
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -144,7 +147,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <CardTitle className="text-lg">Admin module map</CardTitle>
             <CardDescription>The admin remains split into focused modules with clear ownership.</CardDescription>
           </CardHeader>
-          <CardContent className="surface-scroll max-h-[420px] space-y-3 overflow-y-auto pr-2">
+          <CardContent className="surface-scroll space-y-3 pr-2 xl:max-h-none xl:overflow-visible">
             {moduleStatus.filter((module) => matchesSection([module.title, module.summary].join(" "))).map((module) => (
               <div className="rounded-[22px] border border-border bg-white p-4" key={module.key}>
                 <div className="flex items-center justify-between gap-3">
@@ -160,7 +163,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         {matchesSection("commercial settings culture booking window commission advance payment reveal window forced booking") ? (
-          <Card className="h-full rounded-[28px] border-border/80 bg-white">
+          <Card className="h-full scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="commercial-rules">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Commercial and governance settings</CardTitle>
               <CardDescription>Primary economics, Bengali-first launch preference, and booking intelligence rules.</CardDescription>
@@ -201,13 +204,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         ) : null}
 
         {matchesSection("policy controls manual kyc otp replacement reviews blocking") ? (
-          <Card className="rounded-[28px] border-border/80 bg-white">
+          <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="governance">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Policy controls</CardTitle>
               <CardDescription>Operational feature flags for verification, reviews, and booking protection.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form action={saveControlSettings} className="surface-scroll max-h-[560px] space-y-3 overflow-y-auto pr-2">
+              <form action={saveControlSettings} className="space-y-3">
                 {settings.controls.map((control, index) => (
                   <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4" key={control.label}>
                     <input className={checkboxClassName} defaultChecked={control.enabled} name={`controlEnabled-${index}`} type="checkbox" />
@@ -228,13 +231,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <div className="grid gap-5 xl:grid-cols-2">
         {matchesSection("district commission zone travel fee regional service clusters") ? (
-          <Card className="rounded-[28px] border-border/80 bg-white">
+          <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="district-overrides">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">District overrides and zone fees</CardTitle>
               <CardDescription>District-level commission, travel fee, and service-cluster overrides.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form action={saveDistrictSettings} className="surface-scroll max-h-[540px] space-y-3 overflow-y-auto pr-2">
+              <form action={saveDistrictSettings} className="space-y-3">
                 {settings.districts.map((district, index) => (
                   <div className="rounded-[22px] border border-border bg-white p-4" key={district.district}>
                     <div className="grid gap-3 sm:grid-cols-2">
@@ -262,12 +265,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         ) : null}
 
         {matchesSection("culture research panjika sources ritual samples") ? (
-          <Card className="rounded-[28px] border-border/80 bg-white">
+          <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Culture and Panjika research</CardTitle>
               <CardDescription>Bengali is the first launch priority, while other traditions stay ready in the operating model.</CardDescription>
             </CardHeader>
-            <CardContent className="surface-scroll max-h-[540px] space-y-3 overflow-y-auto pr-2">
+            <CardContent className="space-y-3">
               {settings.cultureResearch.map((culture) => (
                 <div className="rounded-[22px] border border-border bg-white p-4" key={culture.cultureType}>
                   <div className="flex items-center justify-between gap-3">
@@ -287,13 +290,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
       <div className="grid gap-5 xl:grid-cols-2">
         {matchesSection("notification settings admin inbox booking alerts kyc alerts referral alerts daily digest") ? (
-          <Card className="rounded-[28px] border-border/80 bg-white">
+          <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="notifications">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Notification settings</CardTitle>
               <CardDescription>Admin controls which operational events land in the inbox and digest.</CardDescription>
             </CardHeader>
-            <CardContent className="flex h-full flex-col">
-              <form action={saveNotificationSettings} className="flex h-full flex-col gap-3">
+            <CardContent>
+              <form action={saveNotificationSettings} className="space-y-3">
                 {[
                   ["adminInboxEnabled", "Admin inbox enabled", "Enable the top-right notification inbox icon for operators."],
                   ["registrationAlertsEnabled", "Registration alerts", "Notify admin when a new priest or user registration is submitted."],
@@ -347,7 +350,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <CardTitle className="text-lg">Settings audit log</CardTitle>
                 <CardDescription>Recent super-admin setting changes for operational traceability.</CardDescription>
               </CardHeader>
-              <CardContent className="surface-scroll max-h-[260px] space-y-3 overflow-y-auto pr-2">
+              <CardContent className="space-y-3">
                 {settings.auditLog.map((entry) => (
                   <div className="rounded-[22px] border border-border bg-white p-4" key={entry.id}>
                     <div className="flex items-center justify-between gap-3">

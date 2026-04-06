@@ -128,7 +128,7 @@ export default async function PayoutDetailPage({ params, searchParams }: PayoutD
             <CardTitle className="text-lg">Detail workspace</CardTitle>
             <CardDescription>All payout state changes for this entry live here.</CardDescription>
           </CardHeader>
-          <CardContent className="surface-scroll overflow-y-auto pr-2 xl:max-h-[980px]">
+          <CardContent className="min-w-0">
             <PayoutDetailPanel entry={entry} returnTo={`/dashboard/payouts/${entry.id}`} />
           </CardContent>
         </Card>

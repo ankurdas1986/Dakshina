@@ -120,7 +120,7 @@ export default async function UserDetailPage({ params, searchParams }: UserDetai
             <CardTitle className="text-lg">Detail workspace</CardTitle>
             <CardDescription>All profile, wallet, and status edits for this user live here.</CardDescription>
           </CardHeader>
-          <CardContent className="surface-scroll overflow-y-auto pr-2 xl:max-h-[980px]">
+          <CardContent className="min-w-0">
             <UserDetailPanel bookingHistory={bookingHistory} returnTo={`/dashboard/users/${record.id}`} transactionLogs={transactionLogs} user={record} />
           </CardContent>
         </Card>

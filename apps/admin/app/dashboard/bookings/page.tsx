@@ -88,14 +88,6 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
       subtitle="Use the booking queue to triage culture fit, pricing, governance, replacement risk, and OTP status. Open a case to handle the full workflow in a dedicated detail page."
       title="Bookings"
       userEmail={user.email}
-      subnav={
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="success">Queue view</Badge>
-          <Badge variant="outline">Governance</Badge>
-          <Badge variant="outline">WhatsApp</Badge>
-          <Badge variant="outline">OTP oversight</Badge>
-        </div>
-      }
     >
       {bannerMessage ? (
         <div className="rounded-[24px] border border-success/20 bg-success/10 px-4 py-3 text-sm font-medium text-success">
@@ -163,7 +155,44 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             <Button className="h-11 rounded-lg" type="submit">Apply</Button>
           </form>
         </CardHeader>
-        <CardContent className="surface-scroll overflow-x-auto overflow-y-auto p-0 xl:max-h-[860px]">
+        <CardContent className="p-0">
+          <div className="space-y-3 p-4 xl:hidden">
+            {filteredBookings.length ? filteredBookings.map((booking) => (
+              <Link
+                className="block rounded-[24px] border border-border bg-white p-4 transition-colors hover:bg-secondary/35"
+                href={`/dashboard/bookings/${booking.id}`}
+                key={booking.id}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-foreground">{booking.bookingCode} - {booking.ritual}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{booking.district} | {booking.eventDate}</p>
+                  </div>
+                  <Badge variant={getBookingStatusVariant(booking.status, booking.replacementRequired)}>{booking.status}</Badge>
+                </div>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-[18px] border border-border bg-secondary/20 px-3 py-2.5 text-sm">
+                    <p className="font-semibold text-foreground">{booking.cultureType.replace("_", " ")}</p>
+                    <p className="mt-1 text-muted-foreground">Rs {booking.pricing.dakshinaAmount + booking.pricing.samagriAddOns + booking.pricing.zoneWiseTravelFee}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Peak x{booking.pricing.peakMultiplier}</p>
+                  </div>
+                  <div className="rounded-[18px] border border-border bg-secondary/20 px-3 py-2.5 text-sm">
+                    <p className="font-semibold text-foreground">{booking.assignedPriest}</p>
+                    <p className="mt-1 text-muted-foreground">Advance {booking.advanceState}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">OTP {booking.completionOtpStatus}</p>
+                  </div>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  <span className="rounded-full border border-border px-2.5 py-1">Risk {booking.risk}</span>
+                  <span className="rounded-full border border-border px-2.5 py-1">Contact {booking.contactReveal}</span>
+                  <span className="rounded-full border border-border px-2.5 py-1">{booking.governance.whatsappConfirmationState}</span>
+                </div>
+              </Link>
+            )) : (
+              <div className="rounded-[24px] border border-border bg-white px-4 py-10 text-center text-sm text-muted-foreground">No bookings match the current filters.</div>
+            )}
+          </div>
+          <div className="hidden overflow-x-auto xl:block">
           <div className="min-w-[1260px]">
             <div className="grid grid-cols-[1.3fr_0.95fr_1fr_0.95fr_0.85fr_0.95fr_0.75fr_0.7fr] gap-3 border-b border-border px-5 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
               <span>Booking</span>
@@ -213,6 +242,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             )) : (
               <div className="px-5 py-10 text-center text-sm text-muted-foreground">No bookings match the current filters.</div>
             )}
+          </div>
           </div>
         </CardContent>
       </Card>
