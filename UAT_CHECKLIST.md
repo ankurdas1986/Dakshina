@@ -160,3 +160,4 @@ Legend:
 
 
 - [x] route-based settings and rituals workspaces verified via build/lint and responsive layout pass
+- [x] dense module submenu behavior verified in the sidebar for settings and rituals workspaces

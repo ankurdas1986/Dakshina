@@ -93,3 +93,9 @@ Large singleton modules are now being split into route-based workspaces as well:
 - `/dashboard/rituals/fard` -> Fard rules and snapshot workspace
 
 This keeps create, edit, research, and policy surfaces separate so operators do not have to manage one very long mixed page.
+
+The left navigation now mirrors this split for the densest modules:
+
+- `Global Settings` exposes route-level workspaces under the main nav item
+- `Rituals and Fard` exposes route-level workspaces under the main nav item
+- the page header still keeps contextual sub-navigation, but the sidebar is now the primary workspace navigator

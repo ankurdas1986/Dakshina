@@ -104,7 +104,9 @@ function CategoryBranch({ categoryId, store }: { categoryId: string; store: Ritu
           <RitualField label="Slug"><Input defaultValue={category.slug} name="slug" /></RitualField>
           <RitualSelectField label="Culture" name="cultureType" defaultValue={category.cultureType} options={cultureOptions} />
           <RitualSelectField label="Node type" name="nodeType" defaultValue={category.nodeType} options={nodeTypeOptions.map((option) => ({ value: option.value, label: option.label }))} />
-          <RitualSelectField label="Parent category" name="parentId" defaultValue={category.parentId ?? ""} options={[{ value: "", label: "No parent (root category)" }, ...store.categories.filter((item) => item.id !== category.id).map((item) => ({ value: item.id, label: `${formatCulture(item.cultureType)}: ${buildCategoryLabel(item.id, store.categories)}` }))]} />
+          <div className="md:col-span-2">
+            <RitualSelectField label="Parent category" name="parentId" defaultValue={category.parentId ?? ""} options={[{ value: "", label: "No parent (root category)" }, ...store.categories.filter((item) => item.id !== category.id).map((item) => ({ value: item.id, label: `${formatCulture(item.cultureType)}: ${buildCategoryLabel(item.id, store.categories)}` }))]} />
+          </div>
           <RitualSelectField label="Tier" name="tierId" defaultValue={category.tierId} options={store.tiers.map((tierItem) => ({ value: tierItem.id, label: `${tierItem.name}: ${tierItem.title}` }))} />
           <RitualField label="Display order"><Input defaultValue={category.displayOrder} min={1} name="displayOrder" type="number" /></RitualField>
           <div className="md:col-span-2 xl:col-span-2"><RitualTextAreaField label="Description" name="description" defaultValue={category.description} /></div>

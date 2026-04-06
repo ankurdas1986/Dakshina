@@ -4,6 +4,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   Bell,
   BookCheck,
@@ -123,6 +124,41 @@ export function AdminShell({
   const [headerVisible, setHeaderVisible] = useState(true);
   const initials = useMemo(() => getInitials(userEmail), [userEmail]);
   const currentSearch = searchConfig[active];
+  const pathname = usePathname();
+
+  const sidebarGroups = {
+    settings: [
+      { href: "/dashboard" as Route, label: "Overview" },
+      { href: "/dashboard/settings/culture" as Route, label: "Culture rollout" },
+      { href: "/dashboard/settings/commercial" as Route, label: "Commercial rules" },
+      { href: "/dashboard/settings/governance" as Route, label: "Governance" },
+      { href: "/dashboard/settings/districts" as Route, label: "District overrides" },
+      { href: "/dashboard/settings/notifications" as Route, label: "Notifications" }
+    ],
+    rituals: [
+      { href: "/dashboard/rituals" as Route, label: "Overview" },
+      { href: "/dashboard/rituals/categories" as Route, label: "Category tree" },
+      { href: "/dashboard/rituals/library" as Route, label: "Ritual library" },
+      { href: "/dashboard/rituals/create" as Route, label: "Create" },
+      { href: "/dashboard/rituals/panjika" as Route, label: "Panjika" },
+      { href: "/dashboard/rituals/fard" as Route, label: "Fard" }
+    ]
+  } as const;
+
+  const isSettingsExpanded = pathname === "/dashboard" || pathname.startsWith("/dashboard/settings");
+  const isRitualsExpanded = pathname.startsWith("/dashboard/rituals");
+
+  function isModuleActive(itemKey: AdminShellProps["active"]) {
+    if (itemKey === "settings") {
+      return isSettingsExpanded;
+    }
+
+    if (itemKey === "rituals") {
+      return isRitualsExpanded;
+    }
+
+    return pathname === `/dashboard/${itemKey}` || pathname.startsWith(`/dashboard/${itemKey}/`);
+  }
 
   useEffect(() => {
     let previousScroll = window.scrollY;
@@ -182,33 +218,60 @@ export function AdminShell({
                 <nav className="flex-1 space-y-1.5 overflow-y-auto pr-1">
                   {moduleStatus.map((item) => {
                     const Icon = iconMap[item.key];
-                    const isActive = item.key === active;
+                    const isActive = isModuleActive(item.key);
+                    const childItems = sidebarGroups[item.key as keyof typeof sidebarGroups];
+                    const isExpanded = item.key === "settings" ? isSettingsExpanded : item.key === "rituals" ? isRitualsExpanded : false;
 
                     return (
-                      <Link
-                        className={cn(
-                          "group flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors",
-                          isActive
-                            ? "border-primary/20 bg-primary/10 text-foreground"
-                            : "border-transparent text-muted-foreground hover:border-border hover:bg-secondary/45 hover:text-foreground"
-                        )}
-                        href={item.href as Route}
-                        key={item.key}
-                        onClick={() => setSidebarOpen(false)}
-                      >
-                        <span
+                      <div className="space-y-1" key={item.key}>
+                        <Link
                           className={cn(
-                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
+                            "group flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors",
                             isActive
-                              ? "bg-white text-primary"
-                              : "bg-secondary/60 text-muted-foreground group-hover:text-primary"
+                              ? "border-primary/20 bg-primary/10 text-foreground"
+                              : "border-transparent text-muted-foreground hover:border-border hover:bg-secondary/45 hover:text-foreground"
                           )}
+                          href={item.href as Route}
+                          onClick={() => setSidebarOpen(false)}
                         >
-                          <Icon className="h-4 w-4" />
-                        </span>
-                        <span className="min-w-0 flex-1 truncate font-medium">{item.title}</span>
-                        <ChevronRight className="h-4 w-4 shrink-0" />
-                      </Link>
+                          <span
+                            className={cn(
+                              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
+                              isActive
+                                ? "bg-white text-primary"
+                                : "bg-secondary/60 text-muted-foreground group-hover:text-primary"
+                            )}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </span>
+                          <span className="min-w-0 flex-1 truncate font-medium">{item.title}</span>
+                          <ChevronRight className={cn("h-4 w-4 shrink-0 transition-transform", isExpanded ? "rotate-90" : "rotate-0")} />
+                        </Link>
+                        {childItems && isExpanded ? (
+                          <div className="ml-4 space-y-1 border-l border-border/70 pl-3">
+                            {childItems.map((child) => {
+                              const isChildActive = pathname === child.href || pathname.startsWith(`${child.href}/`);
+
+                              return (
+                                <Link
+                                  className={cn(
+                                    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
+                                    isChildActive
+                                      ? "bg-primary/10 text-foreground"
+                                      : "text-muted-foreground hover:bg-secondary/45 hover:text-foreground"
+                                  )}
+                                  href={child.href}
+                                  key={child.href}
+                                  onClick={() => setSidebarOpen(false)}
+                                >
+                                  <span className={cn("h-2 w-2 rounded-full", isChildActive ? "bg-primary" : "bg-border")} />
+                                  <span className="min-w-0 flex-1 truncate">{child.label}</span>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        ) : null}
+                      </div>
                     );
                   })}
                 </nav>

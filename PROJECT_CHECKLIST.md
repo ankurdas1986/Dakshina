@@ -48,6 +48,7 @@ Legend:
 - `[x]` responsive UX pass completed for queue pages and detail pages with mobile card fallbacks and scroll cleanup
 - `[x]` field-level info hints added across complex admin forms for operator guidance
 - `[x]` overloaded settings and rituals modules split into dedicated route-based workspaces to reduce mixed-page density
+- `[x]` sidebar now exposes the dense module workspaces as nested navigation under the main module links
 
 ### 3.2 Global Settings
 

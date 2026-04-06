@@ -56,7 +56,9 @@ export default async function RitualCreatePage() {
               <RitualSelectField label="Culture" name="cultureType" defaultValue="Bengali" options={cultureOptions} />
               <RitualSelectField label="Node type" name="nodeType" defaultValue="tradition" options={nodeTypeOptions.map((option) => ({ value: option.value, label: option.label }))} />
               <RitualSelectField label="Tier" name="tierId" defaultValue={store.tiers[0]?.id ?? "tier_1"} options={store.tiers.map((tier) => ({ value: tier.id, label: `${tier.name}: ${tier.title}` }))} />
-              <RitualSelectField label="Parent category" name="parentId" defaultValue="" options={[{ value: "", label: "No parent (root category)" }, ...store.categories.map((category) => ({ value: category.id, label: `${formatCulture(category.cultureType)}: ${buildCategoryLabel(category.id, store.categories)}` }))]} />
+              <div className="md:col-span-2">
+                <RitualSelectField label="Parent category" name="parentId" defaultValue="" options={[{ value: "", label: "No parent (root category)" }, ...store.categories.map((category) => ({ value: category.id, label: `${formatCulture(category.cultureType)}: ${buildCategoryLabel(category.id, store.categories)}` }))]} />
+              </div>
               <RitualField label="Display order"><Input defaultValue={1} min={1} name="displayOrder" type="number" /></RitualField>
               <div className="md:col-span-2"><RitualTextAreaField label="Description" name="description" defaultValue="" /></div>
               <FormActions className="md:col-span-2">
@@ -80,7 +82,9 @@ export default async function RitualCreatePage() {
             <form action={createRitual} className="grid gap-3 md:grid-cols-2">
               <RitualField label="Ritual name"><Input name="name" placeholder="Example: Annaprashan" required /></RitualField>
               <RitualSelectField label="Culture" name="cultureType" defaultValue="Bengali" options={cultureOptions} />
-              <RitualSelectField label="Leaf category" name="categoryId" defaultValue={leafCategoryOptions[0]?.value ?? ""} options={leafCategoryOptions} />
+              <div className="md:col-span-2">
+                <RitualSelectField label="Leaf category" name="categoryId" defaultValue={leafCategoryOptions[0]?.value ?? ""} options={leafCategoryOptions} />
+              </div>
               <RitualSelectField label="Status" name="status" defaultValue="draft" options={[{ value: "draft", label: "draft" }, { value: "active", label: "active" }]} />
               <RitualSelectField label="Delivery" name="deliveryMode" defaultValue="ui_and_pdf" options={[{ value: "ui_and_pdf", label: "UI and PDF" }, { value: "ui_only", label: "UI only" }]} />
               <RitualSelectField label="Pricing mode" name="pricingMode" defaultValue="admin-guided" options={[{ value: "admin-guided", label: "admin-guided" }, { value: "hybrid", label: "hybrid" }, { value: "contract", label: "contract" }]} />
