@@ -1,10 +1,12 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { Building2, CalendarClock, Search, ShieldCheck, TimerReset } from "lucide-react";
+import { Building2, CalendarClock, PlusCircle, Search, ShieldCheck, TimerReset } from "lucide-react";
+import { createSubscriptionRecord } from "../../actions/subscriptions";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
@@ -17,7 +19,8 @@ type SubscriptionsPageProps = {
 };
 
 const messageMap: Record<string, string> = {
-  subscription_saved: "Subscription contract updated and stored for local UAT."
+  subscription_saved: "Subscription contract updated and stored for local UAT.",
+  subscription_created: "Subscription contract created and added to the queue."
 };
 
 function readParam(params: Record<string, string | string[] | undefined>, key: string) {
@@ -96,6 +99,55 @@ export default async function SubscriptionsPage({ searchParams }: SubscriptionsP
           );
         })}
       </div>
+
+      <Card className="rounded-[28px] border-border/80 bg-white">
+        <CardHeader>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg">Create subscription contract</CardTitle>
+              <CardDescription>Create recurring temple, office, or factory coverage and prepare pre-blocked booking generation.</CardDescription>
+            </div>
+            <PlusCircle className="h-5 w-5 text-primary" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <form action={createSubscriptionRecord} className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+            <Input className="h-11 rounded-lg" name="entityName" placeholder="Entity name" required />
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue="temple" name="entityType">
+              <option value="temple">temple</option>
+              <option value="office">office</option>
+              <option value="factory">factory</option>
+            </select>
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue="Bengali" name="cultureType">
+              <option value="Bengali">Bengali</option>
+              <option value="North_Indian">North Indian</option>
+              <option value="Marwadi">Marwadi</option>
+              <option value="Odia">Odia</option>
+              <option value="Gujarati">Gujarati</option>
+            </select>
+            <Input className="h-11 rounded-lg" name="district" placeholder="District" required />
+            <Input className="h-11 rounded-lg" name="locality" placeholder="Locality" required />
+            <Input className="h-11 rounded-lg" name="ritual" placeholder="Ritual / contract type" required />
+            <Input className="h-11 rounded-lg" name="priestName" placeholder="Priest name" />
+            <Input className="h-11 rounded-lg" name="priestId" placeholder="Priest id" />
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue="monthly" name="frequency">
+              <option value="daily">daily</option>
+              <option value="weekly">weekly</option>
+              <option value="monthly">monthly</option>
+            </select>
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue="3" name="durationMonths">
+              <option value="3">3 months</option>
+              <option value="6">6 months</option>
+              <option value="12">12 months</option>
+            </select>
+            <Input className="h-11 rounded-lg" name="startsOn" type="date" />
+            <textarea className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground xl:col-span-3" name="notes" placeholder="Contract note" />
+            <FormActions className="lg:col-span-2 xl:col-span-3">
+              <Button type="submit">Create subscription</Button>
+            </FormActions>
+          </form>
+        </CardContent>
+      </Card>
 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader className="space-y-4">

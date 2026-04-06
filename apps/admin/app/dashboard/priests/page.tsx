@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { BadgeCheck, FileCheck2, Globe2, Languages, Search, Users } from "lucide-react";
+import { BadgeCheck, FileCheck2, Globe2, Languages, PlusCircle, Search, Users } from "lucide-react";
+import { createPriestRecord } from "../../actions/priests";
 import { AdminShell } from "../../../components/admin-shell";
 import { SectionNav } from "../../../components/section-nav";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
 import { getPriestStatusVariant } from "../../../components/priests/priest-detail-panel";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
@@ -20,7 +22,8 @@ type PriestsPageProps = {
 };
 
 const messageMap: Record<string, string> = {
-  priest_review_saved: "Priest review updated and stored for local UAT."
+  priest_review_saved: "Priest review updated and stored for local UAT.",
+  priest_created: "Priest record created and added to the review queue."
 };
 
 const cultureOptions: Array<{ value: string; label: string }> = [
@@ -160,6 +163,38 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
               <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-primary">Open district queue</p>
             </Link>
           ))}
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-[28px] border-border/80 bg-white">
+        <CardHeader>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg">Create priest record</CardTitle>
+              <CardDescription>Manual priest onboarding for assisted KYC intake, invite-style operations, or urgent launch-side coverage.</CardDescription>
+            </div>
+            <PlusCircle className="h-5 w-5 text-primary" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <form action={createPriestRecord} className="grid gap-3 lg:grid-cols-2">
+            <Input className="h-11 rounded-lg" name="name" placeholder="Priest name" required />
+            <Input className="h-11 rounded-lg" name="email" placeholder="Email" required />
+            <Input className="h-11 rounded-lg" name="phone" placeholder="Phone" required />
+            <Input className="h-11 rounded-lg" min={0} name="radiusKm" placeholder="Travel radius (km)" type="number" />
+            <Input className="h-11 rounded-lg" name="district" placeholder="District" required />
+            <Input className="h-11 rounded-lg" name="locality" placeholder="Locality" required />
+            <Input className="h-11 rounded-lg" name="cultureTags" placeholder="Cultures: Bengali, Odia" />
+            <Input className="h-11 rounded-lg" name="languageTags" placeholder="Languages: Bengali, Sanskrit" />
+            <Input className="h-11 rounded-lg" name="mainCategoryId" placeholder="Main category id (optional)" />
+            <Input className="h-11 rounded-lg" name="serviceCategoryId" placeholder="Service category id (optional)" />
+            <Input className="h-11 rounded-lg lg:col-span-2" name="ritualIds" placeholder="Ritual ids, comma separated" />
+            <textarea className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground lg:col-span-2" name="availabilitySummary" placeholder="Availability summary" />
+            <textarea className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground lg:col-span-2" name="notes" placeholder="Admin note" />
+            <FormActions className="lg:col-span-2">
+              <Button type="submit">Create priest</Button>
+            </FormActions>
+          </form>
         </CardContent>
       </Card>
 

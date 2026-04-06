@@ -268,6 +268,16 @@ export async function addCategory(input: Omit<RitualCategory, "id">) {
   return next;
 }
 
+export async function removeCategory(id: string) {
+  const current = await getRitualStore();
+  const next: RitualStore = {
+    ...current,
+    categories: current.categories.filter((category) => category.id !== id)
+  };
+  await writeStore(next);
+  return next;
+}
+
 export async function updateRitual(input: RitualRecord) {
   const current = await getRitualStore();
   const next: RitualStore = { ...current, rituals: current.rituals.map((ritual) => (ritual.id === input.id ? input : ritual)) };
@@ -279,6 +289,16 @@ export async function addRitual(input: Omit<RitualRecord, "id">) {
   const current = await getRitualStore();
   const nextId = `ritual_${String(current.rituals.length + 1).padStart(3, "0")}`;
   const next: RitualStore = { ...current, rituals: [...current.rituals, { id: nextId, ...input }] };
+  await writeStore(next);
+  return next;
+}
+
+export async function removeRitual(id: string) {
+  const current = await getRitualStore();
+  const next: RitualStore = {
+    ...current,
+    rituals: current.rituals.filter((ritual) => ritual.id !== id)
+  };
   await writeStore(next);
   return next;
 }

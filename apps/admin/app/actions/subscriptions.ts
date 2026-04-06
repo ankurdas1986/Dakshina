@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { appendAdminNotification } from "../../lib/notification-store";
 import {
+  addSubscriptionRecord,
   type SubscriptionEntityType,
   type SubscriptionFrequency,
   type SubscriptionStatus,
@@ -77,4 +78,47 @@ export async function saveSubscriptionRecord(formData: FormData) {
   revalidatePath("/dashboard/subscriptions");
   revalidatePath(`/dashboard/subscriptions/${id}`);
   redirect(`${returnTo}?message=subscription_saved` as never);
+}
+
+export async function createSubscriptionRecord(formData: FormData) {
+  const entityName = normalizeText(formData.get("entityName"), "New Contract");
+  const startsOn = normalizeText(formData.get("startsOn"), new Date().toISOString().slice(0, 10));
+  const durationMonths = normalizeDuration(formData.get("durationMonths"), 3);
+  const endDate = new Date(startsOn);
+  if (!Number.isNaN(endDate.getTime())) {
+    endDate.setMonth(endDate.getMonth() + durationMonths);
+    endDate.setDate(endDate.getDate() - 1);
+  }
+
+  await addSubscriptionRecord({
+    entityType: normalizeText(formData.get("entityType"), "temple") as SubscriptionEntityType,
+    entityName,
+    cultureType: normalizeText(formData.get("cultureType"), "Bengali") as CultureType,
+    district: normalizeText(formData.get("district"), "Howrah"),
+    locality: normalizeText(formData.get("locality"), "Bally"),
+    priestId: normalizeText(formData.get("priestId"), "priest_001"),
+    priestName: normalizeText(formData.get("priestName"), "Pending assignment"),
+    ritual: normalizeText(formData.get("ritual"), "Recurring ritual"),
+    frequency: normalizeText(formData.get("frequency"), "monthly") as SubscriptionFrequency,
+    durationMonths,
+    startsOn,
+    endsOn: !Number.isNaN(endDate.getTime()) ? endDate.toISOString().slice(0, 10) : startsOn,
+    nextGenerationDate: startsOn,
+    status: "draft",
+    generatedBookingCodes: [],
+    notes: normalizeText(formData.get("notes"), "Contract manually created by super admin.")
+  });
+
+  await appendAdminNotification({
+    id: `notif_subscription_create_${Date.now()}`,
+    type: "subscription",
+    title: "Subscription created",
+    detail: `${entityName} contract was created for recurring operations.`,
+    href: "/dashboard/subscriptions",
+    createdAt: new Date().toISOString().slice(0, 16).replace("T", " "),
+    read: false
+  });
+
+  revalidatePath("/dashboard/subscriptions");
+  redirect("/dashboard/subscriptions?message=subscription_created" as never);
 }

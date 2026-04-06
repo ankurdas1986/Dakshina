@@ -6,6 +6,7 @@ import { PriestServiceSelector } from "../priest-service-selector";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { FieldHint } from "../ui/field-hint";
+import { FormActions } from "../ui/form-actions";
 import { Input } from "../ui/input";
 import type { PriestRecord } from "../../lib/priest-store";
 import { buildCategoryLabel, type RitualStore } from "../../lib/ritual-store";
@@ -119,7 +120,7 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
       </div>
 
       <label className="grid gap-2 text-sm font-semibold text-foreground">
-        <span>Travel radius (km)</span>
+        <span className="flex items-start justify-between gap-2"><span className="min-w-0">Travel radius (km)</span><FieldHint label="Travel radius (km)" className="shrink-0" /></span>
         <Input defaultValue={priest.radiusKm} min={0} name="radiusKm" type="number" />
       </label>
 
@@ -133,7 +134,7 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
       </div>
 
       <label className="grid gap-2 text-sm font-semibold text-foreground">
-        <span>Availability summary</span>
+        <span className="flex items-start justify-between gap-2"><span className="min-w-0">Availability summary</span><FieldHint label="Availability summary" className="shrink-0" /></span>
         <textarea
           className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
           defaultValue={priest.availabilitySummary}
@@ -142,7 +143,7 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
       </label>
 
       <div className="grid gap-2 text-sm font-semibold text-foreground">
-        <span>Priest service mapping</span>
+        <span className="flex items-start justify-between gap-2"><span className="min-w-0">Priest service mapping</span><FieldHint label="Priest service mapping" className="shrink-0" /></span>
         <PriestServiceSelector
           categories={ritualStore.categories.map((category) => ({ id: category.id, name: category.name, parentId: category.parentId }))}
           defaultMainCategoryId={priest.mainCategoryId}
@@ -161,7 +162,7 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
       </div>
 
       <label className="grid gap-2 text-sm font-semibold text-foreground">
-        <span>Admin notes</span>
+        <span className="flex items-start justify-between gap-2"><span className="min-w-0">Admin notes</span><FieldHint label="Admin notes" className="shrink-0" /></span>
         <textarea
           className="min-h-28 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
           defaultValue={priest.notes}
@@ -169,9 +170,9 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
         />
       </label>
 
-      <div className="flex justify-end">
+      <FormActions>
         <Button type="submit">Save priest review</Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

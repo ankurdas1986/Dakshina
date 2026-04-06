@@ -60,6 +60,7 @@ Legend:
 ### 3.3 Priest Management
 
 - `[x]` module route and responsive shell page
+- `[x]` admin-side manual priest creation flow
 - `[x]` editable KYC review workflow with local persistence
 - `[x]` verified/unverified status control and admin notes
 - `[x]` KYC document preview cards for admin review
@@ -74,6 +75,7 @@ Legend:
 ### 3.4 User Management
 
 - `[x]` module route and responsive shell page
+- `[x]` admin-side manual user creation flow
 - `[x]` advanced search by name, phone, area, and tradition preference
 - `[x]` user list index and dedicated detail route
 - `[x]` editable profile details
@@ -87,6 +89,7 @@ Legend:
 - `[x]` hierarchical ritual category CRUD
 - `[x]` culture-aware category tree grouped by tradition and Bengali-first launch priority
 - `[x]` ritual CRUD
+- `[x]` safe ritual/category delete actions with dependency protection
 - `[x]` culture-aware ritual pricing, demand ranking, and Panjika source visibility
 - `[x]` 4-tier service model management
 - `[x]` JSON-based Fard editor
@@ -95,6 +98,7 @@ Legend:
 ### 3.6 Booking Operations
 
 - `[x]` module route and responsive shell page
+- `[x]` manual / forced booking creation flow
 - `[x]` booking list with status filters
 - `[x]` booking queue shows culture, pricing split, and governance summary
 - `[x]` booking detail route with dedicated workspace
@@ -110,6 +114,7 @@ Legend:
 ### 3.7 Subscriptions
 
 - `[x]` module route and responsive shell page
+- `[x]` admin-side subscription create flow
 - `[x]` institutional contract queue with search/filter
 - `[x]` subscription detail route with generated-booking visibility
 - `[x]` recurring frequency and duration management
@@ -137,6 +142,7 @@ Legend:
 - `[x]` responsive list/detail workflow is implemented for the high-density operational modules
 - `[x]` admin notification inbox covers new priest and user registration visibility
 - `[x]` admin notification inbox now covers refund, subscription, and wallet events
+- `[x]` admin-side create/update flows now exist for users, priests, bookings, subscriptions, rituals, and categories
 - `[ ]` Supabase persistence replacement for local JSON admin stores
 - `[ ]` global cross-module search results experience beyond per-module filtering
 - `[ ]` middleware/Supabase Edge runtime warning cleanup

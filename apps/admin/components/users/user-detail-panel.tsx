@@ -9,6 +9,7 @@ import { buildWhatsAppLink } from "../../lib/utils";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { FieldHint } from "../ui/field-hint";
+import { FormActions } from "../ui/form-actions";
 import { Input } from "../ui/input";
 
 type UserDetailPanelProps = {
@@ -132,9 +133,9 @@ export function UserDetailPanel({ user, bookingHistory, transactionLogs, returnT
         <TextAreaField label="Internal note" name="notes" defaultValue={user.notes} />
       </div>
 
-      <div className="flex justify-end">
+      <FormActions>
         <Button type="submit">Save user record</Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

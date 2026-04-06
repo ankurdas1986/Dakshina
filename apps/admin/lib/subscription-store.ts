@@ -124,6 +124,16 @@ export async function updateSubscriptionRecord(input: SubscriptionRecord) {
   return next;
 }
 
+export async function addSubscriptionRecord(input: Omit<SubscriptionRecord, "id">) {
+  const current = await getSubscriptionStore();
+  const nextId = `sub_${String(current.subscriptions.length + 1).padStart(3, "0")}`;
+  const next: SubscriptionStore = {
+    subscriptions: [{ id: nextId, ...input }, ...current.subscriptions]
+  };
+  await writeStore(next);
+  return next;
+}
+
 export function getSubscriptionMetrics(store: SubscriptionStore) {
   return {
     totalContracts: store.subscriptions.length,

@@ -30,6 +30,7 @@ Legend:
 
 - `[x]` Priest listing renders from persisted data
 - `[x]` Priest queue supports list-first review with dedicated detail page
+- `[x]` Admin can create a new priest record from the queue page
 - `[x]` KYC review actions update status, verification, radius, and notes
 - `[x]` KYC document previews render with large modal view and front/back slots
 - `[x]` Cascading category selection maps priests to leaf categories and ritual checklists
@@ -51,6 +52,7 @@ Legend:
 
 - `[x]` Ritual CRUD works
 - `[x]` Hierarchical category tree CRUD works
+- `[x]` Safe delete actions exist for rituals and dependency-free categories
 - `[x]` Culture-aware category tree, demand ranking, and Panjika research UI are validated in a runtime-enabled shell
 - `[x]` Section chips now jump to top-demand, Panjika, category-tree, and ritual-library sections
 - `[x]` Fard JSON editor validates correctly
@@ -64,6 +66,7 @@ Legend:
 ## Module 4: Bookings
 
 - `[x]` Booking queue supports list-first review with dedicated detail page
+- `[x]` Admin can create a manual / forced booking from the queue page
 - `[x]` Booking queue culture, pricing, and governance summary are validated in a runtime-enabled shell
 - `[x]` Booking status changes follow allowed transitions
 - `[x]` Replacement flow is auditable
@@ -82,6 +85,7 @@ Legend:
 
 ## Module 4A: User Management
 
+- `[x]` Admin can create a new user profile from the queue page
 - `[x]` User queue supports advanced search by name, phone, area, and tradition preference
 - `[x]` User queue supports list-first review with dedicated detail page
 - `[x]` User detail page edits profile data and account status
@@ -117,6 +121,7 @@ Legend:
 
 ## Module 6A: Subscriptions
 
+- `[x]` Admin can create a new subscription contract from the queue page
 - `[x]` Subscription queue supports search and status filtering
 - `[x]` Subscription detail page edits entity, frequency, duration, and generated booking codes
 - `[x]` Generated booking visibility is present in the contract detail page
@@ -147,6 +152,7 @@ Legend:
 - `[x]` SQL schema includes booking policy snapshots, subscriptions, wallet ledger, and in-app notification tables
 - `[x]` SQL schema includes hierarchical and PostGIS-supporting indexes for search and booking integrity
 - `[x]` Admin data stores and key workflows are aligned to the incremental refund, subscription, user-control, wallet, and notification contract
+- `[x]` Primary admin form actions use consistent top spacing and orange submit-button styling
 
 
 

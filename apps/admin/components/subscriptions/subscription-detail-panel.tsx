@@ -6,6 +6,7 @@ import { buildWhatsAppLink } from "../../lib/utils";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { FieldHint } from "../ui/field-hint";
+import { FormActions } from "../ui/form-actions";
 import { Input } from "../ui/input";
 
 export function getSubscriptionVariant(status: SubscriptionRecord["status"]) {
@@ -84,18 +85,18 @@ export function SubscriptionDetailPanel({ entry, returnTo }: { entry: Subscripti
       </div>
 
       <label className="grid gap-2 text-sm font-semibold text-foreground">
-        <span>Generated booking codes</span>
+        <span className="flex items-start justify-between gap-2"><span className="min-w-0">Generated booking codes</span><FieldHint label="Generated booking codes" className="shrink-0" /></span>
         <textarea className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20" defaultValue={entry.generatedBookingCodes.join(", ")} name="generatedBookingCodes" />
       </label>
 
       <label className="grid gap-2 text-sm font-semibold text-foreground">
-        <span>Contract notes</span>
+        <span className="flex items-start justify-between gap-2"><span className="min-w-0">Contract notes</span><FieldHint label="Contract notes" className="shrink-0" /></span>
         <textarea className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20" defaultValue={entry.notes} name="notes" />
       </label>
 
-      <div className="flex justify-end">
+      <FormActions>
         <Button type="submit">Save subscription</Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

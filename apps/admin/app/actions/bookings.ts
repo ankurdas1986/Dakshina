@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
+  addBookingCase,
   type AdvanceState,
   type BookingRisk,
   type BookingStatus,
@@ -12,6 +13,7 @@ import {
   updateBookingCase
 } from "../../lib/booking-store";
 import { appendAdminNotification } from "../../lib/notification-store";
+import type { CultureType } from "../../lib/settings";
 
 function normalizeText(value: FormDataEntryValue | null, fallback = "") {
   return typeof value === "string" ? value.trim() : fallback;
@@ -136,4 +138,80 @@ export async function initiateBookingRefund(formData: FormData) {
   revalidatePath("/dashboard/bookings");
   revalidatePath(`/dashboard/bookings/${id}`);
   redirect(`${returnTo}?message=refund_initiated` as never);
+}
+
+export async function createBookingCase(formData: FormData) {
+  const current = await getBookingStore();
+  const seed = current.cases[0];
+  const eventDate = normalizeText(formData.get("eventDate"), new Date().toISOString().slice(0, 10));
+  const ritual = normalizeText(formData.get("ritual"), "Manual booking");
+  const userName = normalizeText(formData.get("userName"), "Manual user");
+  const bookingCode = normalizeText(
+    formData.get("bookingCode"),
+    `DK-${1000 + current.cases.length + 1}`
+  );
+
+  await addBookingCase({
+    bookingCode,
+    userId: normalizeText(formData.get("userId"), `manual_user_${Date.now()}`),
+    userName,
+    userPhone: normalizeText(formData.get("userPhone"), "+91 90000 00000"),
+    cultureType: normalizeText(formData.get("cultureType"), "Bengali") as CultureType,
+    ritual,
+    district: normalizeText(formData.get("district"), "Howrah"),
+    eventDate,
+    scheduledWindow: normalizeText(formData.get("scheduledWindow"), "09:00 AM - 11:00 AM"),
+    status: "draft",
+    assignedPriest: normalizeText(formData.get("assignedPriest"), "Pending assignment"),
+    advanceState: "pending" as AdvanceState,
+    contactReveal: "payment required",
+    risk: normalizeText(formData.get("risk"), "medium") as BookingRisk,
+    replacementRequired: false,
+    replacementNotes: "Manual admin booking created.",
+    completionOtpStatus: "not_issued" as CompletionOtpStatus,
+    completionOtpIssuedAt: "",
+    completionOtpVerifiedAt: "",
+    completionOtpAttempts: 0,
+    completionOtpLastEvent: "OTP blocked until advance confirmation.",
+    refundState: "not_requested",
+    pendingRefundAmount: 0,
+    refundReason: "",
+    pricing: {
+      dakshinaAmount: normalizeNumber(formData.get("dakshinaAmount"), seed.pricing.dakshinaAmount),
+      samagriAddOns: normalizeNumber(formData.get("samagriAddOns"), 0),
+      zoneWiseTravelFee: normalizeNumber(formData.get("zoneWiseTravelFee"), 0),
+      peakMultiplier: normalizeNumber(formData.get("peakMultiplier"), 1),
+      walletAdvanceApplied: 0
+    },
+    governance: {
+      minBookingGapHours: normalizeNumber(formData.get("minBookingGapHours"), seed.governance.minBookingGapHours),
+      maxBookingWindowDays: normalizeNumber(formData.get("maxBookingWindowDays"), seed.governance.maxBookingWindowDays),
+      forcedBookingOverride: formData.get("forcedBookingOverride") === "on",
+      whatsappConfirmationState: "not_sent"
+    },
+    policySnapshot: {
+      capturedAt: new Date().toISOString().slice(0, 16).replace("T", " "),
+      refundRules: { ...seed.policySnapshot.refundRules },
+      advancePaymentPercent: seed.policySnapshot.advancePaymentPercent,
+      manualRazorpayRefund: true
+    },
+    fardSnapshotLockedAt: "",
+    fardSnapshot: {
+      deliveryMode: "ui_only",
+      items: [{ label: "To be attached after ritual confirmation", quantity: "Pending" }]
+    }
+  });
+
+  await appendAdminNotification({
+    id: `notif_booking_create_${Date.now()}`,
+    type: "booking",
+    title: `Manual booking created`,
+    detail: `${bookingCode} for ${ritual} was created from the super-admin console.`,
+    href: "/dashboard/bookings",
+    createdAt: new Date().toISOString().slice(0, 16).replace("T", " "),
+    read: false
+  });
+
+  revalidatePath("/dashboard/bookings");
+  redirect("/dashboard/bookings?message=booking_created" as never);
 }

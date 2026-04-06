@@ -306,6 +306,17 @@ export async function updateBookingCase(input: BookingCase) {
   return next;
 }
 
+export async function addBookingCase(input: Omit<BookingCase, "id">) {
+  const current = await getBookingStore();
+  const nextId = `booking_${String(current.cases.length + 1).padStart(3, "0")}`;
+  const next: BookingStore = {
+    ...current,
+    cases: [{ id: nextId, ...input }, ...current.cases]
+  };
+  await writeStore(next);
+  return next;
+}
+
 export function getBookingMetrics(store: BookingStore) {
   return {
     activeBookings: store.cases.filter((item) => ["confirmed", "contact_window_locked", "contact_window_open", "in_progress"].includes(item.status)).length,

@@ -220,6 +220,17 @@ export async function updatePriestReview(input: {
   return next;
 }
 
+export async function addPriestRecord(input: Omit<PriestRecord, "id">) {
+  const current = await getPriestStore();
+  const nextId = `priest_${String(current.priests.length + 1).padStart(3, "0")}`;
+  const next: PriestStore = {
+    ...current,
+    priests: [{ id: nextId, ...input }, ...current.priests]
+  };
+  await writeStore(next);
+  return next;
+}
+
 export function getPriestMetrics(store: PriestStore) {
   const verifiedPriests = store.priests.filter((priest) => priest.verificationStatus === "verified").length;
   const pendingKyc = store.priests.filter((priest) => priest.kycStatus === "pending").length;

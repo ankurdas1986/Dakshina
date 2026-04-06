@@ -119,6 +119,16 @@ export async function updateUserRecord(input: UserRecord) {
   return next;
 }
 
+export async function addUserRecord(input: Omit<UserRecord, "id">) {
+  const current = await getUserStore();
+  const nextId = `user_${String(current.users.length + 1).padStart(3, "0")}`;
+  const next: UserStore = {
+    users: [{ id: nextId, ...input }, ...current.users]
+  };
+  await writeStore(next);
+  return next;
+}
+
 export function getUserMetrics(store: UserStore) {
   return {
     totalUsers: store.users.length,

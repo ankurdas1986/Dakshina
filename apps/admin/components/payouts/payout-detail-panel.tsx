@@ -4,6 +4,7 @@ import { confirmManualPayout, savePayoutEntry } from "../../app/actions/payouts"
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { FieldHint } from "../ui/field-hint";
+import { FormActions } from "../ui/form-actions";
 import { Input } from "../ui/input";
 import type { PayoutEntry } from "../../lib/payout-store";
 import { buildWhatsAppLink } from "../../lib/utils";
@@ -98,7 +99,7 @@ export function PayoutDetailPanel({ entry, returnTo }: PayoutDetailPanelProps) {
       <div className="rounded-[20px] border border-border bg-secondary/20 p-4 text-sm text-muted-foreground">
         <p className="font-semibold text-foreground">Confirm manual payout</p>
         <p className="mt-2 leading-6">After you complete the UPI transfer, click confirm to mark this payout as settled and append a ledger entry for priest settlement.</p>
-        <div className="mt-4 flex flex-wrap gap-2">
+        <FormActions className="justify-start pt-4">
           <button
             className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-95"
             formAction={confirmManualPayout}
@@ -106,12 +107,12 @@ export function PayoutDetailPanel({ entry, returnTo }: PayoutDetailPanelProps) {
           >
             Confirm manual payout
           </button>
-        </div>
+        </FormActions>
       </div>
 
-      <div className="flex justify-end">
+      <FormActions>
         <Button type="submit">Save payout</Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

@@ -15,6 +15,8 @@ import {
   type RitualTier,
   updateCategory,
   updateRitual,
+  removeCategory,
+  removeRitual,
   updateTier
 } from "../../lib/ritual-store";
 import type { CultureType } from "../../lib/settings";
@@ -231,4 +233,34 @@ export async function createCategory(formData: FormData) {
   });
 
   redirectSuccess("category_created");
+}
+
+export async function deleteCategory(formData: FormData) {
+  const id = normalizeText(formData.get("id"));
+
+  if (!id) {
+    redirect("/dashboard/rituals?error=missing_category_id");
+  }
+
+  const current = await getRitualStore();
+  const hasChildren = current.categories.some((item) => item.parentId === id);
+  const hasRituals = current.rituals.some((item) => item.categoryId === id);
+
+  if (hasChildren || hasRituals) {
+    redirect("/dashboard/rituals?error=category_has_dependencies");
+  }
+
+  await removeCategory(id);
+  redirectSuccess("category_deleted");
+}
+
+export async function deleteRitual(formData: FormData) {
+  const id = normalizeText(formData.get("id"));
+
+  if (!id) {
+    redirect("/dashboard/rituals?error=missing_ritual_id");
+  }
+
+  await removeRitual(id);
+  redirectSuccess("ritual_deleted");
 }

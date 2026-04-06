@@ -4,6 +4,7 @@ import { initiateBookingRefund, saveBookingCase } from "../../app/actions/bookin
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { FieldHint } from "../ui/field-hint";
+import { FormActions } from "../ui/form-actions";
 import { Input } from "../ui/input";
 import type { BookingCase } from "../../lib/booking-store";
 import { buildWhatsAppLink } from "../../lib/utils";
@@ -188,7 +189,7 @@ export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetai
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               {booking.refundReason || "No refund has been initiated yet."}
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <FormActions className="justify-start pt-4">
               <button
                 className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-95"
                 formAction={initiateBookingRefund}
@@ -196,7 +197,7 @@ export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetai
               >
                 Initiate refund
               </button>
-            </div>
+            </FormActions>
             <p className="mt-3 text-xs leading-5 text-muted-foreground">
               Manual Razorpay mode: calculate from snapshot, process the refund in Razorpay, then store the reference in admin notes or payment logs.
             </p>
@@ -235,9 +236,9 @@ export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetai
 
       <TextAreaField label="Replacement notes" defaultValue={booking.replacementNotes} name="replacementNotes" />
 
-      <div className="flex justify-end">
+      <FormActions>
         <Button type="submit">Save booking case</Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

@@ -1,10 +1,12 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { CircleUserRound, MapPinned, Search, Shield, Wallet } from "lucide-react";
+import { CircleUserRound, MapPinned, PlusCircle, Search, Shield, Wallet } from "lucide-react";
+import { createUserRecord } from "../../actions/users";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
@@ -17,7 +19,8 @@ type UsersPageProps = {
 };
 
 const messageMap: Record<string, string> = {
-  user_saved: "User profile updated and stored for local UAT."
+  user_saved: "User profile updated and stored for local UAT.",
+  user_created: "User profile created and added to the queue."
 };
 
 function readParam(params: Record<string, string | string[] | undefined>, key: string) {
@@ -100,6 +103,40 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
           );
         })}
       </div>
+
+      <Card className="rounded-[28px] border-border/80 bg-white">
+        <CardHeader>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg">Create user profile</CardTitle>
+              <CardDescription>Manual user creation for support-led onboarding, corrections, or assisted bookings.</CardDescription>
+            </div>
+            <PlusCircle className="h-5 w-5 text-primary" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <form action={createUserRecord} className="grid gap-3 lg:grid-cols-2">
+            <Input className="h-11 rounded-lg" name="fullName" placeholder="Full name" required />
+            <Input className="h-11 rounded-lg" name="email" placeholder="Email" required />
+            <Input className="h-11 rounded-lg" name="phone" placeholder="Phone" required />
+            <Input className="h-11 rounded-lg" name="walletBalance" placeholder="Wallet balance" type="number" />
+            <Input className="h-11 rounded-lg" name="district" placeholder="District" required />
+            <Input className="h-11 rounded-lg" name="locality" placeholder="Locality" required />
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue="Bengali" name="traditionPreference">
+              <option value="Bengali">Bengali</option>
+              <option value="North_Indian">North Indian</option>
+              <option value="Marwadi">Marwadi</option>
+              <option value="Odia">Odia</option>
+              <option value="Gujarati">Gujarati</option>
+            </select>
+            <Input className="h-11 rounded-lg" name="address" placeholder="Address" required />
+            <textarea className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground lg:col-span-2" name="notes" placeholder="Admin note" />
+            <FormActions className="lg:col-span-2">
+              <Button type="submit">Create user</Button>
+            </FormActions>
+          </form>
+        </CardContent>
+      </Card>
 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader className="space-y-4">

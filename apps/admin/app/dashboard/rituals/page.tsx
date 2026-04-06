@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 import { CalendarSearch, FileJson2, FolderTree, Globe2, Layers3, PlusCircle, ScrollText } from "lucide-react";
-import { createCategory, createRitual, saveCategory, saveRitual, saveTier } from "../../actions/rituals";
+import { createCategory, createRitual, deleteCategory, deleteRitual, saveCategory, saveRitual, saveTier } from "../../actions/rituals";
 import { AdminShell } from "../../../components/admin-shell";
 import { SectionNav } from "../../../components/section-nav";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { FieldHint } from "../../../components/ui/field-hint";
+import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
@@ -36,8 +37,10 @@ const messageMap: Record<string, string> = {
   tier_saved: "Service tier updated and stored for local UAT.",
   category_saved: "Category tree change saved and synced to linked rituals.",
   category_created: "New category added to the hierarchical ritual tree.",
+  category_deleted: "Category removed from the hierarchical ritual tree.",
   ritual_saved: "Ritual details saved and stored for local UAT.",
-  ritual_created: "New ritual created and stored for local UAT."
+  ritual_created: "New ritual created and stored for local UAT.",
+  ritual_deleted: "Ritual removed from the template library."
 };
 
 const errorMap: Record<string, string> = {
@@ -48,7 +51,8 @@ const errorMap: Record<string, string> = {
   invalid_category_id: "Category id is invalid.",
   invalid_parent_category: "Parent category is invalid.",
   missing_ritual_id: "Ritual id is missing.",
-  invalid_ritual_id: "Ritual id is invalid."
+  invalid_ritual_id: "Ritual id is invalid.",
+  category_has_dependencies: "This category still has child nodes or linked rituals, so it cannot be deleted yet."
 };
 
 const cultureOptions: Array<{ value: string; label: string }> = [
@@ -271,9 +275,9 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                     <SelectField label="Status" name="status" defaultValue={tier.status} options={[{ value: "active", label: "active" }, { value: "planned", label: "planned" }]} />
                     <SelectField label="Pricing mode" name="pricingMode" defaultValue={tier.pricingMode} options={[{ value: "admin-guided", label: "admin-guided" }, { value: "hybrid", label: "hybrid" }, { value: "contract", label: "contract" }]} />
                   </div>
-                  <div className="flex justify-end">
-                    <Button type="submit" variant="secondary">Save tier</Button>
-                  </div>
+                  <FormActions>
+                    <Button type="submit">Save tier</Button>
+                  </FormActions>
                 </div>
               </form>
             ))}
@@ -291,7 +295,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
             </div>
           </CardHeader>
           <CardContent>
-              <form action={createCategory} className="grid gap-3 md:grid-cols-2">
+              <form action={createCategory} className="grid gap-3 lg:grid-cols-2">
               <Field label="Category name"><Input name="name" placeholder="Example: Marriage" required /></Field>
               <Field label="Slug"><Input name="slug" placeholder="marriage" /></Field>
               <SelectField label="Culture" name="cultureType" defaultValue={cultureFilter === "all" ? "Bengali" : cultureFilter} options={cultureOptions.filter((option) => option.value !== "all")} />
@@ -300,7 +304,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
               <SelectField label="Parent category" name="parentId" defaultValue="" options={[{ value: "", label: "No parent (root category)" }, ...store.categories.map((category) => ({ value: category.id, label: `${formatCulture(category.cultureType)}: ${buildCategoryLabel(category.id, store.categories)}` }))]} />
               <Field label="Display order"><Input defaultValue={1} min={1} name="displayOrder" type="number" /></Field>
               <div className="sm:col-span-2"><TextAreaField label="Description" name="description" defaultValue="" /></div>
-              <div className="flex justify-end sm:col-span-2"><Button type="submit">Create category</Button></div>
+              <FormActions className="sm:col-span-2 lg:col-span-2"><Button type="submit">Create category</Button></FormActions>
             </form>
           </CardContent>
         </Card>
@@ -345,7 +349,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
               </div>
             </CardHeader>
             <CardContent>
-              <form action={createRitual} className="grid gap-3 md:grid-cols-2">
+              <form action={createRitual} className="grid gap-3 lg:grid-cols-2">
                 <Field label="Ritual name"><Input name="name" placeholder="Example: Annaprashan" required /></Field>
                 <SelectField label="Culture" name="cultureType" defaultValue={cultureFilter === "all" ? "Bengali" : cultureFilter} options={cultureOptions.filter((option) => option.value !== "all")} />
                 <SelectField label="Leaf category" name="categoryId" defaultValue={leafCategoryOptions[0]?.value ?? ""} options={leafCategoryOptions} />
@@ -360,7 +364,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                 <Field label="Zone-wise travel fee"><Input defaultValue={0} min={0} name="zoneWiseTravelFee" type="number" /></Field>
                 <Field label="Peak multiplier"><Input defaultValue={1} min={1} name="peakMultiplier" step="0.01" type="number" /></Field>
                 <div className="sm:col-span-2"><TextAreaField label="Fard JSON" name="fardTemplate" defaultValue={JSON.stringify({ items: [{ label: "", quantity: "" }] }, null, 2)} /></div>
-                <div className="flex justify-end sm:col-span-2"><Button type="submit">Create ritual</Button></div>
+                <FormActions className="sm:col-span-2 lg:col-span-2"><Button type="submit">Create ritual</Button></FormActions>
               </form>
             </CardContent>
           </Card>
@@ -427,7 +431,7 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                 </div>
                 <Badge variant={ritual.status === "active" ? "success" : "secondary"}>{ritual.status}</Badge>
               </div>
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-2">
+              <div className="grid gap-3 lg:grid-cols-2">
                 <Field label="Ritual name"><Input defaultValue={ritual.name} name="name" required /></Field>
                 <SelectField label="Culture" name="cultureType" defaultValue={ritual.cultureType} options={cultureOptions.filter((option) => option.value !== "all")} />
                 <SelectField label="Leaf category" name="categoryId" defaultValue={ritual.categoryId} options={leafCategoryOptions} />
@@ -442,7 +446,16 @@ export default async function RitualsPage({ searchParams }: RitualsPageProps) {
                 <Field label="Zone-wise travel fee"><Input defaultValue={ritual.pricing.zoneWiseTravelFee} min={0} name="zoneWiseTravelFee" type="number" /></Field>
                 <Field label="Peak multiplier"><Input defaultValue={ritual.pricing.peakMultiplier} min={1} name="peakMultiplier" step="0.01" type="number" /></Field>
                 <div className="md:col-span-2 xl:col-span-2"><TextAreaField label="Fard JSON" name="fardTemplate" defaultValue={JSON.stringify(ritual.fardTemplate, null, 2)} /></div>
-                <div className="flex justify-end md:col-span-2 xl:col-span-2"><Button type="submit" variant="secondary">Save ritual</Button></div>
+                <FormActions className="lg:col-span-2">
+                  <button
+                    className="inline-flex h-10 items-center justify-center rounded-xl border border-destructive/30 px-4 text-sm font-semibold text-destructive transition hover:bg-destructive/5"
+                    formAction={deleteRitual}
+                    type="submit"
+                  >
+                    Delete ritual
+                  </button>
+                  <Button type="submit">Save ritual</Button>
+                </FormActions>
               </div>
             </form>
           ))}
@@ -480,7 +493,7 @@ function CategoryBranch({ categoryId, store }: CategoryBranchProps) {
             <Badge variant={children.length > 0 ? "outline" : "secondary"}>{children.length > 0 ? `${children.length} sub-categories` : "leaf category"}</Badge>
           </div>
         </div>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-2">
+        <div className="grid gap-3 lg:grid-cols-2">
           <Field label="Category name"><Input defaultValue={category.name} name="name" required /></Field>
           <Field label="Slug"><Input defaultValue={category.slug} name="slug" /></Field>
           <SelectField label="Culture" name="cultureType" defaultValue={category.cultureType} options={cultureOptions.filter((option) => option.value !== "all")} />
@@ -488,13 +501,22 @@ function CategoryBranch({ categoryId, store }: CategoryBranchProps) {
           <SelectField label="Parent category" name="parentId" defaultValue={category.parentId ?? ""} options={[{ value: "", label: "No parent (root category)" }, ...store.categories.filter((item) => item.id !== category.id).map((item) => ({ value: item.id, label: `${formatCulture(item.cultureType)}: ${buildCategoryLabel(item.id, store.categories)}` }))]} />
           <SelectField label="Tier" name="tierId" defaultValue={category.tierId} options={store.tiers.map((tierItem) => ({ value: tierItem.id, label: `${tierItem.name}: ${tierItem.title}` }))} />
           <Field label="Display order"><Input defaultValue={category.displayOrder} min={1} name="displayOrder" type="number" /></Field>
-          <div className="md:col-span-2 xl:col-span-2"><TextAreaField label="Description" name="description" defaultValue={category.description} /></div>
+          <div className="lg:col-span-2"><TextAreaField label="Description" name="description" defaultValue={category.description} /></div>
           {linkedRituals.length > 0 ? (
-            <div className="rounded-[20px] border border-dashed border-border bg-primary/5 px-4 py-3 text-sm text-muted-foreground md:col-span-2 xl:col-span-2">
+            <div className="rounded-[20px] border border-dashed border-border bg-primary/5 px-4 py-3 text-sm text-muted-foreground lg:col-span-2">
               Linked rituals: {linkedRituals.map((ritual) => `${ritual.name} (${formatCulture(ritual.cultureType)})`).join(", ")}
             </div>
           ) : null}
-          <div className="flex justify-end md:col-span-2 xl:col-span-2"><Button type="submit" variant="secondary">Save category</Button></div>
+          <FormActions className="lg:col-span-2">
+            <button
+              className="inline-flex h-10 items-center justify-center rounded-xl border border-destructive/30 px-4 text-sm font-semibold text-destructive transition hover:bg-destructive/5"
+              formAction={deleteCategory}
+              type="submit"
+            >
+              Delete category
+            </button>
+            <Button type="submit">Save category</Button>
+          </FormActions>
         </div>
       </form>
       {children.length > 0 ? (

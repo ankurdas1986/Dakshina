@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { CalendarRange, Clock3, MessageCircleMore, RefreshCcw, Search, Wallet } from "lucide-react";
+import { CalendarRange, Clock3, MessageCircleMore, PlusCircle, RefreshCcw, Search, Wallet } from "lucide-react";
+import { createBookingCase } from "../../actions/bookings";
 import { getBookingStatusVariant } from "../../../components/bookings/booking-detail-panel";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
@@ -19,7 +21,8 @@ type BookingsPageProps = {
 
 const messageMap: Record<string, string> = {
   booking_saved: "Booking case updated and stored for local UAT.",
-  refund_initiated: "Refund amount calculated from the booking snapshot. Complete the manual Razorpay refund and store the reference."
+  refund_initiated: "Refund amount calculated from the booking snapshot. Complete the manual Razorpay refund and store the reference.",
+  booking_created: "Manual booking created and added to the operations queue."
 };
 
 const errorMap: Record<string, string> = {
@@ -118,6 +121,51 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
           );
         })}
       </div>
+
+      <Card className="rounded-[28px] border-border/80 bg-white">
+        <CardHeader>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg">Create manual booking</CardTitle>
+              <CardDescription>Use this for super-admin forced bookings, support-assisted orders, and offline capture before payment collection.</CardDescription>
+            </div>
+            <PlusCircle className="h-5 w-5 text-primary" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <form action={createBookingCase} className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+            <Input className="h-11 rounded-lg" name="bookingCode" placeholder="Booking code (optional)" />
+            <Input className="h-11 rounded-lg" name="userName" placeholder="User name" required />
+            <Input className="h-11 rounded-lg" name="userPhone" placeholder="User phone" required />
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue="Bengali" name="cultureType">
+              {cultureOptions.filter((option) => option.value !== "all").map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+            <Input className="h-11 rounded-lg" name="ritual" placeholder="Ritual" required />
+            <Input className="h-11 rounded-lg" name="district" placeholder="District" required />
+            <Input className="h-11 rounded-lg" name="eventDate" type="date" />
+            <Input className="h-11 rounded-lg" name="scheduledWindow" placeholder="09:00 AM - 11:00 AM" />
+            <Input className="h-11 rounded-lg" name="assignedPriest" placeholder="Assigned priest" />
+            <Input className="h-11 rounded-lg" min={0} name="dakshinaAmount" placeholder="Dakshina amount" type="number" />
+            <Input className="h-11 rounded-lg" min={0} name="samagriAddOns" placeholder="Samagri add-ons" type="number" />
+            <Input className="h-11 rounded-lg" min={0} name="zoneWiseTravelFee" placeholder="Zone travel fee" type="number" />
+            <Input className="h-11 rounded-lg" min={1} name="peakMultiplier" placeholder="Peak multiplier" step="0.01" type="number" />
+            <Input className="h-11 rounded-lg" min={1} name="minBookingGapHours" placeholder="Min booking gap (hours)" type="number" />
+            <Input className="h-11 rounded-lg" min={1} name="maxBookingWindowDays" placeholder="Max booking window (days)" type="number" />
+            <label className="flex items-start gap-3 rounded-[20px] border border-border bg-white p-4 xl:col-span-3">
+              <input className="mt-1 h-4 w-4 rounded border-border accent-[hsl(var(--primary))] focus:ring-primary" name="forcedBookingOverride" type="checkbox" />
+              <span>
+                <span className="block text-sm font-semibold text-foreground">Forced booking override</span>
+                <span className="block text-sm leading-6 text-muted-foreground">Use when super admin needs to bypass booking governance rules.</span>
+              </span>
+            </label>
+            <FormActions className="lg:col-span-2 xl:col-span-3">
+              <Button type="submit">Create booking</Button>
+            </FormActions>
+          </form>
+        </CardContent>
+      </Card>
 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader className="space-y-4">

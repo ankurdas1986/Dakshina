@@ -11,6 +11,7 @@ import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { FieldHint } from "../../components/ui/field-hint";
+import { FormActions } from "../../components/ui/form-actions";
 import { Input } from "../../components/ui/input";
 import { getAdminShellData } from "../../lib/admin-shell-data";
 import { moduleStatus } from "../../lib/admin-data";
@@ -27,7 +28,11 @@ const messageMap: Record<string, string> = {
   platform_settings_saved: "Platform settings saved for local UAT.",
   district_settings_saved: "District commission settings saved for local UAT.",
   policy_controls_saved: "Policy controls saved for local UAT.",
-  notification_settings_saved: "Notification settings saved for local UAT."
+  notification_settings_saved: "Notification settings saved for local UAT.",
+  user_created: "User account created and added to the governance queue.",
+  priest_created: "Priest record created and added to the review queue.",
+  booking_created: "Manual booking created and added to the booking queue.",
+  subscription_created: "Subscription contract created and added to the contract queue."
 };
 
 const checkboxClassName =
@@ -196,9 +201,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     <span className="block text-sm leading-6 text-muted-foreground">Allow super admin to bypass rules for manually approved bookings.</span>
                   </span>
                 </label>
-                <div className="flex justify-end sm:col-span-2">
+                <FormActions className="sm:col-span-2">
                   <Button type="submit">Save commercial settings</Button>
-                </div>
+                </FormActions>
               </form>
             </CardContent>
           </Card>
@@ -221,9 +226,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     </span>
                   </label>
                 ))}
-                <div className="flex justify-end">
-                  <Button type="submit" variant="secondary">Save policy controls</Button>
-                </div>
+                <FormActions>
+                  <Button type="submit">Save policy controls</Button>
+                </FormActions>
               </form>
             </CardContent>
           </Card>
@@ -257,9 +262,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     </div>
                   </div>
                 ))}
-                <div className="flex justify-end">
+                <FormActions>
                   <Button type="submit">Save district overrides</Button>
-                </div>
+                </FormActions>
               </form>
             </CardContent>
           </Card>
@@ -318,9 +323,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                   <p className="text-sm font-semibold text-foreground">Current unread notifications</p>
                   <p className="mt-1 text-sm text-muted-foreground">Current unread count: {notificationCount}.</p>
                 </div>
-                <div className="flex justify-end">
-                  <Button type="submit" variant="secondary">Save notification settings</Button>
-                </div>
+                <FormActions>
+                  <Button type="submit">Save notification settings</Button>
+                </FormActions>
               </form>
             </CardContent>
           </Card>
