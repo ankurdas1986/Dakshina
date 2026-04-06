@@ -303,6 +303,67 @@ export async function removeRitual(id: string) {
   return next;
 }
 
+export async function updatePanjikaResearch(input: PanjikaResearch) {
+  const current = await getRitualStore();
+  const exists = current.panjikaResearch.some((entry) => entry.cultureType === input.cultureType);
+  const next: RitualStore = {
+    ...current,
+    panjikaResearch: exists
+      ? current.panjikaResearch.map((entry) => (entry.cultureType === input.cultureType ? input : entry))
+      : [...current.panjikaResearch, input]
+  };
+  await writeStore(next);
+  return next;
+}
+
+export async function removePanjikaResearch(cultureType: CultureType) {
+  const current = await getRitualStore();
+  const next: RitualStore = {
+    ...current,
+    panjikaResearch: current.panjikaResearch.filter((entry) => entry.cultureType !== cultureType)
+  };
+  await writeStore(next);
+  return next;
+}
+
+export async function addFardRule(rule: string) {
+  const current = await getRitualStore();
+  const next: RitualStore = {
+    ...current,
+    fardRules: [...current.fardRules, rule]
+  };
+  await writeStore(next);
+  return next;
+}
+
+export async function updateFardRule(index: number, rule: string) {
+  const current = await getRitualStore();
+  const nextRules = [...current.fardRules];
+
+  if (index < 0 || index >= nextRules.length) {
+    return current;
+  }
+
+  nextRules[index] = rule;
+
+  const next: RitualStore = {
+    ...current,
+    fardRules: nextRules
+  };
+  await writeStore(next);
+  return next;
+}
+
+export async function removeFardRule(index: number) {
+  const current = await getRitualStore();
+  const next: RitualStore = {
+    ...current,
+    fardRules: current.fardRules.filter((_, ruleIndex) => ruleIndex !== index)
+  };
+  await writeStore(next);
+  return next;
+}
+
 export function getFardItemCount(template: Record<string, unknown>) {
   const items = template.items;
   return Array.isArray(items) ? items.length : 0;

@@ -1,4 +1,4 @@
-import { deleteCategory, saveCategory } from "../../../actions/rituals";
+import { createCategory, deleteCategory, saveCategory } from "../../../actions/rituals";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
@@ -50,6 +50,42 @@ export default async function RitualCategoriesPage() {
     >
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
+          <CardTitle className="text-lg">Create category node</CardTitle>
+          <CardDescription>Create a tradition, service type, or ritual group directly from the tree workspace.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={createCategory} className="grid gap-3 md:grid-cols-2 xl:grid-cols-2">
+            <input name="returnTo" type="hidden" value="/dashboard/rituals/categories" />
+            <RitualField label="Category name"><Input name="name" placeholder="Example: Marriage" required /></RitualField>
+            <RitualField label="Slug"><Input name="slug" placeholder="marriage" /></RitualField>
+            <RitualSelectField label="Culture" name="cultureType" defaultValue="Bengali" options={cultureOptions} />
+            <RitualSelectField label="Node type" name="nodeType" defaultValue="tradition" options={nodeTypeOptions.map((option) => ({ value: option.value, label: option.label }))} />
+            <RitualSelectField label="Tier" name="tierId" defaultValue={store.tiers[0]?.id ?? "tier_1"} options={store.tiers.map((tierItem) => ({ value: tierItem.id, label: `${tierItem.name}: ${tierItem.title}` }))} />
+            <div className="md:col-span-2">
+              <RitualSelectField
+                label="Parent category"
+                name="parentId"
+                defaultValue=""
+                options={[
+                  { value: "", label: "No parent (root category)" },
+                  ...store.categories.map((item) => ({
+                    value: item.id,
+                    label: `${formatCulture(item.cultureType)}: ${buildCategoryLabel(item.id, store.categories)}`
+                  }))
+                ]}
+              />
+            </div>
+            <RitualField label="Display order"><Input defaultValue={1} min={1} name="displayOrder" type="number" /></RitualField>
+            <div className="md:col-span-2"><RitualTextAreaField label="Description" name="description" defaultValue="" /></div>
+            <FormActions className="md:col-span-2">
+              <Button type="submit">Create category</Button>
+            </FormActions>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-[28px] border-border/80 bg-white">
+        <CardHeader>
           <CardTitle className="text-lg">Culture category tree</CardTitle>
           <CardDescription>Tradition - service type - ritual grouping is edited here with dependency-safe delete actions.</CardDescription>
         </CardHeader>
@@ -89,6 +125,7 @@ function CategoryBranch({ categoryId, store }: { categoryId: string; store: Ritu
     <div className="space-y-3">
       <form action={saveCategory} className="rounded-[24px] border border-border bg-white p-4">
         <input name="id" type="hidden" value={category.id} />
+        <input name="returnTo" type="hidden" value="/dashboard/rituals/categories" />
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-foreground">{buildCategoryLabel(category.id, store.categories)}</p>

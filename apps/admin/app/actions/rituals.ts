@@ -4,16 +4,22 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   addCategory,
+  addFardRule,
   addRitual,
   type CategoryNodeType,
   type DeliveryMode,
   getRitualStore,
+  removeFardRule,
+  removePanjikaResearch,
   type PricingMode,
   type RitualCategory,
   type RitualRecord,
   type RitualStatus,
   type RitualTier,
+  type PanjikaResearch,
   updateCategory,
+  updateFardRule,
+  updatePanjikaResearch,
   updateRitual,
   removeCategory,
   removeRitual,
@@ -53,9 +59,19 @@ function parseFardTemplate(value: FormDataEntryValue | null) {
   }
 }
 
-function redirectSuccess(message: string) {
+function normalizeReturnTo(value: FormDataEntryValue | null) {
+  const next = normalizeText(value, "/dashboard/rituals");
+  return next.startsWith("/dashboard/rituals") ? next : "/dashboard/rituals";
+}
+
+function redirectSuccess(message: string, formData?: FormData) {
   revalidatePath("/dashboard/rituals");
-  redirect(`/dashboard/rituals?message=${message}`);
+  revalidatePath("/dashboard/rituals/categories");
+  revalidatePath("/dashboard/rituals/library");
+  revalidatePath("/dashboard/rituals/panjika");
+  revalidatePath("/dashboard/rituals/fard");
+  const returnTo = normalizeReturnTo(formData?.get("returnTo") ?? null);
+  redirect(`${returnTo}?message=${message}` as never);
 }
 
 export async function saveTier(formData: FormData) {
@@ -81,7 +97,7 @@ export async function saveTier(formData: FormData) {
   };
 
   await updateTier(nextTier);
-  redirectSuccess("tier_saved");
+  redirectSuccess("tier_saved", formData);
 }
 
 export async function saveRitual(formData: FormData) {
@@ -127,7 +143,7 @@ export async function saveRitual(formData: FormData) {
   };
 
   await updateRitual(nextRitual);
-  redirectSuccess("ritual_saved");
+  redirectSuccess("ritual_saved", formData);
 }
 
 export async function createRitual(formData: FormData) {
@@ -160,7 +176,7 @@ export async function createRitual(formData: FormData) {
     fardTemplate: parseFardTemplate(formData.get("fardTemplate"))
   });
 
-  redirectSuccess("ritual_created");
+  redirectSuccess("ritual_created", formData);
 }
 
 function slugify(value: string) {
@@ -205,7 +221,7 @@ export async function saveCategory(formData: FormData) {
   };
 
   await updateCategory(nextCategory);
-  redirectSuccess("category_saved");
+  redirectSuccess("category_saved", formData);
 }
 
 export async function createCategory(formData: FormData) {
@@ -232,7 +248,7 @@ export async function createCategory(formData: FormData) {
     displayOrder: Number.parseInt(normalizeText(formData.get("displayOrder"), "1"), 10) || 1
   });
 
-  redirectSuccess("category_created");
+  redirectSuccess("category_created", formData);
 }
 
 export async function deleteCategory(formData: FormData) {
@@ -251,7 +267,7 @@ export async function deleteCategory(formData: FormData) {
   }
 
   await removeCategory(id);
-  redirectSuccess("category_deleted");
+  redirectSuccess("category_deleted", formData);
 }
 
 export async function deleteRitual(formData: FormData) {
@@ -262,5 +278,68 @@ export async function deleteRitual(formData: FormData) {
   }
 
   await removeRitual(id);
-  redirectSuccess("ritual_deleted");
+  redirectSuccess("ritual_deleted", formData);
+}
+
+function normalizeCsvList(value: FormDataEntryValue | null) {
+  return normalizeText(value)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+export async function savePanjikaResearch(formData: FormData) {
+  const cultureType = normalizeCulture(formData.get("cultureType"), "Bengali");
+  const sources = normalizeCsvList(formData.get("sources"));
+  const sampleRituals = normalizeCsvList(formData.get("sampleRituals"));
+
+  const nextEntry: PanjikaResearch = {
+    cultureType,
+    sources: sources.length ? sources : ["Primary source"],
+    adminInstruction: normalizeText(formData.get("adminInstruction"), "Select the matching tradition before importing raw calendar text."),
+    sampleRituals: sampleRituals.length ? sampleRituals : ["Seed ritual"]
+  };
+
+  await updatePanjikaResearch(nextEntry);
+  redirectSuccess("panjika_saved", formData);
+}
+
+export async function deletePanjikaResearch(formData: FormData) {
+  const cultureType = normalizeCulture(formData.get("cultureType"), "Bengali");
+  await removePanjikaResearch(cultureType);
+  redirectSuccess("panjika_deleted", formData);
+}
+
+export async function createFardRule(formData: FormData) {
+  const rule = normalizeText(formData.get("rule"));
+
+  if (!rule) {
+    redirect("/dashboard/rituals/fard?error=missing_fard_rule");
+  }
+
+  await addFardRule(rule);
+  redirectSuccess("fard_rule_created", formData);
+}
+
+export async function saveFardRule(formData: FormData) {
+  const index = normalizeNumber(formData.get("index"), -1);
+  const rule = normalizeText(formData.get("rule"));
+
+  if (index < 0 || !rule) {
+    redirect("/dashboard/rituals/fard?error=invalid_fard_rule");
+  }
+
+  await updateFardRule(index, rule);
+  redirectSuccess("fard_rule_saved", formData);
+}
+
+export async function deleteFardRule(formData: FormData) {
+  const index = normalizeNumber(formData.get("index"), -1);
+
+  if (index < 0) {
+    redirect("/dashboard/rituals/fard?error=invalid_fard_rule");
+  }
+
+  await removeFardRule(index);
+  redirectSuccess("fard_rule_deleted", formData);
 }

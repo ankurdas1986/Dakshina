@@ -88,11 +88,17 @@ Large singleton modules are now being split into route-based workspaces as well:
 - `/dashboard/rituals` -> Rituals and Fard overview
 - `/dashboard/rituals/categories` -> category tree workspace
 - `/dashboard/rituals/library` -> ritual template library
-- `/dashboard/rituals/create` -> creation workspace
 - `/dashboard/rituals/panjika` -> Panjika research workspace
 - `/dashboard/rituals/fard` -> Fard rules and snapshot workspace
 
-This keeps create, edit, research, and policy surfaces separate so operators do not have to manage one very long mixed page.
+Create actions now live inside the relevant ritual workspaces instead of a detached create page:
+
+- category create + edit + delete live in `Category tree`
+- ritual create + edit + delete live in `Ritual library`
+- Panjika source create + edit + delete live in `Panjika`
+- Fard rule create + edit + delete live in `Fard`
+
+This keeps each page operationally complete without forcing operators to jump to a disconnected create route.
 
 The left navigation now mirrors this split for the densest modules:
 

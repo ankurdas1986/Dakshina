@@ -1,5 +1,9 @@
+import { createFardRule, deleteFardRule, saveFardRule } from "../../../actions/rituals";
 import { Badge } from "../../../../components/ui/badge";
+import { Button } from "../../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { FormActions } from "../../../../components/ui/form-actions";
+import { RitualTextAreaField } from "../../../../components/rituals/fields";
 import { RitualPageShell } from "../../../../components/rituals/ritual-page-shell";
 import { getBookingStore } from "../../../../lib/booking-store";
 import { getRitualStore } from "../../../../lib/ritual-store";
@@ -27,10 +31,29 @@ export default async function RitualFardPage() {
             <CardDescription>Booking confirmation snapshots the ritual checklist before user delivery.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {store.fardRules.map((rule) => (
-              <div className="rounded-[20px] border border-border bg-white p-4" key={rule}>
-                <p className="text-sm leading-6 text-muted-foreground">{rule}</p>
-              </div>
+            <form action={createFardRule} className="rounded-[20px] border border-border bg-secondary/20 p-4">
+              <input name="returnTo" type="hidden" value="/dashboard/rituals/fard" />
+              <RitualTextAreaField label="Create new Fard rule" name="rule" defaultValue="" />
+              <FormActions>
+                <Button type="submit">Add rule</Button>
+              </FormActions>
+            </form>
+            {store.fardRules.map((rule, index) => (
+              <form action={saveFardRule} className="rounded-[20px] border border-border bg-white p-4" key={`${index}-${rule.slice(0, 24)}`}>
+                <input name="returnTo" type="hidden" value="/dashboard/rituals/fard" />
+                <input name="index" type="hidden" value={index} />
+                <RitualTextAreaField label={`Rule ${index + 1}`} name="rule" defaultValue={rule} />
+                <FormActions>
+                  <button
+                    className="inline-flex h-10 items-center justify-center rounded-xl border border-destructive/30 px-4 text-sm font-semibold text-destructive transition hover:bg-destructive/5"
+                    formAction={deleteFardRule}
+                    type="submit"
+                  >
+                    Delete rule
+                  </button>
+                  <Button type="submit">Save rule</Button>
+                </FormActions>
+              </form>
             ))}
           </CardContent>
         </Card>

@@ -96,6 +96,7 @@ Legend:
 - `[x]` 4-tier service model management
 - `[x]` JSON-based Fard editor
 - `[x]` Fard snapshot preview rules
+- `[x]` ritual module creation is embedded inside the relevant CRUD workspaces instead of a detached create route
 
 ### 3.6 Booking Operations
 

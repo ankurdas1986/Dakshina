@@ -58,6 +58,7 @@ Legend:
 - `[x]` Fard JSON editor validates correctly
 - `[x]` Booking Fard snapshot rules hold after ritual edits
 - `[x]` Booking Fard snapshot rules are visible in the admin UI
+- `[x]` Category, ritual, Panjika, and Fard pages now expose create + edit + delete actions within the same relevant workspace
 - `[x]` Typecheck passes in a runtime-enabled shell
 - `[x]` Lint passes in a runtime-enabled shell
 - `[x]` Production build passes in a runtime-enabled shell
