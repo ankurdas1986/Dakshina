@@ -1,212 +1,416 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { BellDot, CalendarRange, ChevronRight, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowUpRight,
+  BellRing,
+  BookCheck,
+  LayoutGrid,
+  Landmark,
+  MessageCircleMore,
+  RadioTower,
+  ShieldAlert,
+  Siren,
+  Wallet
+} from "lucide-react";
 import { AdminShell } from "../../components/admin-shell";
-import { SettingsRouteNav } from "../../components/settings/settings-route-nav";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../components/ui/card";
+import { KpiCard } from "../../components/ui/kpi-card";
+import { SectionTitle } from "../../components/ui/section-title";
 import { getAdminShellData } from "../../lib/admin-shell-data";
-import { moduleStatus } from "../../lib/admin-data";
 import { requireAdminUser } from "../../lib/auth";
+import { getBookingMetrics, getBookingStore } from "../../lib/booking-store";
+import { moduleStatus } from "../../lib/admin-data";
+import { getNotificationStore } from "../../lib/notification-store";
+import { getPayoutMetrics, getPayoutStore } from "../../lib/payout-store";
+import { getPriestMetrics, getPriestStore } from "../../lib/priest-store";
+import { getSubscriptionMetrics, getSubscriptionStore } from "../../lib/subscription-store";
+import { getUserMetrics, getUserStore } from "../../lib/user-store";
+import { cn } from "../../lib/utils";
 
 export const dynamic = "force-dynamic";
 
-type DashboardPageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
-
-function readParam(params: Record<string, string | string[] | undefined>, key: string) {
-  const value = params[key];
-  return Array.isArray(value) ? value[0] : value;
+function sanitizeWhatsappNumber(value: string) {
+  const digits = value.replace(/[^\d]/g, "");
+  return digits.length >= 10 ? digits : "";
 }
 
-export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+function buildWhatsappLink(number: string, title: string, detail: string, href: string) {
+  const sanitized = sanitizeWhatsappNumber(number);
+
+  if (!sanitized) {
+    return null;
+  }
+
+  const text = encodeURIComponent(
+    `Dakshina Hub admin alert\n\n${title}\n${detail}\n\nOpen: ${href}`
+  );
+
+  return `https://wa.me/${sanitized}?text=${text}`;
+}
+
+function notificationTone(type: string) {
+  if (type === "refund" || type === "booking") {
+    return {
+      badge: "danger" as const,
+      panel: "surface-panel-rose alert-ring-high"
+    };
+  }
+
+  if (type === "kyc" || type === "subscription") {
+    return {
+      badge: "warning" as const,
+      panel: "surface-panel-amber alert-ring-medium"
+    };
+  }
+
+  if (type === "priest_registration" || type === "user_registration" || type === "wallet") {
+    return {
+      badge: "info" as const,
+      panel: "surface-panel-blue alert-ring-low"
+    };
+  }
+
+  return {
+    badge: "outline" as const,
+    panel: "surface-panel"
+  };
+}
+
+function moduleTone(key: string) {
+  switch (key) {
+    case "settings":
+      return "surface-panel-amber";
+    case "priests":
+      return "surface-panel-blue";
+    case "users":
+      return "surface-panel-violet";
+    case "rituals":
+      return "surface-panel-amber";
+    case "bookings":
+      return "surface-panel-rose";
+    case "subscriptions":
+      return "surface-panel-blue";
+    case "payouts":
+      return "surface-panel-green";
+    case "trust":
+      return "surface-panel-violet";
+    default:
+      return "surface-panel";
+  }
+}
+
+export default async function DashboardLandingPage() {
   const user = await requireAdminUser();
   const { notifications, notificationCount, notificationEnabled, settings } = await getAdminShellData();
-  const resolvedSearchParams = (await searchParams) ?? {};
-  const query = readParam(resolvedSearchParams, "q")?.toLowerCase() ?? "";
-  const matchesSection = (value: string) => !query || value.toLowerCase().includes(query);
+  const priestStore = await getPriestStore();
+  const userStore = await getUserStore();
+  const bookingStore = await getBookingStore();
+  const payoutStore = await getPayoutStore();
+  const subscriptionStore = await getSubscriptionStore();
+  const rawNotificationStore = await getNotificationStore();
 
-  const launchMetrics = [
+  const priestMetrics = getPriestMetrics(priestStore);
+  const userMetrics = getUserMetrics(userStore);
+  const bookingMetrics = getBookingMetrics(bookingStore);
+  const payoutMetrics = getPayoutMetrics(payoutStore);
+  const subscriptionMetrics = getSubscriptionMetrics(subscriptionStore);
+  const whatsappNumber = settings.notificationSettings.superAdminWhatsappNumber;
+  const topNotifications = notifications.slice(0, 6);
+
+  const priorityCards = [
     {
-      label: "Default culture",
-      value: settings.platform.defaultCulture.replace("_", " "),
-      detail: "Bengali remains the launch priority while the schema supports other traditions.",
-      icon: Sparkles
+      label: "Unread alerts",
+      value: notificationCount,
+      detail: "Fresh admin notifications waiting in the in-app inbox.",
+      icon: BellRing,
+      tone: "rose" as const
     },
     {
-      label: "Advance payment",
-      value: `${settings.platform.bookingAdvancePercent}%`,
-      detail: "Required before any contact reveal.",
-      icon: ShieldCheck
+      label: "Pending KYC",
+      value: priestMetrics.pendingKyc,
+      detail: "Priest registrations waiting for verification decisions.",
+      icon: BookCheck,
+      tone: "amber" as const
     },
     {
-      label: "Min booking gap",
-      value: `${settings.platform.minBookingGapHours} hr`,
-      detail: "Used to avoid back-to-back double booking pressure.",
-      icon: CalendarRange
+      label: "Refund cases",
+      value: bookingMetrics.refundCases,
+      detail: "Bookings that currently carry pending refund exposure.",
+      icon: Wallet,
+      tone: "rose" as const
     },
     {
-      label: "Booking window",
-      value: `${settings.platform.maxBookingWindowDays} days`,
-      detail: "Controls how far ahead bookings can be accepted.",
-      icon: BellDot
+      label: "Pending payouts",
+      value: payoutMetrics.pendingCount,
+      detail: "Manual priest settlements waiting for operator action.",
+      icon: Landmark,
+      tone: "green" as const
     }
   ];
 
-  const quickLinks = [
+  const urgentQueues = [
     {
-      title: "Culture rollout",
-      detail: "Default culture, launch cluster, and Panjika-backed culture readiness.",
-      href: "/dashboard/settings/culture" as Route
+      title: "Priest registrations",
+      value: priestMetrics.totalPriests,
+      summary: `${priestMetrics.pendingKyc} pending KYC, ${priestMetrics.verifiedPriests} verified, ${priestMetrics.culturesCovered} cultures covered.`,
+      href: "/dashboard/priests" as Route
     },
     {
-      title: "Commercial rules",
-      detail: "Commission, advance payment, referral percentages, and booking-window economics.",
-      href: "/dashboard/settings/commercial" as Route
+      title: "User governance",
+      value: userMetrics.totalUsers,
+      summary: `${userMetrics.activeUsers} active, ${userMetrics.blockedUsers} blocked, ${userMetrics.walletUsers} wallet users.`,
+      href: "/dashboard/users" as Route
     },
     {
-      title: "Governance",
-      detail: "Operational toggles for festival blocking, overrides, OTP, KYC, and review controls.",
-      href: "/dashboard/settings/governance" as Route
+      title: "Booking watchlist",
+      value: bookingMetrics.activeBookings,
+      summary: `${bookingMetrics.paymentPending} payments pending, ${bookingMetrics.replacementCases} replacements, ${bookingMetrics.completionPending} completion cases.`,
+      href: "/dashboard/bookings" as Route
     },
     {
-      title: "District overrides",
-      detail: "District-level commission, travel fees, and service cluster overrides.",
-      href: "/dashboard/settings/districts" as Route
-    },
-    {
-      title: "Notifications",
-      detail: "Inbox alert scope, registration alerts, and daily digest controls.",
-      href: "/dashboard/settings/notifications" as Route
+      title: "Institutional contracts",
+      value: subscriptionMetrics.totalContracts,
+      summary: `${subscriptionMetrics.activeContracts} active, ${subscriptionMetrics.generatedBookings} generated bookings across recurring contracts.`,
+      href: "/dashboard/subscriptions" as Route
     }
   ];
 
   return (
     <AdminShell
-      active="settings"
+      active="dashboard"
       notificationCount={notificationCount}
       notificationEnabled={notificationEnabled}
       notifications={notifications}
-      subtitle="Use this overview as the control map. Edit each settings group in its own workspace instead of one long form."
-      title="Global Settings"
+      subtitle="This is the super-admin command center. Review alerts, registrations, booking issues, payouts, and escalations before entering module workspaces."
+      title="Operations dashboard"
       userEmail={user.email}
-      subnav={<SettingsRouteNav activeHref="/dashboard" />}
     >
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {launchMetrics.map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <Card className="rounded-[24px] border-border/80 bg-white" key={metric.label}>
-              <CardContent className="flex h-full flex-col justify-between gap-4 p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-2">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                    <p className="text-2xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                  </div>
-                  <div className="rounded-2xl bg-primary/10 p-2.5">
-                    <Icon className="h-5 w-5 text-primary" />
-                  </div>
-                </div>
-                <p className="text-sm leading-6 text-muted-foreground">{metric.detail}</p>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {priorityCards.map((card) => (
+          <KpiCard
+            detail={card.detail}
+            icon={card.icon}
+            key={card.label}
+            label={card.label}
+            tone={card.tone}
+            value={card.value}
+          />
+        ))}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
-        <Card className="rounded-[28px] border-border/80 bg-white">
+      <div className="grid gap-5 xl:grid-cols-[1.08fr_0.92fr]">
+        <Card className="surface-panel-blue rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Settings workspaces</CardTitle>
-            <CardDescription>Each settings group now has a dedicated route to reduce form density and operator confusion.</CardDescription>
+            <SectionTitle icon={LayoutGrid} tone="blue">Priority queues</SectionTitle>
+            <CardDescription>Use the dashboard first, then move into the relevant module. This keeps the landing route operational instead of configuration-heavy.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
-            {quickLinks.filter((link) => matchesSection(`${link.title} ${link.detail}`)).map((link) => (
-              <Link className="group rounded-[22px] border border-border bg-white p-4 transition-colors hover:bg-secondary/30" href={link.href} key={link.href}>
+            {urgentQueues.map((queue) => (
+              <Link className="group rounded-[22px] border border-border bg-white p-4 transition-colors hover:bg-secondary/30" href={queue.href} key={queue.href}>
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">{link.title}</p>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                  <p className="text-sm font-semibold text-foreground">{queue.title}</p>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">{queue.value}</Badge>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </div>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{link.detail}</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{queue.summary}</p>
               </Link>
             ))}
           </CardContent>
         </Card>
 
-        <Card className="rounded-[28px] border-border/80 bg-white">
+        <Card className="surface-panel-amber rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Admin module map</CardTitle>
-            <CardDescription>The admin remains split into focused modules with clear ownership.</CardDescription>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <SectionTitle icon={BellRing} tone="amber">Admin alert inbox</SectionTitle>
+                <CardDescription>All new notifications are surfaced here on landing before they roll into module-specific handling.</CardDescription>
+              </div>
+              <Badge variant={notificationCount > 0 ? "success" : "outline"}>{notificationCount} unread</Badge>
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            {moduleStatus.filter((module) => matchesSection([module.title, module.summary].join(" "))).map((module) => (
-              <div className="rounded-[22px] border border-border bg-white p-4" key={module.key}>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">{module.title}</p>
-                  <Badge variant={module.key === "settings" ? "success" : "outline"}>{module.status}</Badge>
+            {topNotifications.map((notification) => {
+              const whatsappLink = settings.notificationSettings.whatsappAlertsEnabled
+                ? buildWhatsappLink(whatsappNumber, notification.title, notification.detail, notification.href)
+                : null;
+
+              return (
+                <div className={cn("rounded-[22px] border border-border p-4", notificationTone(notification.type).panel)} key={notification.id}>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">{notification.title}</p>
+                    <Badge variant={notification.read ? "outline" : notificationTone(notification.type).badge}>{notification.read ? "Seen" : "New"}</Badge>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{notification.detail}</p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <Button asChild size="sm" variant="secondary">
+                      <Link href={notification.href as Route}>Open alert</Link>
+                    </Button>
+                    {whatsappLink ? (
+                      <Button asChild size="sm">
+                        <a href={whatsappLink} rel="noreferrer" target="_blank">
+                          <MessageCircleMore className="h-4 w-4" />
+                          WhatsApp
+                        </a>
+                      </Button>
+                    ) : null}
+                    <span className="text-xs text-muted-foreground">{notification.createdAt}</span>
+                  </div>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{module.summary}</p>
-              </div>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card className="rounded-[28px] border-border/80 bg-white">
+      <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
+        <Card className="surface-panel-violet rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Culture and Panjika research</CardTitle>
-            <CardDescription>Bengali remains first, but every supported tradition is seeded and governable.</CardDescription>
+            <SectionTitle icon={MessageCircleMore} tone="violet">WhatsApp escalation</SectionTitle>
+            <CardDescription>Zero-cost mode uses `wa.me` deep links. This does not auto-send messages, but it gives you one-click WhatsApp escalation from the dashboard.</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-3 md:grid-cols-2">
-            {settings.cultureResearch.filter((culture) => matchesSection(`${culture.cultureType} ${culture.sources.join(" ")} ${culture.sampleRituals.join(" ")}`)).map((culture) => (
-              <div className="rounded-[22px] border border-border bg-white p-4" key={culture.cultureType}>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">{culture.cultureType.replace("_", " ")}</p>
-                  <Badge variant={culture.isLaunchPriority ? "success" : "outline"}>{culture.isLaunchPriority ? "Launch priority" : "Supported"}</Badge>
+          <CardContent className="space-y-3">
+            <div className="rounded-[22px] border border-border bg-secondary/20 p-4">
+              <p className="text-sm font-semibold text-foreground">Configured number</p>
+              <p className="mt-1 text-sm text-muted-foreground">{whatsappNumber}</p>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                WhatsApp alert links are {settings.notificationSettings.whatsappAlertsEnabled ? "enabled" : "disabled"} in notification settings.
+              </p>
+            </div>
+            {topNotifications.slice(0, 3).map((notification) => {
+              const whatsappLink = buildWhatsappLink(whatsappNumber, notification.title, notification.detail, notification.href);
+              return (
+                <div className={cn("rounded-[22px] border border-border p-4", notificationTone(notification.type).panel)} key={`wa-${notification.id}`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">{notification.title}</p>
+                    <Badge variant={notificationTone(notification.type).badge}>{notification.type.replace("_", " ")}</Badge>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{notification.detail}</p>
+                  <div className="mt-3">
+                    {settings.notificationSettings.whatsappAlertsEnabled && whatsappLink ? (
+                      <Button asChild>
+                        <a href={whatsappLink} rel="noreferrer" target="_blank">
+                          <MessageCircleMore className="h-4 w-4" />
+                          Open in WhatsApp
+                        </a>
+                      </Button>
+                    ) : (
+                      <div className="rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
+                        Enable WhatsApp alert links in notification settings and store your number in international format to use this.
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Sources</p>
-                <p className="mt-1 text-sm text-foreground">{culture.sources.join(" / ")}</p>
-                <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">Sample rituals</p>
-                <p className="mt-1 text-sm text-muted-foreground">{culture.sampleRituals.join(", ")}</p>
-              </div>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
 
-        <Card className="rounded-[28px] border-border/80 bg-white">
+        <Card className="surface-panel-blue rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Service tiers and audit log</CardTitle>
-            <CardDescription>Reference-only visibility stays here; edits happen in dedicated settings and ritual workspaces.</CardDescription>
+            <SectionTitle icon={RadioTower} tone="blue">Platform pulse</SectionTitle>
+            <CardDescription>High-level operating health across modules, using the same local development data plane the admin is currently running on.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {settings.serviceTiers.map((tier) => (
-              <div className="rounded-[22px] border border-border bg-white p-4" key={tier.name}>
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-foreground">{tier.name}</p>
-                  <Badge variant={tier.status === "active" ? "success" : "secondary"}>{tier.status}</Badge>
-                </div>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{tier.focus}</p>
+          <CardContent className="grid gap-3 md:grid-cols-2">
+            <div className="surface-panel-amber rounded-[22px] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-foreground">Launch culture</p>
+                <Badge variant="success">{settings.platform.defaultCulture.replace("_", " ")}</Badge>
               </div>
-            ))}
-            <div className="rounded-[22px] border border-border bg-secondary/20 p-4">
-              <p className="text-sm font-semibold text-foreground">Latest audit event</p>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{settings.auditLog[0]?.detail ?? "No audit events yet."}</p>
-              <div className="mt-3 flex items-center justify-between gap-3 text-xs text-muted-foreground">
-                <span>{settings.auditLog[0]?.action ?? "Pending"}</span>
-                <span>{settings.auditLog[0]?.createdAt ?? "-"}</span>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Reveal window {settings.platform.revealWindowHours.min}-{settings.platform.revealWindowHours.max} hours, booking gap {settings.platform.minBookingGapHours} hours.
+              </p>
+            </div>
+            <div className="surface-panel-blue rounded-[22px] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-foreground">New registrations</p>
+                <Badge variant="outline">
+                  {rawNotificationStore.notifications.filter((item) => item.type === "priest_registration" || item.type === "user_registration").length}
+                </Badge>
               </div>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Recent incoming registrations are visible both in the inbox and in the priest/user queues.
+              </p>
+            </div>
+            <div className={cn("rounded-[22px] p-4", bookingMetrics.refundCases > 0 ? "surface-panel-rose alert-ring-high" : "surface-panel")}>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-foreground">Manual refunds</p>
+                <Badge variant={bookingMetrics.refundCases > 0 ? "danger" : "outline"}>{bookingMetrics.refundCases}</Badge>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Refunds remain policy-snapshot-based and manual-first until live payment infrastructure is introduced.
+              </p>
+            </div>
+            <div className={cn("rounded-[22px] p-4", payoutMetrics.pendingCount > 0 ? "surface-panel-green alert-ring-low" : "surface-panel")}>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-foreground">Manual payouts</p>
+                <Badge variant={payoutMetrics.pendingCount > 0 ? "success" : "outline"}>{payoutMetrics.pendingCount} pending</Badge>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Priest settlements stay manual-first with UPI details and payout confirmation in the payout workspace.
+              </p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="flex justify-end">
-        <Button asChild>
-          <Link href={"/dashboard/settings/commercial" as Route}>Open settings workspace</Link>
-        </Button>
+      <div className="grid gap-5 xl:grid-cols-[1fr_0.95fr]">
+        <Card className="surface-panel rounded-[28px] border-border/80 bg-white">
+          <CardHeader>
+            <SectionTitle icon={LayoutGrid}>Module quick access</SectionTitle>
+            <CardDescription>Settings remain a module now. The landing route is operational and the modules stay task-specific.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-3 md:grid-cols-2">
+            {moduleStatus
+              .filter((module) => module.key !== "dashboard")
+              .map((module) => (
+                <Link className={cn("group rounded-[22px] border border-border p-4 transition-colors hover:bg-secondary/30", moduleTone(module.key))} href={module.href as Route} key={module.key}>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">{module.title}</p>
+                    <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{module.summary}</p>
+                </Link>
+              ))}
+          </CardContent>
+        </Card>
+
+        <Card className="surface-panel-rose rounded-[28px] border-border/80 bg-white">
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <SectionTitle icon={Siren} tone="rose">Hot alerts</SectionTitle>
+                <CardDescription>Small actionable list for the highest-friction operational issues.</CardDescription>
+              </div>
+              <ShieldAlert className="h-5 w-5 text-primary" />
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {bookingStore.cases
+              .filter((booking) => booking.replacementRequired || booking.pendingRefundAmount > 0 || booking.governance.whatsappConfirmationState === "failed")
+              .slice(0, 4)
+              .map((booking) => (
+                <Link
+                  className="block rounded-[22px] border border-border bg-white p-4 transition-colors hover:bg-secondary/30"
+                  href={`/dashboard/bookings/${booking.id}` as Route}
+                  key={booking.id}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-foreground">{booking.bookingCode} - {booking.ritual}</p>
+                    <Badge variant={booking.risk === "high" ? "danger" : booking.risk === "medium" ? "warning" : "info"}>{booking.risk} risk</Badge>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {booking.replacementRequired ? "Replacement required. " : ""}
+                    {booking.pendingRefundAmount > 0 ? `Refund exposure Rs ${booking.pendingRefundAmount}. ` : ""}
+                    WhatsApp state: {booking.governance.whatsappConfirmationState.replaceAll("_", " ")}.
+                  </p>
+                </Link>
+              ))}
+          </CardContent>
+        </Card>
       </div>
     </AdminShell>
   );

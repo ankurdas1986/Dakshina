@@ -1,12 +1,14 @@
+import { FolderTree, GitBranchPlus } from "lucide-react";
 import { createCategory, deleteCategory, saveCategory } from "../../../actions/rituals";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { ConfirmSubmitButton } from "../../../../components/ui/confirm-submit-button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
 import { Input } from "../../../../components/ui/input";
 import { RitualField, RitualSelectField, RitualTextAreaField } from "../../../../components/rituals/fields";
 import { RitualPageShell } from "../../../../components/rituals/ritual-page-shell";
+import { SectionTitle } from "../../../../components/ui/section-title";
 import {
   buildCategoryLabel,
   getCategoriesByCulture,
@@ -51,7 +53,7 @@ export default async function RitualCategoriesPage() {
     >
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
-          <CardTitle className="text-lg">Create category node</CardTitle>
+          <SectionTitle icon={GitBranchPlus} tone="amber">Create category node</SectionTitle>
           <CardDescription>Create a tradition, service type, or ritual group directly from the tree workspace.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -87,7 +89,7 @@ export default async function RitualCategoriesPage() {
 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
-          <CardTitle className="text-lg">Culture category tree</CardTitle>
+          <SectionTitle icon={FolderTree} tone="blue">Culture category tree</SectionTitle>
           <CardDescription>Tradition - service type - ritual grouping is edited here with dependency-safe delete actions.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">

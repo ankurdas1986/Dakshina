@@ -1,11 +1,13 @@
+import { FileJson2, ShieldCheck } from "lucide-react";
 import { createFardRule, deleteFardRule, saveFardRule } from "../../../actions/rituals";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { ConfirmSubmitButton } from "../../../../components/ui/confirm-submit-button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
 import { RitualTextAreaField } from "../../../../components/rituals/fields";
 import { RitualPageShell } from "../../../../components/rituals/ritual-page-shell";
+import { SectionTitle } from "../../../../components/ui/section-title";
 import { getBookingStore } from "../../../../lib/booking-store";
 import { getRitualStore } from "../../../../lib/ritual-store";
 
@@ -28,7 +30,7 @@ export default async function RitualFardPage() {
       <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Fard operating rules</CardTitle>
+            <SectionTitle icon={FileJson2} tone="amber">Fard operating rules</SectionTitle>
             <CardDescription>Booking confirmation snapshots the ritual checklist before user delivery.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -61,7 +63,7 @@ export default async function RitualFardPage() {
 
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Booking Fard snapshots</CardTitle>
+            <SectionTitle icon={ShieldCheck} tone="green">Booking Fard snapshots</SectionTitle>
             <CardDescription>These examples show the booking-side checklist remains locked even if the ritual template changes later.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">

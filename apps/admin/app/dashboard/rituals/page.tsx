@@ -1,9 +1,11 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { ChevronRight, FileJson2, FolderTree, Globe2, Layers3, ScrollText } from "lucide-react";
+import { BookTemplate, ChevronRight, FileJson2, FolderTree, Globe2, Layers3, ScrollText, ShieldCheck } from "lucide-react";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
+import { KpiCard } from "../../../components/ui/kpi-card";
+import { SectionTitle } from "../../../components/ui/section-title";
 import { RitualPageShell } from "../../../components/rituals/ritual-page-shell";
 import { getBookingStore } from "../../../lib/booking-store";
 import {
@@ -25,11 +27,11 @@ export default async function RitualsOverviewPage() {
   const topDemand = getTopDemandRituals(store).slice(0, 8);
 
   const metricCards = [
-    { label: "Service tiers", value: metrics.serviceTiers, icon: Layers3 },
-    { label: "Cultures covered", value: metrics.culturesCovered, icon: Globe2 },
-    { label: "Category tree nodes", value: metrics.categoryCount, icon: FolderTree },
-    { label: "Ritual templates", value: metrics.ritualCount, icon: ScrollText },
-    { label: "Fard templates", value: metrics.fardTemplates, icon: FileJson2 }
+    { label: "Service tiers", value: metrics.serviceTiers, icon: Layers3, tone: "amber" as const, detail: "Tier structure keeps ritual operations and pricing grouped cleanly." },
+    { label: "Cultures covered", value: metrics.culturesCovered, icon: Globe2, tone: "blue" as const, detail: "Culture-aware catalog stays Bengali-first without excluding later rollout." },
+    { label: "Category tree nodes", value: metrics.categoryCount, icon: FolderTree, tone: "green" as const, detail: "Tradition, service type, and ritual hierarchy nodes currently active." },
+    { label: "Ritual templates", value: metrics.ritualCount, icon: ScrollText, tone: "violet" as const, detail: "Operational ritual templates with pricing, duration, and delivery logic." },
+    { label: "Fard templates", value: metrics.fardTemplates, icon: FileJson2, tone: "rose" as const, detail: "Locked Fard templates available for snapshotting into bookings." }
   ];
 
   const quickLinks = [
@@ -69,26 +71,14 @@ export default async function RitualsOverviewPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         {metricCards.map((metric) => {
           const Icon = metric.icon;
-          return (
-            <Card className="rounded-[24px] border-border/80 bg-white" key={metric.label}>
-              <CardContent className="flex items-center justify-between gap-4 p-5">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                  <p className="mt-2 text-2xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                </div>
-                <div className="rounded-2xl bg-primary/10 p-2.5">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          );
+          return <KpiCard detail={metric.detail} icon={Icon} key={metric.label} label={metric.label} tone={metric.tone} value={metric.value} />;
         })}
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Ritual workspaces</CardTitle>
+            <SectionTitle icon={BookTemplate} tone="amber">Ritual workspaces</SectionTitle>
             <CardDescription>The module is split so create, edit, research, and snapshot review are no longer mixed on one page.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
@@ -106,7 +96,7 @@ export default async function RitualsOverviewPage() {
 
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Top demand rituals by culture</CardTitle>
+            <SectionTitle icon={ScrollText} tone="blue">Top demand rituals by culture</SectionTitle>
             <CardDescription>Bengali remains homepage priority while other traditions stay ready for phased rollout.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
@@ -127,7 +117,7 @@ export default async function RitualsOverviewPage() {
       <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Culture research snapshot</CardTitle>
+            <SectionTitle icon={Globe2} tone="violet">Culture research snapshot</SectionTitle>
             <CardDescription>Tradition source research stays visible here without crowding the editing workflows.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -148,7 +138,7 @@ export default async function RitualsOverviewPage() {
 
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Fard snapshot integrity</CardTitle>
+            <SectionTitle icon={ShieldCheck} tone="green">Fard snapshot integrity</SectionTitle>
             <CardDescription>Confirmed bookings carry locked Fard data even if the ritual template changes later.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">

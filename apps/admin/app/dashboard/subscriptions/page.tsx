@@ -1,13 +1,15 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { Building2, CalendarClock, PlusCircle, Search, ShieldCheck, TimerReset } from "lucide-react";
+import { Building2, CalendarClock, PlusCircle, Search, ShieldCheck, TimerReset, WalletCards } from "lucide-react";
 import { createSubscriptionRecord } from "../../actions/subscriptions";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
 import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
+import { KpiCard } from "../../../components/ui/kpi-card";
+import { SectionTitle } from "../../../components/ui/section-title";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getSubscriptionMetrics, getSubscriptionStore } from "../../../lib/subscription-store";
@@ -78,33 +80,20 @@ export default async function SubscriptionsPage({ searchParams }: SubscriptionsP
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Total contracts", value: metrics.totalContracts, icon: Building2 },
-          { label: "Active", value: metrics.activeContracts, icon: ShieldCheck },
-          { label: "Paused", value: metrics.pausedContracts, icon: TimerReset },
-          { label: "Generated bookings", value: metrics.generatedBookings, icon: CalendarClock }
-        ].map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <Card className="rounded-[24px] border-border/80 bg-white" key={metric.label}>
-              <CardContent className="flex items-center justify-between gap-4 p-5">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                  <p className="mt-2 text-2xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                </div>
-                <div className="rounded-2xl bg-primary/10 p-2.5">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+          { label: "Total contracts", value: metrics.totalContracts, icon: Building2, tone: "blue" as const, detail: "Temple, office, and factory contracts currently governed here." },
+          { label: "Active", value: metrics.activeContracts, icon: ShieldCheck, tone: "green" as const, detail: "Recurring contracts currently generating operational work." },
+          { label: "Paused", value: metrics.pausedContracts, icon: TimerReset, tone: "rose" as const, detail: "Contracts paused or blocked from generating new workload." },
+          { label: "Generated bookings", value: metrics.generatedBookings, icon: CalendarClock, tone: "amber" as const, detail: "Pre-blocked bookings already created from contract recurrence." }
+        ].map((metric) => (
+          <KpiCard detail={metric.detail} icon={metric.icon} key={metric.label} label={metric.label} tone={metric.tone} value={metric.value} />
+        ))}
       </div>
 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-lg">Create subscription contract</CardTitle>
+              <SectionTitle icon={WalletCards} tone="amber">Create subscription contract</SectionTitle>
               <CardDescription>Create recurring temple, office, or factory coverage and prepare pre-blocked booking generation.</CardDescription>
             </div>
             <PlusCircle className="h-5 w-5 text-primary" />
@@ -152,7 +141,7 @@ export default async function SubscriptionsPage({ searchParams }: SubscriptionsP
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader className="space-y-4">
           <div>
-            <CardTitle className="text-lg">Institutional contract queue</CardTitle>
+            <SectionTitle icon={Building2} tone="blue">Institutional contract queue</SectionTitle>
             <CardDescription>Open a contract to manage duration, frequency, and generated booking blocks.</CardDescription>
           </div>
           <form className="grid gap-3 lg:grid-cols-[minmax(0,1.3fr)_0.9fr_0.9fr_auto]">

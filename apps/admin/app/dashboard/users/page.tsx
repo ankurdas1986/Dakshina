@@ -1,13 +1,15 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { CircleUserRound, MapPinned, PlusCircle, Search, Shield, Wallet } from "lucide-react";
+import { CircleUserRound, MapPinned, PlusCircle, Search, Shield, UserPlus, Wallet } from "lucide-react";
 import { createUserRecord } from "../../actions/users";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
 import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
+import { KpiCard } from "../../../components/ui/kpi-card";
+import { SectionTitle } from "../../../components/ui/section-title";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getUserMetrics, getUserStore } from "../../../lib/user-store";
@@ -82,33 +84,20 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {[
-          { label: "Total users", value: metrics.totalUsers, icon: CircleUserRound },
-          { label: "Active", value: metrics.activeUsers, icon: Shield },
-          { label: "Blocked", value: metrics.blockedUsers, icon: Shield },
-          { label: "Wallet users", value: metrics.walletUsers, icon: Wallet }
-        ].map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <Card className="rounded-[24px] border-border/80 bg-white" key={metric.label}>
-              <CardContent className="flex items-center justify-between gap-4 p-5">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                  <p className="mt-2 text-2xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                </div>
-                <div className="rounded-2xl bg-primary/10 p-2.5">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+          { label: "Total users", value: metrics.totalUsers, icon: CircleUserRound, tone: "blue" as const, detail: "All user accounts currently available to operations." },
+          { label: "Active", value: metrics.activeUsers, icon: Shield, tone: "green" as const, detail: "Accounts currently allowed to place and manage bookings." },
+          { label: "Blocked", value: metrics.blockedUsers, icon: Shield, tone: "rose" as const, detail: "Accounts restricted by admin governance controls." },
+          { label: "Wallet users", value: metrics.walletUsers, icon: Wallet, tone: "violet" as const, detail: "Users currently carrying wallet or credit-ledger activity." }
+        ].map((metric) => (
+          <KpiCard detail={metric.detail} icon={metric.icon} key={metric.label} label={metric.label} tone={metric.tone} value={metric.value} />
+        ))}
       </div>
 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-lg">Create user profile</CardTitle>
+              <SectionTitle icon={UserPlus} tone="amber">Create user profile</SectionTitle>
               <CardDescription>Manual user creation for support-led onboarding, corrections, or assisted bookings.</CardDescription>
             </div>
             <PlusCircle className="h-5 w-5 text-primary" />
@@ -141,7 +130,7 @@ export default async function UsersPage({ searchParams }: UsersPageProps) {
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader className="space-y-4">
           <div>
-            <CardTitle className="text-lg">User governance queue</CardTitle>
+            <SectionTitle icon={MapPinned} tone="blue">User governance queue</SectionTitle>
             <CardDescription>Search by name, phone, area, and culture preference. Open a row to edit the full lifecycle record.</CardDescription>
           </div>
           <form className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_0.9fr_0.9fr_1fr_auto]">

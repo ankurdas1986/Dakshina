@@ -80,6 +80,67 @@
 }
 
 @layer utilities {
+  .surface-panel {
+    @apply rounded-[24px] border border-border bg-white;
+  }
+
+  .surface-panel-amber {
+    @apply rounded-[24px] border border-amber-200/80 bg-gradient-to-br from-amber-50 via-white to-white;
+  }
+
+  .surface-panel-rose {
+    @apply rounded-[24px] border border-rose-200/80 bg-gradient-to-br from-rose-50 via-white to-white;
+  }
+
+  .surface-panel-blue {
+    @apply rounded-[24px] border border-sky-200/80 bg-gradient-to-br from-sky-50 via-white to-white;
+  }
+
+  .surface-panel-green {
+    @apply rounded-[24px] border border-emerald-200/80 bg-gradient-to-br from-emerald-50 via-white to-white;
+  }
+
+  .surface-panel-violet {
+    @apply rounded-[24px] border border-violet-200/80 bg-gradient-to-br from-violet-50 via-white to-white;
+  }
+
+  .surface-kpi-amber {
+    @apply border-amber-400/40;
+    background: linear-gradient(135deg, rgba(112, 62, 9, 0.98), rgba(163, 96, 17, 0.94) 58%, rgba(235, 155, 48, 0.9));
+  }
+
+  .surface-kpi-blue {
+    @apply border-sky-400/40;
+    background: linear-gradient(135deg, rgba(16, 49, 101, 0.98), rgba(23, 89, 168, 0.94) 58%, rgba(56, 149, 231, 0.88));
+  }
+
+  .surface-kpi-green {
+    @apply border-emerald-400/40;
+    background: linear-gradient(135deg, rgba(12, 71, 58, 0.98), rgba(16, 119, 89, 0.94) 58%, rgba(37, 181, 124, 0.88));
+  }
+
+  .surface-kpi-rose {
+    @apply border-rose-400/40;
+    background: linear-gradient(135deg, rgba(118, 27, 48, 0.98), rgba(174, 41, 83, 0.94) 58%, rgba(244, 114, 182, 0.88));
+  }
+
+  .surface-kpi-violet {
+    @apply border-violet-400/40;
+    background: linear-gradient(135deg, rgba(74, 31, 122, 0.98), rgba(107, 60, 184, 0.94) 58%, rgba(167, 139, 250, 0.88));
+  }
+
+  .alert-ring-high {
+    box-shadow: 0 0 0 1px rgba(225, 29, 72, 0.14), 0 16px 40px rgba(225, 29, 72, 0.08);
+  }
+
+  .alert-ring-medium {
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.14), 0 16px 40px rgba(245, 158, 11, 0.08);
+  }
+
+  .alert-ring-low {
+    box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.14), 0 16px 40px rgba(14, 165, 233, 0.08);
+  }
+
   .surface-scroll {
     scrollbar-width: thin;
     scrollbar-color: rgba(179, 116, 22, 0.35) transparent;

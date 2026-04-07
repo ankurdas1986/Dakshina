@@ -1,10 +1,12 @@
+import { Globe2, LibraryBig } from "lucide-react";
 import { savePlatformSettings } from "../../../actions/settings";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
 import { SettingsField, SettingsNumberField, SettingsSelectField } from "../../../../components/settings/fields";
 import { SettingsPageShell } from "../../../../components/settings/settings-page-shell";
+import { SectionTitle } from "../../../../components/ui/section-title";
 import { getAdminShellData } from "../../../../lib/admin-shell-data";
 import { settingsCultureOptions } from "../../../../lib/settings-form-data";
 
@@ -24,7 +26,7 @@ export default async function CultureSettingsPage() {
           <CardHeader>
             <div className="flex items-center justify-between gap-3">
               <div>
-                <CardTitle className="text-lg">Culture launch controls</CardTitle>
+                <SectionTitle icon={Globe2} tone="amber">Culture launch controls</SectionTitle>
                 <CardDescription>Set the operating default and launch geography without mixing in all other commercial rules.</CardDescription>
               </div>
               <Badge variant="success">Launch policy</Badge>
@@ -32,6 +34,7 @@ export default async function CultureSettingsPage() {
           </CardHeader>
           <CardContent>
             <form action={savePlatformSettings} className="grid gap-4 sm:grid-cols-2">
+              <input name="returnTo" type="hidden" value="/dashboard/settings/culture" />
               <SettingsSelectField label="Default culture" name="defaultCulture" defaultValue={settings.platform.defaultCulture} options={settingsCultureOptions} />
               <SettingsField label="Launch cluster" name="launchRegion" defaultValue={settings.platform.launchRegion} />
               <SettingsField label="Currency" name="currency" defaultValue={settings.platform.currency} />
@@ -48,7 +51,7 @@ export default async function CultureSettingsPage() {
 
         <Card className="rounded-[28px] border-border/80 bg-white">
           <CardHeader>
-            <CardTitle className="text-lg">Supported traditions and sources</CardTitle>
+            <SectionTitle icon={LibraryBig} tone="violet">Supported traditions and sources</SectionTitle>
             <CardDescription>Keep cultural source research visible without embedding it inside one long settings page.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">

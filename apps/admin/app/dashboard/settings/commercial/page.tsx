@@ -1,7 +1,9 @@
+import { WalletCards } from "lucide-react";
 import { savePlatformSettings } from "../../../actions/settings";
 import { Button } from "../../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
+import { SectionTitle } from "../../../../components/ui/section-title";
 import { SettingsNumberField } from "../../../../components/settings/fields";
 import { SettingsPageShell } from "../../../../components/settings/settings-page-shell";
 import { getAdminShellData } from "../../../../lib/admin-shell-data";
@@ -19,11 +21,12 @@ export default async function CommercialSettingsPage() {
     >
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
-          <CardTitle className="text-lg">Pricing and booking economics</CardTitle>
+          <SectionTitle icon={WalletCards} tone="amber">Pricing and booking economics</SectionTitle>
           <CardDescription>Primary commission, advance payment, referrals, and booking window economics.</CardDescription>
         </CardHeader>
         <CardContent>
           <form action={savePlatformSettings} className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <input name="returnTo" type="hidden" value="/dashboard/settings/commercial" />
             <SettingsNumberField label="Default commission (%)" name="defaultCommissionPercent" defaultValue={settings.platform.defaultCommissionPercent} />
             <SettingsNumberField label="Advance payment (%)" name="bookingAdvancePercent" defaultValue={settings.platform.bookingAdvancePercent} />
             <SettingsNumberField label="Referee discount (%)" name="refereeDiscountPercent" defaultValue={settings.platform.refereeDiscountPercent} />

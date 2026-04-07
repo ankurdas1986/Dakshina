@@ -5,9 +5,11 @@ import { AdminShell } from "../../../components/admin-shell";
 import { SectionNav } from "../../../components/section-nav";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
 import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
+import { KpiCard } from "../../../components/ui/kpi-card";
+import { SectionTitle } from "../../../components/ui/section-title";
 import { getPriestStatusVariant } from "../../../components/priests/priest-detail-panel";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
@@ -128,25 +130,22 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => {
           const Icon = metric.icon;
-          return (
-            <Card className="rounded-[24px] border-border/80 bg-white" key={metric.label}>
-              <CardContent className="flex items-center justify-between gap-4 p-5">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                  <p className="mt-2 text-2xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                </div>
-                <div className="rounded-2xl bg-primary/10 p-2.5">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          );
+          const detail =
+            metric.label === "Total priests"
+              ? "All priest records currently visible to operations."
+              : metric.label === "Verified"
+                ? "Priests already approved for live marketplace handling."
+                : metric.label === "Pending KYC"
+                  ? "Priest registrations waiting for KYC review or document validation."
+                  : "Cultures currently covered by the priest pool.";
+          const tone = metric.label === "Verified" ? "green" : metric.label === "Pending KYC" ? "rose" : metric.label === "Cultures covered" ? "violet" : "blue";
+          return <KpiCard detail={detail} icon={Icon} key={metric.label} label={metric.label} tone={tone} value={metric.value} />;
         })}
       </div>
 
       <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="coverage-summary">
         <CardHeader>
-          <CardTitle className="text-lg">District and radius coverage</CardTitle>
+          <SectionTitle icon={Languages} tone="blue">District and radius coverage</SectionTitle>
           <CardDescription>Use this summary to identify where verified priest coverage is thin before opening individual records.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -170,7 +169,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-lg">Create priest record</CardTitle>
+              <SectionTitle icon={PlusCircle} tone="amber">Create priest record</SectionTitle>
               <CardDescription>Manual priest onboarding for assisted KYC intake, invite-style operations, or urgent launch-side coverage.</CardDescription>
             </div>
             <PlusCircle className="h-5 w-5 text-primary" />
@@ -201,7 +200,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
       <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="priest-queue">
         <CardHeader className="space-y-4">
           <div>
-            <CardTitle className="text-lg">Priest operations queue</CardTitle>
+            <SectionTitle icon={Users} tone="blue">Priest operations queue</SectionTitle>
             <CardDescription>Table-first review flow. Use filters here, then open a single priest record to take action.</CardDescription>
           </div>
           <form className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_0.95fr_0.95fr_0.85fr_0.95fr_auto]">

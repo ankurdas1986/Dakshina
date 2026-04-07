@@ -2,9 +2,16 @@ import { settingsSnapshot } from "./settings";
 
 export const moduleStatus = [
   {
+    key: "dashboard",
+    title: "Dashboard",
+    href: "/dashboard",
+    status: "live",
+    summary: "Command center for urgent alerts, registrations, booking issues, refunds, payouts, and quick actions."
+  },
+  {
     key: "settings",
     title: "Global Settings",
-    href: "/dashboard",
+    href: "/dashboard/settings",
     status: "live",
     summary: "Commercial rules, privacy timing, district overrides, and rollout controls."
   },

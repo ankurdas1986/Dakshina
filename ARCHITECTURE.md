@@ -61,6 +61,7 @@ This repository is scaffolded as an admin-first Turborepo workspace with these t
 
 The admin now follows a route-based operating model instead of packing review forms into one page:
 
+- `/dashboard` is the super-admin command center
 - module index pages are queue/table views for scanning and filtering
 - record detail pages are dedicated workspaces for one priest or one booking at a time
 - breadcrumbs and back links keep navigation explicit
@@ -79,7 +80,8 @@ This is the default pattern to extend into future admin modules such as payouts 
 
 Large singleton modules are now being split into route-based workspaces as well:
 
-- `/dashboard` -> Global Settings overview
+- `/dashboard` -> super-admin operations dashboard
+- `/dashboard/settings` -> Global Settings entry route
 - `/dashboard/settings/culture` -> culture rollout workspace
 - `/dashboard/settings/commercial` -> commercial rules workspace
 - `/dashboard/settings/governance` -> governance workspace
@@ -102,6 +104,14 @@ This keeps each page operationally complete without forcing operators to jump to
 
 The left navigation now mirrors this split for the densest modules:
 
+- `Dashboard` is the operational landing route after login
 - `Global Settings` exposes route-level workspaces under the main nav item
 - `Rituals and Fard` exposes route-level workspaces under the main nav item
 - the page header still keeps contextual sub-navigation, but the sidebar is now the primary workspace navigator
+
+Notification delivery is split deliberately:
+
+- the admin inbox remains the primary in-app notification stream
+- the dashboard landing page surfaces the newest alerts directly
+- zero-cost WhatsApp support uses `wa.me` deep links from the dashboard
+- provider-based auto-send is deferred until a paid messaging integration is introduced

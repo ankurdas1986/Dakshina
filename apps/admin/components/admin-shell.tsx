@@ -32,7 +32,7 @@ import { DakshinaLogo } from "./dakshina-logo";
 import type { AdminNotification } from "../lib/notification-store";
 
 type AdminShellProps = {
-  active: "settings" | "priests" | "users" | "rituals" | "bookings" | "subscriptions" | "payouts" | "trust";
+  active: "dashboard" | "settings" | "priests" | "users" | "rituals" | "bookings" | "subscriptions" | "payouts" | "trust";
   children: ReactNode;
   userEmail?: string | null;
   title: string;
@@ -45,6 +45,7 @@ type AdminShellProps = {
 };
 
 const iconMap = {
+  dashboard: LayoutDashboard,
   settings: Settings2,
   priests: BookCheck,
   users: CircleUserRound,
@@ -56,8 +57,12 @@ const iconMap = {
 } as const;
 
 const searchConfig = {
-  settings: {
+  dashboard: {
     action: "/dashboard",
+    placeholder: "Search alerts, queues, payouts, users..."
+  },
+  settings: {
+    action: "/dashboard/settings",
     placeholder: "Search settings, policies, districts..."
   },
   priests: {
@@ -106,6 +111,34 @@ function getInitials(email?: string | null) {
   return source.slice(0, 2).toUpperCase();
 }
 
+function notificationTone(type: AdminNotification["type"]) {
+  if (type === "refund" || type === "booking") {
+    return {
+      panel: "surface-panel-rose",
+      icon: "bg-destructive/10 text-destructive"
+    };
+  }
+
+  if (type === "kyc" || type === "subscription") {
+    return {
+      panel: "surface-panel-amber",
+      icon: "bg-warning/20 text-warning-foreground"
+    };
+  }
+
+  if (type === "priest_registration" || type === "user_registration" || type === "wallet") {
+    return {
+      panel: "surface-panel-blue",
+      icon: "bg-sky-100 text-sky-700"
+    };
+  }
+
+  return {
+    panel: "surface-panel",
+    icon: "bg-primary/10 text-primary"
+  };
+}
+
 export function AdminShell({
   active,
   children,
@@ -128,7 +161,7 @@ export function AdminShell({
 
   const sidebarGroups = {
     settings: [
-      { href: "/dashboard" as Route, label: "Overview" },
+      { href: "/dashboard/settings" as Route, label: "Overview" },
       { href: "/dashboard/settings/culture" as Route, label: "Culture rollout" },
       { href: "/dashboard/settings/commercial" as Route, label: "Commercial rules" },
       { href: "/dashboard/settings/governance" as Route, label: "Governance" },
@@ -144,10 +177,15 @@ export function AdminShell({
     ]
   } as const;
 
-  const isSettingsExpanded = pathname === "/dashboard" || pathname.startsWith("/dashboard/settings");
+  const isDashboardActive = pathname === "/dashboard";
+  const isSettingsExpanded = pathname.startsWith("/dashboard/settings");
   const isRitualsExpanded = pathname.startsWith("/dashboard/rituals");
 
   function isModuleActive(itemKey: AdminShellProps["active"]) {
+    if (itemKey === "dashboard") {
+      return isDashboardActive;
+    }
+
     if (itemKey === "settings") {
       return isSettingsExpanded;
     }
@@ -337,14 +375,15 @@ export function AdminShell({
                     <div className="surface-scroll max-h-[360px] space-y-2 overflow-y-auto px-3 py-3">
                       {notifications.length ? notifications.map((item) => (
                         <Link
-                          className="block rounded-xl border border-border bg-white px-3 py-3 transition-colors hover:bg-secondary/40"
+                          className={cn("block rounded-xl border border-border px-3 py-3 transition-colors hover:bg-secondary/40", notificationTone(item.type).panel)}
                           href={item.href as Route}
                           key={item.id}
                           onClick={() => setNotificationMenuOpen(false)}
                         >
                           <div className="flex items-start gap-3">
                             <span className={cn(
-                              "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary",
+                              "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+                              notificationTone(item.type).icon,
                               item.read ? "opacity-70" : "ring-2 ring-primary/10"
                             )}>
                               {item.type === "priest_registration" ? (

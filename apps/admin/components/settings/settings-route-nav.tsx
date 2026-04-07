@@ -2,7 +2,7 @@ import type { Route } from "next";
 import { ModuleRouteNav } from "../module-route-nav";
 
 const items = [
-  { href: "/dashboard" as Route, label: "Overview" },
+  { href: "/dashboard/settings" as Route, label: "Overview" },
   { href: "/dashboard/settings/culture" as Route, label: "Culture rollout" },
   { href: "/dashboard/settings/commercial" as Route, label: "Commercial rules" },
   { href: "/dashboard/settings/governance" as Route, label: "Governance" },

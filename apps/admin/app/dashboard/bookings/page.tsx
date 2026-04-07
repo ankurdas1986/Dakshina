@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { CalendarRange, Clock3, MessageCircleMore, PlusCircle, RefreshCcw, Search, Wallet } from "lucide-react";
+import { CalendarRange, Clock3, MessageCircleMore, PlusCircle, RefreshCcw, Search, ShieldAlert, Wallet } from "lucide-react";
 import { createBookingCase } from "../../actions/bookings";
 import { getBookingStatusVariant } from "../../../components/bookings/booking-detail-panel";
 import { AdminShell } from "../../../components/admin-shell";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
 import { FormActions } from "../../../components/ui/form-actions";
 import { Input } from "../../../components/ui/input";
+import { KpiCard } from "../../../components/ui/kpi-card";
+import { SectionTitle } from "../../../components/ui/section-title";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getBookingMetrics, getBookingStore } from "../../../lib/booking-store";
@@ -106,19 +108,16 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => {
           const Icon = metric.icon;
-          return (
-            <Card className="rounded-[24px] border-border/80 bg-white" key={metric.label}>
-              <CardContent className="flex items-center justify-between gap-4 p-5">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                  <p className="mt-2 text-2xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                </div>
-                <div className="rounded-2xl bg-primary/10 p-2.5">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          );
+          const detail =
+            metric.label === "Active bookings"
+              ? "Live operational booking load currently moving through the marketplace."
+              : metric.label === "Payment pending"
+                ? "Bookings still waiting on wallet or advance payment action."
+                : metric.label === "Replacement cases"
+                  ? "Cases needing reassignment or intervention before ritual completion."
+                  : "Bookings waiting for final OTP-based completion closure.";
+          const tone = metric.label === "Replacement cases" ? "rose" : metric.label === "Payment pending" ? "amber" : metric.label === "Completion pending" ? "violet" : "blue";
+          return <KpiCard detail={detail} icon={Icon} key={metric.label} label={metric.label} tone={tone} value={metric.value} />;
         })}
       </div>
 
@@ -126,7 +125,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-lg">Create manual booking</CardTitle>
+              <SectionTitle icon={PlusCircle} tone="amber">Create manual booking</SectionTitle>
               <CardDescription>Use this for super-admin forced bookings, support-assisted orders, and offline capture before payment collection.</CardDescription>
             </div>
             <PlusCircle className="h-5 w-5 text-primary" />
@@ -170,7 +169,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader className="space-y-4">
           <div>
-            <CardTitle className="text-lg">Booking operations queue</CardTitle>
+            <SectionTitle icon={CalendarRange} tone="blue">Booking operations queue</SectionTitle>
             <CardDescription>Table-first workflow. Keep the queue dense here and move into a dedicated case page to edit the booking.</CardDescription>
           </div>
           <form className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_0.9fr_0.85fr_0.95fr_0.95fr_auto]">
@@ -297,7 +296,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
-          <CardTitle className="text-lg">Replacement workflow policy</CardTitle>
+          <SectionTitle icon={ShieldAlert} tone="rose">Replacement workflow policy</SectionTitle>
           <CardDescription>Reassignment remains controlled and auditable in the MVP. The queue handles triage, the detail page handles execution.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

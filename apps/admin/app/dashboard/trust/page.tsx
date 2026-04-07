@@ -9,9 +9,11 @@ import { AdminShell } from "../../../components/admin-shell";
 import { SectionNav } from "../../../components/section-nav";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
 import { FieldHint } from "../../../components/ui/field-hint";
 import { Input } from "../../../components/ui/input";
+import { KpiCard } from "../../../components/ui/kpi-card";
+import { SectionTitle } from "../../../components/ui/section-title";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getTrustMetrics, getTrustStore } from "../../../lib/trust-store";
@@ -112,20 +114,16 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <Card className="rounded-[24px] border-border/80 bg-white" key={metric.label}>
-              <CardContent className="flex items-center justify-between gap-4 p-5">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
-                  <p className="mt-2 text-2xl font-extrabold tracking-tight text-foreground">{metric.value}</p>
-                </div>
-                <div className="rounded-2xl bg-primary/10 p-2.5">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-          );
+          const tone = metric.label === "Reviews pending" ? "rose" : metric.label === "Referral credits pending" ? "amber" : metric.label === "Average rating" ? "violet" : "green";
+          const detail =
+            metric.label === "Average rating"
+              ? "Visible public quality signal from verified completed bookings."
+              : metric.label === "Reviews pending"
+                ? "Moderation workload currently waiting for admin review."
+                : metric.label === "Referral credits pending"
+                  ? "Ledger credits not yet released into final settlement state."
+                  : "Priests currently falling below trust threshold controls.";
+          return <KpiCard detail={detail} icon={metric.icon} key={metric.label} label={metric.label} tone={tone} value={metric.value} />;
         })}
       </div>
 
@@ -138,7 +136,7 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
       <div className="grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
         <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="trust-controls">
           <CardHeader>
-            <CardTitle className="text-lg">Trust controls</CardTitle>
+            <SectionTitle icon={ShieldCheck} tone="rose">Trust controls</SectionTitle>
             <CardDescription>Completion gates, review policy, and quality operations remain admin-managed.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -171,7 +169,7 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
         <div className="space-y-5">
           <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="trust-score">
             <CardHeader>
-              <CardTitle className="text-lg">Trust score operations</CardTitle>
+              <SectionTitle icon={Star} tone="violet">Trust score operations</SectionTitle>
               <CardDescription>Admin can tune the visible score using rating, punctuality, completion quality, verification, and a controlled adjustment.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -213,7 +211,7 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
 
           <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="referral-ledger">
             <CardHeader>
-              <CardTitle className="text-lg">Referral ledger</CardTitle>
+              <SectionTitle icon={WalletCards} tone="amber">Referral ledger</SectionTitle>
               <CardDescription>Reward release remains auditable and depends on completion state.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -259,7 +257,7 @@ export default async function TrustPage({ searchParams }: TrustPageProps) {
 
           <Card className="scroll-mt-28 rounded-[28px] border-border/80 bg-white" id="review-moderation">
             <CardHeader>
-              <CardTitle className="text-lg">Review moderation</CardTitle>
+              <SectionTitle icon={MessageSquareQuote} tone="blue">Review moderation</SectionTitle>
               <CardDescription>Reviews should only stay visible after valid completed bookings.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

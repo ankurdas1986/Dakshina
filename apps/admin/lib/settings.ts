@@ -52,6 +52,8 @@ export type SettingsSnapshot = {
     kycAlertsEnabled: boolean;
     referralAlertsEnabled: boolean;
     dailyDigestEnabled: boolean;
+    whatsappAlertsEnabled: boolean;
+    superAdminWhatsappNumber: string;
   };
   auditLog: Array<{
     id: string;
@@ -190,7 +192,9 @@ export const settingsSnapshot: SettingsSnapshot = {
     bookingAlertsEnabled: true,
     kycAlertsEnabled: true,
     referralAlertsEnabled: false,
-    dailyDigestEnabled: true
+    dailyDigestEnabled: true,
+    whatsappAlertsEnabled: false,
+    superAdminWhatsappNumber: '+919999999999'
   },
   auditLog: [
     {

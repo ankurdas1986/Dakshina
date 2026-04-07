@@ -17,6 +17,10 @@ Legend:
 - `[x]` Saving policy controls updates persisted values
 - `[x]` Saving notification settings updates header inbox behavior and persisted values
 - `[x]` Admin inbox shows new priest and user registration alerts
+- `[x]` `/dashboard` shows a real operations landing page instead of a settings overview
+- `[x]` Dashboard landing page surfaces current admin notifications and WhatsApp escalation links
+- `[x]` Priority alerts use differentiated visual severity styling instead of the same monotonous surface treatment
+- `[x]` Dashboard KPI cards use darker brand-tinted surfaces with light text and retain responsive readability
 - `[x]` Settings audit log records admin changes
 - `[x]` Changes persist in `apps/admin/data/global-settings.json`
 - `[x]` Section chips now work as real anchor navigation instead of fake tabs
@@ -164,3 +168,4 @@ Legend:
 
 - [x] route-based settings and rituals workspaces verified via build/lint and responsive layout pass
 - [x] dense module submenu behavior verified in the sidebar for settings and rituals workspaces
+- [x] icon-led section headers and darker KPI hierarchy hold together across the refreshed queue and settings surfaces

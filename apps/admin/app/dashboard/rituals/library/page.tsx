@@ -1,12 +1,14 @@
+import { BookTemplate, ScrollText } from "lucide-react";
 import { createRitual, deleteRitual, saveRitual } from "../../../actions/rituals";
 import { Badge } from "../../../../components/ui/badge";
 import { Button } from "../../../../components/ui/button";
 import { ConfirmSubmitButton } from "../../../../components/ui/confirm-submit-button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "../../../../components/ui/card";
 import { FormActions } from "../../../../components/ui/form-actions";
 import { Input } from "../../../../components/ui/input";
 import { RitualField, RitualSelectField, RitualTextAreaField } from "../../../../components/rituals/fields";
 import { RitualPageShell } from "../../../../components/rituals/ritual-page-shell";
+import { SectionTitle } from "../../../../components/ui/section-title";
 import { buildCategoryLabel, getFardItemCount, getLeafCategoryOptions, getRitualStore } from "../../../../lib/ritual-store";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +37,7 @@ export default async function RitualLibraryPage() {
     >
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
-          <CardTitle className="text-lg">Create ritual template</CardTitle>
+          <SectionTitle icon={BookTemplate} tone="amber">Create ritual template</SectionTitle>
           <CardDescription>Create ritual records directly from the library workspace so create and edit stay in one operational surface.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -66,7 +68,7 @@ export default async function RitualLibraryPage() {
 
       <Card className="rounded-[28px] border-border/80 bg-white">
         <CardHeader>
-          <CardTitle className="text-lg">Ritual template library</CardTitle>
+          <SectionTitle icon={ScrollText} tone="blue">Ritual template library</SectionTitle>
           <CardDescription>Edit culture mapping, duration, pricing split, demand rank, and Fard JSON here.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

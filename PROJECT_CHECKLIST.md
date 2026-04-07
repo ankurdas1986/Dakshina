@@ -43,6 +43,7 @@ Legend:
 - `[x]` long cards constrained with internal scroll
 - `[x]` top-right notification entry added to the admin header
 - `[x]` admin inbox now includes new priest and user registration notifications
+- `[x]` `/dashboard` now acts as the true super-admin command center instead of opening on Global Settings
 - `[x]` sub-navigation support added for module pages that need denser workflows
 - `[x]` misleading fake section tabs removed or converted into real section-anchor navigation
 - `[x]` responsive UX pass completed for queue pages and detail pages with mobile card fallbacks and scroll cleanup
@@ -51,6 +52,8 @@ Legend:
 - `[x]` sidebar now exposes the dense module workspaces as nested navigation under the main module links
 - `[x]` destructive CRUD actions now require an explicit confirmation dialog
 - `[x]` default browser scrollbar styling replaced with a consistent app-level scrollbar theme
+- `[x]` high-priority dashboard alerts and notifications now use semantic visual tones instead of one flat color treatment
+- `[x]` branded dark KPI cards and icon-led section headers now enforce stronger visual hierarchy across the main super-admin workspaces
 
 ### 3.2 Global Settings
 
@@ -58,6 +61,7 @@ Legend:
 - `[x]` editable settings forms with local persistence for UAT
 - `[x]` notification settings controls added to Module 1
 - `[x]` registration alert toggle added for new priest and user registrations
+- `[x]` WhatsApp alert-link toggle and super-admin number setting added for zero-cost escalation
 - `[x]` local audit log for settings changes
 - `[ ]` Supabase-backed settings persistence
 

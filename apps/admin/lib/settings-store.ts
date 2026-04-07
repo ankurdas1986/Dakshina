@@ -214,6 +214,11 @@ export function parseNotificationFormData(formData: FormData): SettingsSnapshot[
     bookingAlertsEnabled: formData.get("bookingAlertsEnabled") === "on",
     kycAlertsEnabled: formData.get("kycAlertsEnabled") === "on",
     referralAlertsEnabled: formData.get("referralAlertsEnabled") === "on",
-    dailyDigestEnabled: formData.get("dailyDigestEnabled") === "on"
+    dailyDigestEnabled: formData.get("dailyDigestEnabled") === "on",
+    whatsappAlertsEnabled: formData.get("whatsappAlertsEnabled") === "on",
+    superAdminWhatsappNumber: normalizeText(
+      formData.get("superAdminWhatsappNumber"),
+      settingsSnapshot.notificationSettings.superAdminWhatsappNumber
+    )
   };
 }
