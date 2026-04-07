@@ -189,7 +189,7 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
               <input className="mt-1 h-4 w-4 rounded border-border accent-[hsl(var(--primary))] focus:ring-primary" defaultChecked name="allowContactReveal" type="checkbox" />
               <span className="space-y-1">
                 <span className="block text-sm font-semibold text-foreground">Allow direct contact reveal</span>
-                <span className="block text-sm leading-6 text-muted-foreground">Enable this only if users who pay the required advance should be allowed to view this priest's phone number.</span>
+                <span className="block text-sm leading-6 text-muted-foreground">Enable this only if users who pay the required advance should be allowed to view this priest&apos;s phone number.</span>
               </span>
             </label>
             <Input className="h-11 rounded-lg" name="mainCategoryId" placeholder="Main category id (optional)" />
@@ -325,4 +325,5 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
     </AdminShell>
   );
 }
+
 

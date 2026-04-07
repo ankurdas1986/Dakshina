@@ -11,6 +11,7 @@ import { DateInput } from "../../../components/ui/date-input";
 import { Input } from "../../../components/ui/input";
 import { KpiCard } from "../../../components/ui/kpi-card";
 import { SectionTitle } from "../../../components/ui/section-title";
+import { TimeRangePicker } from "../../../components/ui/time-range-picker";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getBookingMetrics, getBookingStore } from "../../../lib/booking-store";
@@ -145,7 +146,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             <Input className="h-11 rounded-lg" name="ritual" placeholder="Ritual" required />
             <Input className="h-11 rounded-lg" name="district" placeholder="District" required />
             <DateInput name="eventDate" />
-            <Input className="h-11 rounded-lg" name="scheduledWindow" placeholder="09:00 AM - 11:00 AM" />
+            <TimeRangePicker name="scheduledWindow" />
             <Input className="h-11 rounded-lg" name="assignedPriest" placeholder="Assigned priest" />
             <Input className="h-11 rounded-lg" min={0} name="dakshinaAmount" placeholder="Dakshina amount" type="number" />
             <Input className="h-11 rounded-lg" min={0} name="samagriAddOns" placeholder="Samagri add-ons" type="number" />

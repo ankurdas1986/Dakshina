@@ -3,6 +3,7 @@ import { MessageCircleMore } from "lucide-react";
 import { initiateBookingRefund, saveBookingCase } from "../../app/actions/bookings";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import { DateTimePicker } from "../ui/date-time-picker";
 import { FieldHint } from "../ui/field-hint";
 import { FormActions } from "../ui/form-actions";
 import { Input } from "../ui/input";
@@ -161,8 +162,8 @@ export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetai
         <div className="grid gap-3 md:grid-cols-2">
           <SelectField defaultValue={booking.completionOtpStatus} label="OTP status" name="completionOtpStatus" options={otpStatusOptions} />
           <NumberField defaultValue={booking.completionOtpAttempts} label="Attempt count" min={0} name="completionOtpAttempts" />
-          <Field label="Issued at"><Input defaultValue={booking.completionOtpIssuedAt} name="completionOtpIssuedAt" /></Field>
-          <Field label="Verified at"><Input defaultValue={booking.completionOtpVerifiedAt} name="completionOtpVerifiedAt" /></Field>
+          <Field label="Issued at"><DateTimePicker defaultValue={booking.completionOtpIssuedAt} name="completionOtpIssuedAt" /></Field>
+          <Field label="Verified at"><DateTimePicker defaultValue={booking.completionOtpVerifiedAt} name="completionOtpVerifiedAt" /></Field>
           <div className="md:col-span-2"><TextAreaField defaultValue={booking.completionOtpLastEvent} label="OTP event note" name="completionOtpLastEvent" /></div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { MessageCircleMore } from "lucide-react";
 import { confirmManualPayout, savePayoutEntry } from "../../app/actions/payouts";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import { DateInput } from "../ui/date-input";
 import { FieldHint } from "../ui/field-hint";
 import { FormActions } from "../ui/form-actions";
 import { Input } from "../ui/input";
@@ -80,7 +81,7 @@ export function PayoutDetailPanel({ entry, returnTo }: PayoutDetailPanelProps) {
           ]}
         />
         <Field label="Scheduled for">
-          <Input defaultValue={entry.payoutScheduledFor} name="payoutScheduledFor" />
+          <DateInput defaultValue={entry.payoutScheduledFor} name="payoutScheduledFor" />
         </Field>
         <Field label="Reference">
           <Input defaultValue={entry.payoutReference} name="payoutReference" placeholder="UPI / bank reference" />
