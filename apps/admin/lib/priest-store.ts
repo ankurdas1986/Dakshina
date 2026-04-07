@@ -33,6 +33,7 @@ export type PriestRecord = {
   verificationStatus: PriestVerificationStatus;
   submittedAt: string;
   phone: string;
+  allowContactReveal: boolean;
   pendingPayout: number;
   documents: string[];
   documentRecords: PriestDocumentRecord[];
@@ -73,6 +74,7 @@ const fallbackPriests: PriestStore = {
       verificationStatus: "unverified",
       submittedAt: "2026-04-01",
       phone: "+91 90070 10001",
+      allowContactReveal: true,
       pendingPayout: 2500,
       documents: ["govt_id", "address_proof", "profile_photo"],
       documentRecords: [
@@ -100,6 +102,7 @@ const fallbackPriests: PriestStore = {
       verificationStatus: "review",
       submittedAt: "2026-03-31",
       phone: "+91 90070 10002",
+      allowContactReveal: false,
       pendingPayout: 8500,
       documents: ["govt_id", "address_proof", "profile_photo", "service_specialization"],
       documentRecords: [
@@ -127,6 +130,7 @@ const fallbackPriests: PriestStore = {
       verificationStatus: "verified",
       submittedAt: "2026-03-29",
       phone: "+91 90070 10003",
+      allowContactReveal: true,
       pendingPayout: 0,
       documents: ["govt_id", "address_proof", "profile_photo", "service_specialization", "home_pin"],
       documentRecords: [
@@ -153,6 +157,7 @@ function normalizePriest(priest: Partial<PriestRecord>, fallback: PriestRecord):
     ...fallback,
     ...priest,
     email: priest.email ?? fallback.email ?? `${fallback.id}@dakshina.local`,
+    allowContactReveal: priest.allowContactReveal ?? fallback.allowContactReveal,
     pendingPayout: priest.pendingPayout ?? fallback.pendingPayout,
     cultureTags: priest.cultureTags ?? fallback.cultureTags,
     languageTags: priest.languageTags ?? fallback.languageTags,
@@ -183,6 +188,7 @@ export async function updatePriestReview(input: {
   verificationStatus: PriestVerificationStatus;
   radiusKm: number;
   pendingPayout: number;
+  allowContactReveal: boolean;
   notes: string;
   mainCategoryId: string | null;
   serviceCategoryId: string | null;
@@ -204,6 +210,7 @@ export async function updatePriestReview(input: {
       verificationStatus: input.verificationStatus,
       radiusKm: input.radiusKm,
       pendingPayout: input.pendingPayout,
+      allowContactReveal: input.allowContactReveal,
       notes: input.notes,
       mainCategoryId: input.mainCategoryId,
       serviceCategoryId: input.serviceCategoryId,
@@ -245,3 +252,4 @@ export function getPriestMetrics(store: PriestStore) {
     culturesCovered
   };
 }
+

@@ -56,6 +56,7 @@ export async function savePriestReview(formData: FormData) {
     verificationStatus: normalizeText(formData.get("verificationStatus"), "unverified") as PriestVerificationStatus,
     radiusKm: normalizeNumber(formData.get("radiusKm"), 0),
     pendingPayout: normalizeNumber(formData.get("pendingPayout"), currentPriest.pendingPayout),
+    allowContactReveal: formData.get("allowContactReveal") === "on",
     notes: normalizeText(formData.get("notes"), currentPriest.notes),
     mainCategoryId,
     serviceCategoryId,
@@ -98,6 +99,7 @@ export async function createPriestRecord(formData: FormData) {
     submittedAt: new Date().toISOString().slice(0, 10),
     phone: normalizeText(formData.get("phone"), "+91 90000 00000"),
     pendingPayout: 0,
+    allowContactReveal: formData.get("allowContactReveal") === "on",
     documents: ["aadhaar", "profile_photo"],
     documentRecords: [
       { id: `doc_${Date.now()}`, type: "aadhaar", side: "front", status: "pending" },
@@ -109,3 +111,4 @@ export async function createPriestRecord(formData: FormData) {
   revalidatePath("/dashboard/priests");
   redirect("/dashboard/priests?message=priest_created" as never);
 }
+

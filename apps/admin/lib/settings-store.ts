@@ -170,6 +170,7 @@ export function parsePlatformFormData(formData: FormData, current: SettingsSnaps
     ),
     bookingAdvancePercent: normalizeNumber(formData.get("bookingAdvancePercent"), current.platform.bookingAdvancePercent),
     defaultCommissionPercent: normalizeNumber(formData.get("defaultCommissionPercent"), current.platform.defaultCommissionPercent),
+    revealContactAfterAdvanceEnabled: formData.get("revealContactAfterAdvanceEnabled") === "on",
     revealWindowHours: {
       min: Math.min(revealWindowMin, revealWindowMax),
       max: Math.max(revealWindowMin, revealWindowMax)
@@ -222,3 +223,4 @@ export function parseNotificationFormData(formData: FormData): SettingsSnapshot[
     )
   };
 }
+

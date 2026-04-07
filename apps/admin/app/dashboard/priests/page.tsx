@@ -185,6 +185,13 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
             <Input className="h-11 rounded-lg" name="locality" placeholder="Locality" required />
             <Input className="h-11 rounded-lg" name="cultureTags" placeholder="Cultures: Bengali, Odia" />
             <Input className="h-11 rounded-lg" name="languageTags" placeholder="Languages: Bengali, Sanskrit" />
+            <label className="flex items-start gap-3 rounded-[18px] border border-border bg-white px-4 py-3 lg:col-span-2">
+              <input className="mt-1 h-4 w-4 rounded border-border accent-[hsl(var(--primary))] focus:ring-primary" defaultChecked name="allowContactReveal" type="checkbox" />
+              <span className="space-y-1">
+                <span className="block text-sm font-semibold text-foreground">Allow direct contact reveal</span>
+                <span className="block text-sm leading-6 text-muted-foreground">Enable this only if users who pay the required advance should be allowed to view this priest's phone number.</span>
+              </span>
+            </label>
             <Input className="h-11 rounded-lg" name="mainCategoryId" placeholder="Main category id (optional)" />
             <Input className="h-11 rounded-lg" name="serviceCategoryId" placeholder="Service category id (optional)" />
             <Input className="h-11 rounded-lg lg:col-span-2" name="ritualIds" placeholder="Ritual ids, comma separated" />
@@ -318,3 +325,4 @@ export default async function PriestsPage({ searchParams }: PriestsPageProps) {
     </AdminShell>
   );
 }
+

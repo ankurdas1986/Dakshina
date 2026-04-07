@@ -22,6 +22,7 @@ export type SettingsSnapshot = {
     defaultCulture: CultureType;
     bookingAdvancePercent: number;
     defaultCommissionPercent: number;
+    revealContactAfterAdvanceEnabled: boolean;
     revealWindowHours: {
       min: number;
       max: number;
@@ -71,6 +72,7 @@ export const settingsSnapshot: SettingsSnapshot = {
     defaultCulture: 'Bengali',
     bookingAdvancePercent: 20,
     defaultCommissionPercent: 12,
+    revealContactAfterAdvanceEnabled: true,
     revealWindowHours: {
       min: 48,
       max: 72
@@ -213,3 +215,4 @@ export const settingsSnapshot: SettingsSnapshot = {
     }
   ]
 };
+

@@ -16,6 +16,7 @@ const hintMap: Record<string, string> = {
   currency: "Stores the currency label used across pricing, payouts, and wallet calculations.",
   "default commission (%)": "Controls the baseline platform commission before district or manual overrides are applied.",
   "advance payment (%)": "Sets the minimum advance required before a booking is treated as commercially confirmed.",
+  "reveal contact after advance payment": "If enabled, users who have paid the required advance can view priest contact details when the priest-level permission is also enabled.",
   "referee discount (%)": "Discount applied to the referred user's first eligible booking.",
   "referrer reward (rs)": "Credit released to the referrer only after the referred booking is completed and verified.",
   "min booking gap (hours)": "Prevents back-to-back bookings that would create scheduling collisions for priest operations.",
@@ -33,6 +34,7 @@ const hintMap: Record<string, string> = {
   "travel radius (km)": "Maximum travel distance used for hyper-local matching and booking assignment.",
   "kyc status": "Tracks the current KYC review stage for approval and go-live decisions.",
   "verification status": "Controls whether the priest appears as unverified, under review, or fully verified.",
+  "allow direct contact reveal": "Per-priest override that decides whether this priest's phone number can be shown after the booking advance has been paid.",
   "full name": "Primary display name used across bookings, admin search, and communication history.",
   email: "Main email identity for login, admin contact, and notification routing.",
   phone: "Primary phone number used for operational contact and WhatsApp deep links.",
@@ -147,3 +149,4 @@ export function FieldHint({ label, hint, className }: FieldHintProps) {
     </span>
   );
 }
+

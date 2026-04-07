@@ -321,7 +321,7 @@ export default async function DashboardLandingPage() {
                 <Badge variant="success">{settings.platform.defaultCulture.replace("_", " ")}</Badge>
               </div>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Reveal window {settings.platform.revealWindowHours.min}-{settings.platform.revealWindowHours.max} hours, booking gap {settings.platform.minBookingGapHours} hours.
+                Contact reveal after advance is {settings.platform.revealContactAfterAdvanceEnabled ? "enabled" : "disabled"}, with booking gap {settings.platform.minBookingGapHours} hours and advanced window {settings.platform.revealWindowHours.min}-{settings.platform.revealWindowHours.max} hours.
               </p>
             </div>
             <div className="surface-panel-blue rounded-[22px] p-4">
@@ -415,3 +415,4 @@ export default async function DashboardLandingPage() {
     </AdminShell>
   );
 }
+

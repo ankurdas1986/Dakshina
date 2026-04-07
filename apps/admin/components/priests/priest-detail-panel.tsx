@@ -90,7 +90,7 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
         <InfoRow icon={FolderOpenDot} label="Category path" value={priest.serviceCategoryId ? buildCategoryLabel(priest.serviceCategoryId, ritualStore.categories) : "Not assigned"} />
         <InfoRow icon={Globe2} label="Cultures" value={priest.cultureTags.join(", ")} />
         <InfoRow icon={Languages} label="Languages" value={priest.languageTags.join(", ")} />
-        <InfoRow icon={PhoneCall} label="Contact" value={priest.phone} />
+        <InfoRow icon={PhoneCall} label="Contact" value={`${priest.phone} ${priest.allowContactReveal ? "| reveal allowed" : "| reveal blocked"}`} />
         <InfoRow icon={FileImage} label="Pending payout" value={`Rs ${priest.pendingPayout}`} />
         <InfoRow icon={MapPinned} label="Availability" value={priest.availabilitySummary} />
       </div>
@@ -118,6 +118,19 @@ export function PriestDetailPanel({ priest, ritualStore, returnTo }: PriestDetai
           ]}
         />
       </div>
+
+      <label className="flex items-start gap-3 rounded-[22px] border border-border bg-white p-4">
+        <input className="mt-1 h-4 w-4 rounded border-border accent-[hsl(var(--primary))] focus:ring-primary" defaultChecked={priest.allowContactReveal} name="allowContactReveal" type="checkbox" />
+        <span className="space-y-1">
+          <span className="flex items-start justify-between gap-2">
+            <span className="block text-sm font-semibold text-foreground">Allow direct contact reveal</span>
+            <FieldHint label="Allow direct contact reveal" className="shrink-0" />
+          </span>
+          <span className="block text-sm leading-6 text-muted-foreground">
+            Only priests with this enabled can have their phone number shown after a user pays the required advance and the platform-level reveal rule is enabled.
+          </span>
+        </span>
+      </label>
 
       <label className="grid gap-2 text-sm font-semibold text-foreground">
         <span className="flex items-start justify-between gap-2"><span className="min-w-0">Travel radius (km)</span><FieldHint label="Travel radius (km)" className="shrink-0" /></span>
@@ -230,5 +243,6 @@ function Field({ label, children }: FieldProps) {
     </label>
   );
 }
+
 
 
