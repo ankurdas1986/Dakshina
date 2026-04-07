@@ -1,3 +1,5 @@
+@import "react-day-picker/src/style.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -166,5 +168,108 @@
   .surface-scroll::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, rgba(224, 143, 36, 0.95), rgba(171, 108, 20, 0.95));
     background-clip: padding-box;
+  }
+
+  .rdp-modern {
+    --rdp-accent-color: hsl(var(--primary));
+    --rdp-accent-background-color: rgba(246, 180, 92, 0.16);
+    --rdp-day-width: 46px;
+    --rdp-day-height: 46px;
+    --rdp-day_button-width: 42px;
+    --rdp-day_button-height: 42px;
+    --rdp-day_button-border-radius: 1rem;
+    --rdp-day_button-border: 1px solid transparent;
+    --rdp-nav-height: 3rem;
+    --rdp-nav_button-width: 2.5rem;
+    --rdp-nav_button-height: 2.5rem;
+    --rdp-disabled-opacity: 0.28;
+    --rdp-outside-opacity: 0.38;
+    --rdp-today-color: hsl(var(--foreground));
+    width: 100%;
+    color: hsl(var(--foreground));
+  }
+
+  .rdp-modern .rdp-months {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .rdp-modern .rdp-month {
+    width: 100%;
+  }
+
+  .rdp-modern .rdp-month_caption {
+    margin-bottom: 0.5rem;
+    align-items: center;
+  }
+
+  .rdp-modern .rdp-caption_label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+  }
+
+  .rdp-modern .rdp-nav {
+    gap: 0.4rem;
+  }
+
+  .rdp-modern .rdp-button_previous,
+  .rdp-modern .rdp-button_next {
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--border));
+    background: white;
+    transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+  }
+
+  .rdp-modern .rdp-button_previous:hover,
+  .rdp-modern .rdp-button_next:hover {
+    background: hsl(var(--secondary));
+    border-color: rgba(224, 143, 36, 0.36);
+  }
+
+  .rdp-modern .rdp-chevron {
+    fill: hsl(var(--primary));
+  }
+
+  .rdp-modern .rdp-weekday {
+    padding: 0.35rem 0;
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .rdp-modern .rdp-day {
+    text-align: center;
+  }
+
+  .rdp-modern .rdp-day_button {
+    font-weight: 600;
+    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease;
+  }
+
+  .rdp-modern .rdp-day_button:hover:not([disabled]) {
+    background: hsl(var(--secondary));
+  }
+
+  .rdp-modern .rdp-selected .rdp-day_button,
+  .rdp-modern .rdp-day_button.rdp-selected {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 26px rgba(224, 143, 36, 0.28);
+  }
+
+  .rdp-modern .rdp-today:not(.rdp-selected) .rdp-day_button,
+  .rdp-modern .rdp-day_button.rdp-today:not(.rdp-selected) {
+    border-color: rgba(224, 143, 36, 0.35);
+    background: rgba(246, 180, 92, 0.12);
+  }
+
+  .rdp-modern .rdp-outside .rdp-day_button {
+    color: rgba(122, 100, 84, 0.45);
   }
 }

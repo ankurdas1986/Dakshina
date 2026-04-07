@@ -52,26 +52,7 @@ export function DateInput({ name, defaultValue, className, required, min, max }:
             selected={selected}
             showOutsideDays
             disabled={(date) => (minDate ? date < minDate : false) || (maxDate ? date > maxDate : false)}
-            classNames={{
-              months: "flex flex-col gap-4",
-              month: "space-y-4",
-              caption: "flex items-center justify-between px-1",
-              caption_label: "text-sm font-semibold text-foreground",
-              nav: "flex items-center gap-1",
-              nav_button:
-                "inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-white text-foreground transition-colors hover:bg-secondary",
-              table: "w-full border-collapse",
-              head_row: "grid grid-cols-7",
-              head_cell: "py-2 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground",
-              row: "grid grid-cols-7",
-              cell: "p-0 text-center",
-              day:
-                "mx-auto flex h-10 w-10 items-center justify-center rounded-2xl text-sm font-medium text-foreground transition-colors hover:bg-secondary",
-              day_selected: "bg-primary text-primary-foreground hover:bg-primary",
-              day_today: "border border-primary/30 bg-primary/10 text-foreground",
-              day_outside: "text-muted-foreground/45",
-              day_disabled: "text-muted-foreground/30"
-            }}
+            className="rdp-modern"
           />
           <div className="mt-4 flex items-center justify-between gap-2">
             <button
