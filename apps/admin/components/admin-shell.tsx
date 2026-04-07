@@ -25,6 +25,7 @@ import {
 import { signOut } from "../app/actions/auth";
 import { moduleStatus } from "../lib/admin-data";
 import { cn } from "../lib/utils";
+import { AdminScrollMemory } from "./admin-scroll-memory";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -216,6 +217,7 @@ export function AdminShell({
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-transparent p-2 sm:p-3 lg:p-4">
+      <AdminScrollMemory />
       <div className="relative">
         <button
           aria-hidden={!sidebarOpen}
