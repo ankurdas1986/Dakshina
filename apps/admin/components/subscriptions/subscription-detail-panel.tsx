@@ -7,6 +7,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { FieldHint } from "../ui/field-hint";
 import { FormActions } from "../ui/form-actions";
+import { DateInput } from "../ui/date-input";
 import { Input } from "../ui/input";
 
 export function getSubscriptionVariant(status: SubscriptionRecord["status"]) {
@@ -60,9 +61,9 @@ export function SubscriptionDetailPanel({ entry, returnTo }: { entry: Subscripti
         <SelectField label="Culture" name="cultureType" defaultValue={entry.cultureType} options={["Bengali", "North_Indian", "Marwadi", "Odia", "Gujarati"]} />
         <SelectField label="Frequency" name="frequency" defaultValue={entry.frequency} options={["daily", "weekly", "monthly"]} />
         <SelectField label="Duration" name="durationMonths" defaultValue={String(entry.durationMonths)} options={["3", "6", "12"]} />
-        <Field label="Starts on"><Input defaultValue={entry.startsOn} name="startsOn" /></Field>
-        <Field label="Ends on"><Input defaultValue={entry.endsOn} name="endsOn" /></Field>
-        <Field label="Next generation date"><Input defaultValue={entry.nextGenerationDate} name="nextGenerationDate" /></Field>
+        <Field label="Starts on"><DateInput defaultValue={entry.startsOn} name="startsOn" /></Field>
+        <Field label="Ends on"><DateInput defaultValue={entry.endsOn} name="endsOn" /></Field>
+        <Field label="Next generation date"><DateInput defaultValue={entry.nextGenerationDate} name="nextGenerationDate" /></Field>
         <SelectField label="Status" name="status" defaultValue={entry.status} options={["draft", "active", "paused", "completed", "cancelled"]} />
       </div>
 
@@ -122,3 +123,6 @@ function SelectField({ label, name, defaultValue, options }: { label: string; na
     </label>
   );
 }
+
+
+

@@ -7,6 +7,7 @@ import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
 import { FormActions } from "../../../components/ui/form-actions";
+import { DateInput } from "../../../components/ui/date-input";
 import { Input } from "../../../components/ui/input";
 import { KpiCard } from "../../../components/ui/kpi-card";
 import { SectionTitle } from "../../../components/ui/section-title";
@@ -143,7 +144,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             </select>
             <Input className="h-11 rounded-lg" name="ritual" placeholder="Ritual" required />
             <Input className="h-11 rounded-lg" name="district" placeholder="District" required />
-            <Input className="h-11 rounded-lg" name="eventDate" type="date" />
+            <DateInput name="eventDate" />
             <Input className="h-11 rounded-lg" name="scheduledWindow" placeholder="09:00 AM - 11:00 AM" />
             <Input className="h-11 rounded-lg" name="assignedPriest" placeholder="Assigned priest" />
             <Input className="h-11 rounded-lg" min={0} name="dakshinaAmount" placeholder="Dakshina amount" type="number" />
@@ -310,3 +311,6 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
     </AdminShell>
   );
 }
+
+
+

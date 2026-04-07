@@ -7,6 +7,7 @@ import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
 import { FormActions } from "../../../components/ui/form-actions";
+import { DateInput } from "../../../components/ui/date-input";
 import { Input } from "../../../components/ui/input";
 import { KpiCard } from "../../../components/ui/kpi-card";
 import { SectionTitle } from "../../../components/ui/section-title";
@@ -129,7 +130,7 @@ export default async function SubscriptionsPage({ searchParams }: SubscriptionsP
               <option value="6">6 months</option>
               <option value="12">12 months</option>
             </select>
-            <Input className="h-11 rounded-lg" name="startsOn" type="date" />
+            <DateInput name="startsOn" />
             <textarea className="min-h-24 rounded-lg border border-border bg-white px-4 py-3 text-sm text-foreground xl:col-span-3" name="notes" placeholder="Contract note" />
             <FormActions className="lg:col-span-2 xl:col-span-3">
               <Button type="submit">Create subscription</Button>
@@ -226,3 +227,6 @@ export default async function SubscriptionsPage({ searchParams }: SubscriptionsP
     </AdminShell>
   );
 }
+
+
+

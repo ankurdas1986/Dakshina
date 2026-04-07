@@ -28,6 +28,7 @@ import { cn } from "../lib/utils";
 import { AdminScrollMemory } from "./admin-scroll-memory";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
+import { AdminToast } from "./ui/admin-toast";
 import { Input } from "./ui/input";
 import { DakshinaLogo } from "./dakshina-logo";
 import type { AdminNotification } from "../lib/notification-store";
@@ -218,6 +219,7 @@ export function AdminShell({
   return (
     <main className="min-h-screen overflow-x-hidden bg-transparent p-2 sm:p-3 lg:p-4">
       <AdminScrollMemory />
+      <AdminToast />
       <div className="relative">
         <button
           aria-hidden={!sidebarOpen}
@@ -527,3 +529,7 @@ export function AdminShell({
     </main>
   );
 }
+
+
+
+
