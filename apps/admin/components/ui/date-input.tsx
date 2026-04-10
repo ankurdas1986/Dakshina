@@ -3,8 +3,8 @@
 import * as Popover from "@radix-ui/react-popover";
 import { CalendarDays, ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
-import { DayPicker } from "react-day-picker";
 import { cn } from "../../lib/utils";
+import { Calendar } from "./calendar";
 import { formatDateLabel, formatDateValue, parseDateValue } from "./date-time-utils";
 
 type DateInputProps = {
@@ -42,17 +42,15 @@ export function DateInput({ name, defaultValue, className, required, min, max }:
       <Popover.Portal>
         <Popover.Content
           align="start"
-          className="z-[90] w-[350px] max-w-[calc(100vw-2rem)] rounded-[24px] border border-border bg-white p-4 shadow-2xl outline-none"
+          className="z-[90] w-[360px] max-w-[calc(100vw-2rem)] rounded-[24px] border border-border bg-white p-4 shadow-2xl outline-none"
           sideOffset={10}
         >
-          <DayPicker
+          <Calendar
             mode="single"
             month={selected}
             onSelect={setSelected}
             selected={selected}
-            showOutsideDays
             disabled={(date) => (minDate ? date < minDate : false) || (maxDate ? date > maxDate : false)}
-            className="rdp-modern"
           />
           <div className="mt-4 flex items-center justify-between gap-2">
             <button

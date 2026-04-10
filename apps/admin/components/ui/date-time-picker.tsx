@@ -4,8 +4,8 @@ import * as Popover from "@radix-ui/react-popover";
 import { format } from "date-fns";
 import { CalendarDays, ChevronDown, Clock3 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { DayPicker } from "react-day-picker";
 import { cn } from "../../lib/utils";
+import { Calendar } from "./calendar";
 import {
   combineDateAndTime,
   formatDateTimeLabel,
@@ -72,7 +72,7 @@ export function DateTimePicker({
           </div>
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="rounded-[20px] border border-border bg-secondary/20 p-3">
-              <DayPicker mode="single" month={date} onSelect={setDate} selected={date} showOutsideDays className="rdp-modern" />
+              <Calendar mode="single" month={date} onSelect={setDate} selected={date} />
             </div>
             <div className="rounded-[20px] border border-border bg-secondary/20 p-3">
               <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
