@@ -7,11 +7,11 @@ import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../../../components/ui/card";
 import { FormActions } from "../../../components/ui/form-actions";
-import { DateInput } from "../../../components/ui/date-input";
 import { Input } from "../../../components/ui/input";
 import { KpiCard } from "../../../components/ui/kpi-card";
 import { SectionTitle } from "../../../components/ui/section-title";
 import { TimeRangePicker } from "../../../components/ui/time-range-picker";
+import { BookingAuspiciousAssistFields } from "../../../components/bookings/booking-auspicious-assist-fields";
 import { getAdminShellData } from "../../../lib/admin-shell-data";
 import { requireAdminUser } from "../../../lib/auth";
 import { getBookingMetrics, getBookingStore } from "../../../lib/booking-store";
@@ -138,19 +138,21 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             <Input className="h-11 rounded-lg" name="bookingCode" placeholder="Booking code (optional)" />
             <Input className="h-11 rounded-lg" name="userName" placeholder="User name" required />
             <Input className="h-11 rounded-lg" name="userPhone" placeholder="User phone" required />
-            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue="Bengali" name="cultureType">
-              {cultureOptions.filter((option) => option.value !== "all").map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-            <Input className="h-11 rounded-lg" name="ritual" placeholder="Ritual" required />
+            <BookingAuspiciousAssistFields
+              cultureOptions={cultureOptions
+                .filter((option) => option.value !== "all")
+                .map((option) => ({ value: option.value as CultureType, label: option.label }))}
+            />
             <Input className="h-11 rounded-lg" name="district" placeholder="District" required />
-            <DateInput name="eventDate" />
             <TimeRangePicker name="scheduledWindow" />
             <Input className="h-11 rounded-lg" name="assignedPriest" placeholder="Assigned priest" />
             <Input className="h-11 rounded-lg" min={0} name="dakshinaAmount" placeholder="Dakshina amount" type="number" />
             <Input className="h-11 rounded-lg" min={0} name="samagriAddOns" placeholder="Samagri add-ons" type="number" />
             <Input className="h-11 rounded-lg" min={0} name="zoneWiseTravelFee" placeholder="Zone travel fee" type="number" />
+            <select className="h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground" defaultValue="user" name="samagriProvider">
+              <option value="user">Samagri: user provides</option>
+              <option value="priest">Samagri: priest provides</option>
+            </select>
             <Input className="h-11 rounded-lg" min={1} name="peakMultiplier" placeholder="Peak multiplier" step="0.01" type="number" />
             <Input className="h-11 rounded-lg" min={1} name="minBookingGapHours" placeholder="Min booking gap (hours)" type="number" />
             <Input className="h-11 rounded-lg" min={1} name="maxBookingWindowDays" placeholder="Max booking window (days)" type="number" />
@@ -312,6 +314,8 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
     </AdminShell>
   );
 }
+
+
 
 
 

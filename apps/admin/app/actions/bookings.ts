@@ -9,10 +9,12 @@ import {
   type BookingStatus,
   type CompletionOtpStatus,
   type BookingCase,
+  type SamagriProvider,
   getBookingStore,
   updateBookingCase
 } from "../../lib/booking-store";
 import { appendAdminNotification } from "../../lib/notification-store";
+import { getMasterSamagriForBooking } from "../../lib/master-samagri-store";
 import type { CultureType } from "../../lib/settings";
 
 function normalizeText(value: FormDataEntryValue | null, fallback = "") {
@@ -52,6 +54,31 @@ function calculatePendingRefundAmount(booking: BookingCase) {
   return Math.round((advanceAmount * booking.policySnapshot.refundRules.lessThan24HoursPercent) / 100);
 }
 
+function normalizeSamagriProvider(value: FormDataEntryValue | null, fallback: SamagriProvider): SamagriProvider {
+  const normalized = typeof value === "string" ? value.trim() : "";
+  return normalized === "priest" ? "priest" : normalized === "user" ? "user" : fallback;
+}
+
+function readSamagriSnapshotFromForm(formData: FormData) {
+  const names = formData.getAll("samagriItemName").map((value) => String(value));
+  const units = formData.getAll("samagriUnit").map((value) => String(value));
+  const optionalFlags = formData.getAll("samagriIsOptional").map((value) => String(value) === "1");
+  const quantities = formData.getAll("samagriQuantity").map((value) => Number(value));
+  const selected = new Set(formData.getAll("samagriSelected").map((value) => String(value)));
+
+  if (!names.length) {
+    return [];
+  }
+
+  return names.map((itemName, index) => ({
+    itemName,
+    quantity: Number.isFinite(quantities[index]) && quantities[index] > 0 ? quantities[index] : 1,
+    unit: units[index] || "pcs",
+    isOptional: optionalFlags[index] ?? false,
+    selected: selected.has(itemName)
+  }));
+}
+
 export async function saveBookingCase(formData: FormData) {
   const id = normalizeText(formData.get("id"));
   const returnTo = normalizeText(formData.get("returnTo"), "/dashboard/bookings");
@@ -67,6 +94,9 @@ export async function saveBookingCase(formData: FormData) {
     redirect("/dashboard/bookings?error=invalid_booking_id");
   }
 
+  const samagriProvider = normalizeSamagriProvider(formData.get("samagriProvider"), booking.samagriProvider);
+  const samagriSnapshot = samagriProvider === "priest" ? readSamagriSnapshotFromForm(formData) : [];
+
   await updateBookingCase({
     ...booking,
     assignedPriest: normalizeText(formData.get("assignedPriest"), booking.assignedPriest),
@@ -81,6 +111,8 @@ export async function saveBookingCase(formData: FormData) {
     completionOtpVerifiedAt: normalizeText(formData.get("completionOtpVerifiedAt"), booking.completionOtpVerifiedAt),
     completionOtpAttempts: normalizeNumber(formData.get("completionOtpAttempts"), booking.completionOtpAttempts),
     completionOtpLastEvent: normalizeText(formData.get("completionOtpLastEvent"), booking.completionOtpLastEvent),
+    samagriProvider,
+    samagriSnapshot,
     governance: {
       minBookingGapHours: normalizeNumber(formData.get("minBookingGapHours"), booking.governance.minBookingGapHours),
       maxBookingWindowDays: normalizeNumber(formData.get("maxBookingWindowDays"), booking.governance.maxBookingWindowDays),
@@ -150,13 +182,19 @@ export async function createBookingCase(formData: FormData) {
     formData.get("bookingCode"),
     `DK-${1000 + current.cases.length + 1}`
   );
+  const cultureType = normalizeText(formData.get("cultureType"), "Bengali") as CultureType;
+  const samagriProvider = normalizeSamagriProvider(formData.get("samagriProvider"), "user");
+  const masterSamagri =
+    samagriProvider === "priest"
+      ? await getMasterSamagriForBooking({ cultureType, ritualLabel: ritual })
+      : [];
 
   await addBookingCase({
     bookingCode,
     userId: normalizeText(formData.get("userId"), `manual_user_${Date.now()}`),
     userName,
     userPhone: normalizeText(formData.get("userPhone"), "+91 90000 00000"),
-    cultureType: normalizeText(formData.get("cultureType"), "Bengali") as CultureType,
+    cultureType,
     ritual,
     district: normalizeText(formData.get("district"), "Howrah"),
     eventDate,
@@ -176,6 +214,17 @@ export async function createBookingCase(formData: FormData) {
     refundState: "not_requested",
     pendingRefundAmount: 0,
     refundReason: "",
+    samagriProvider,
+    samagriSnapshot:
+      samagriProvider === "priest"
+        ? masterSamagri.map((item) => ({
+            itemName: item.itemName,
+            quantity: item.defaultQuantity,
+            unit: item.unit,
+            isOptional: item.isOptional,
+            selected: !item.isOptional
+          }))
+        : [],
     pricing: {
       dakshinaAmount: normalizeNumber(formData.get("dakshinaAmount"), seed.pricing.dakshinaAmount),
       samagriAddOns: normalizeNumber(formData.get("samagriAddOns"), 0),

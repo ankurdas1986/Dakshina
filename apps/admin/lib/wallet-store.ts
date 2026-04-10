@@ -21,6 +21,7 @@ export type WalletTransaction = {
   status: WalletTransactionStatus;
   direction: "credit" | "debit";
   amount: number;
+  samagriCost: number;
   description: string;
   createdAt: string;
 };
@@ -41,6 +42,7 @@ const fallbackStore: WalletStore = {
       status: "completed",
       direction: "debit",
       amount: 550,
+      samagriCost: 0,
       description: "20% advance paid from internal wallet for Satyanarayan Puja.",
       createdAt: "2026-04-03 09:12"
     },
@@ -51,6 +53,7 @@ const fallbackStore: WalletStore = {
       status: "completed",
       direction: "credit",
       amount: 150,
+      samagriCost: 0,
       description: "Referral reward released after completed ritual verification.",
       createdAt: "2026-04-02 18:00"
     },
@@ -62,6 +65,7 @@ const fallbackStore: WalletStore = {
       status: "completed",
       direction: "credit",
       amount: 2100,
+      samagriCost: 0,
       description: "Manual UPI payout confirmed by admin for Lakshmi Puja.",
       createdAt: "2026-03-30 10:15"
     }
@@ -80,7 +84,15 @@ async function writeStore(store: WalletStore) {
 export async function getWalletStore() {
   try {
     const raw = await readFile(walletFilePath, "utf8");
-    return JSON.parse(raw) as WalletStore;
+    const parsed = JSON.parse(raw) as Partial<WalletStore>;
+    return {
+      transactions: (parsed.transactions ?? fallbackStore.transactions).map((entry) => ({
+        ...entry,
+        samagriCost: Number.isFinite((entry as Partial<WalletTransaction>).samagriCost)
+          ? (entry as Partial<WalletTransaction>).samagriCost!
+          : 0
+      }))
+    };
   } catch {
     await writeStore(fallbackStore);
     return fallbackStore;

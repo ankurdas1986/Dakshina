@@ -54,6 +54,26 @@ Every admin, priest, and user workflow should read from those same contracts.
 
 The next additive implementation block extends the existing super-admin without disturbing multicultural rollout or booking governance.
 
+### Additional modules for the next increment
+
+This block must be implemented without refactoring the existing multicultural, registration, or basic booking logic. It adds new operational modules on top of the current system:
+
+- Master Panjika Engine (Smart Scheduling)
+  - admin bulk CSV upload for annual auspicious slots
+  - top-3 recommended slots surfaced at booking time with date picker fallback
+- Dynamic Samagri Ecosystem
+  - master samagri checklist by culture and ritual
+  - booking-level procurement toggle (`samagri_provider`)
+  - per-booking checklist adjustment flow
+- Institutional Subscriptions (Auto Pre-Blocking)
+  - subscription activation auto-generates booking entries to pre-block priest calendars
+- Admin God-Mode (Advanced Search & Control)
+  - user filtering by name/phone/area/tradition
+  - lifecycle actions + full history view
+- Financial Ledger (Samagri & Settlement)
+  - wallet ledger supports samagri cost line items
+  - payout confirmation settles earnings + samagri cost in the ledger
+
 ### New backend contracts
 
 - booking-level `policy_snapshot` and `pending_refund_amount`
@@ -77,8 +97,10 @@ The next additive implementation block extends the existing super-admin without 
 2. Extend booking and payout data contracts
 3. Add `User Management` module with list/detail flow
 4. Add `Subscriptions` module with generated-booking visibility
-5. Add wallet ledger visibility across users, bookings, and payouts
-6. Re-run UAT on admin
+5. Add Master Panjika Engine (CSV upload + recommended slots UI)
+6. Add master samagri + booking procurement toggle + checklist workflow
+7. Add wallet ledger samagri line item + payout settlement confirmation
+8. Re-run UAT on admin
 
 ## Marketplace Hierarchy Model
 

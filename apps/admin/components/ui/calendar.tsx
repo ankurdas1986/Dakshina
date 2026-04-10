@@ -18,16 +18,28 @@ export function Calendar({ className, classNames, showOutsideDays = true, ...pro
         month_caption: "relative flex h-10 items-center justify-center",
         caption_label: "text-sm font-semibold text-foreground",
         nav: "absolute inset-x-0 top-0 flex items-center justify-between",
-        button_previous: cn(buttonVariants({ variant: "outline", size: "icon" }), "h-9 w-9 rounded-full bg-white p-0 shadow-none"),
-        button_next: cn(buttonVariants({ variant: "outline", size: "icon" }), "h-9 w-9 rounded-full bg-white p-0 shadow-none"),
+        button_previous: cn(
+          buttonVariants({ variant: "outline", size: "icon" }),
+          "h-9 w-9 rounded-full bg-white p-0 shadow-none"
+        ),
+        button_next: cn(
+          buttonVariants({ variant: "outline", size: "icon" }),
+          "h-9 w-9 rounded-full bg-white p-0 shadow-none"
+        ),
         month_grid: "w-full border-collapse",
-        weekdays: "grid grid-cols-7",
-        weekday: "pb-2 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground",
-        weeks: "space-y-1",
-        week: "grid grid-cols-7",
-        day: "flex h-11 w-full items-center justify-center p-0 text-center text-sm",
-        day_button: cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-10 w-10 rounded-2xl border border-transparent bg-transparent p-0 font-semibold text-foreground hover:bg-secondary hover:text-foreground"),
-        selected: "bg-primary text-primary-foreground shadow-[0_10px_24px_rgba(224,143,36,0.28)] hover:bg-primary hover:text-primary-foreground",
+        weekdays: "border-b border-border/50",
+        weekday:
+          "pb-2 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground",
+        weeks: "divide-y divide-border/20",
+        week: "",
+        // Keep table semantics for the day cell; flex on <td> breaks the grid.
+        day: "h-11 w-11 p-0 text-center text-sm",
+        day_button: cn(
+          buttonVariants({ variant: "ghost", size: "icon" }),
+          "h-10 w-10 rounded-2xl border border-transparent bg-transparent p-0 font-semibold text-foreground hover:bg-secondary hover:text-foreground"
+        ),
+        selected:
+          "bg-primary text-primary-foreground shadow-[0_10px_24px_rgba(224,143,36,0.28)] hover:bg-primary hover:text-primary-foreground",
         today: "border border-primary/35 bg-primary/10 text-foreground",
         outside: "text-muted-foreground/40",
         disabled: "cursor-not-allowed text-muted-foreground/30 opacity-60",

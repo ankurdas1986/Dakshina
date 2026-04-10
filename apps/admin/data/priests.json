@@ -15,21 +15,54 @@
       "locality": "Bally",
       "mainCategoryId": "cat_001",
       "serviceCategoryId": "cat_003",
-      "ritualIds": ["ritual_001", "ritual_002"],
-      "services": ["Lakshmi Puja", "Gaye Holud"],
-      "cultureTags": ["Bengali"],
-      "languageTags": ["Bengali", "English", "Sanskrit"],
+      "ritualIds": [
+        "ritual_001",
+        "ritual_002"
+      ],
+      "services": [
+        "Lakshmi Puja",
+        "Gaye Holud"
+      ],
+      "cultureTags": [
+        "Bengali"
+      ],
+      "languageTags": [
+        "Bengali",
+        "English",
+        "Sanskrit"
+      ],
       "radiusKm": 14,
       "availabilitySummary": "Mon-Sun 6:00 AM - 9:00 PM, off on Amavasya afternoon",
       "kycStatus": "pending",
       "verificationStatus": "unverified",
       "submittedAt": "2026-04-01",
       "phone": "+91 90070 10001",
-      "documents": ["govt_id", "address_proof", "profile_photo"],
+      "allowContactReveal": true,
+      "pendingPayout": 0,
+      "documents": [
+        "govt_id",
+        "address_proof",
+        "profile_photo"
+      ],
       "documentRecords": [
-        { "id": "doc_001", "type": "aadhaar", "side": "front", "status": "pending" },
-        { "id": "doc_002", "type": "aadhaar", "side": "back", "status": "pending" },
-        { "id": "doc_003", "type": "profile_photo", "side": "single", "status": "pending" }
+        {
+          "id": "doc_001",
+          "type": "aadhaar",
+          "side": "front",
+          "status": "pending"
+        },
+        {
+          "id": "doc_002",
+          "type": "aadhaar",
+          "side": "back",
+          "status": "pending"
+        },
+        {
+          "id": "doc_003",
+          "type": "profile_photo",
+          "side": "single",
+          "status": "pending"
+        }
       ],
       "notes": "Primary Bengali launch priest. Strong Tier 1 fit."
     },
@@ -41,21 +74,56 @@
       "locality": "Uttarpara",
       "mainCategoryId": "cat_004",
       "serviceCategoryId": "cat_006",
-      "ritualIds": ["ritual_002"],
-      "services": ["Gaye Holud", "Bou Bhat", "Annaprashan"],
-      "cultureTags": ["Bengali", "North_Indian"],
-      "languageTags": ["Bengali", "Hindi", "English"],
+      "ritualIds": [
+        "ritual_002"
+      ],
+      "services": [
+        "Gaye Holud",
+        "Bou Bhat",
+        "Annaprashan"
+      ],
+      "cultureTags": [
+        "Bengali",
+        "North_Indian"
+      ],
+      "languageTags": [
+        "Bengali",
+        "Hindi",
+        "English"
+      ],
       "radiusKm": 18,
       "availabilitySummary": "Tue-Sun 7:00 AM - 10:00 PM, Mondays blocked",
       "kycStatus": "review",
       "verificationStatus": "review",
       "submittedAt": "2026-03-31",
       "phone": "+91 90070 10002",
-      "documents": ["govt_id", "address_proof", "profile_photo", "service_specialization"],
+      "allowContactReveal": false,
+      "pendingPayout": 8500,
+      "documents": [
+        "govt_id",
+        "address_proof",
+        "profile_photo",
+        "service_specialization"
+      ],
       "documentRecords": [
-        { "id": "doc_004", "type": "voter_id", "side": "front", "status": "review" },
-        { "id": "doc_005", "type": "voter_id", "side": "back", "status": "review" },
-        { "id": "doc_006", "type": "service_specialization", "side": "single", "status": "review" }
+        {
+          "id": "doc_004",
+          "type": "voter_id",
+          "side": "front",
+          "status": "review"
+        },
+        {
+          "id": "doc_005",
+          "type": "voter_id",
+          "side": "back",
+          "status": "review"
+        },
+        {
+          "id": "doc_006",
+          "type": "service_specialization",
+          "side": "single",
+          "status": "review"
+        }
       ],
       "notes": "Good cross-culture fit. Review punctuality and district commitment before live approval."
     },
@@ -67,21 +135,56 @@
       "locality": "Barasat",
       "mainCategoryId": "cat_010",
       "serviceCategoryId": "cat_012",
-      "ritualIds": ["ritual_004"],
-      "services": ["Hastagranthi", "Sankranti"],
-      "cultureTags": ["Odia", "Bengali"],
-      "languageTags": ["Odia", "Bengali", "Hindi"],
+      "ritualIds": [
+        "ritual_004"
+      ],
+      "services": [
+        "Hastagranthi",
+        "Sankranti"
+      ],
+      "cultureTags": [
+        "Odia",
+        "Bengali"
+      ],
+      "languageTags": [
+        "Odia",
+        "Bengali",
+        "Hindi"
+      ],
       "radiusKm": 22,
       "availabilitySummary": "Daily 8:00 AM - 8:00 PM, festival blackout handled manually",
       "kycStatus": "approved",
       "verificationStatus": "verified",
       "submittedAt": "2026-03-29",
       "phone": "+91 90070 10003",
-      "documents": ["govt_id", "address_proof", "profile_photo", "service_specialization", "home_pin"],
+      "allowContactReveal": true,
+      "pendingPayout": 0,
+      "documents": [
+        "govt_id",
+        "address_proof",
+        "profile_photo",
+        "service_specialization",
+        "home_pin"
+      ],
       "documentRecords": [
-        { "id": "doc_007", "type": "aadhaar", "side": "front", "status": "approved" },
-        { "id": "doc_008", "type": "aadhaar", "side": "back", "status": "approved" },
-        { "id": "doc_009", "type": "home_pin", "side": "single", "status": "approved" }
+        {
+          "id": "doc_007",
+          "type": "aadhaar",
+          "side": "front",
+          "status": "approved"
+        },
+        {
+          "id": "doc_008",
+          "type": "aadhaar",
+          "side": "back",
+          "status": "approved"
+        },
+        {
+          "id": "doc_009",
+          "type": "home_pin",
+          "side": "single",
+          "status": "approved"
+        }
       ],
       "notes": "Verified backup for Odia and Bengali assignments."
     }

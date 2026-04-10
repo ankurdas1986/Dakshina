@@ -14,12 +14,18 @@ type DateInputProps = {
   required?: boolean;
   min?: string;
   max?: string;
+  onValueChange?: (value: string) => void;
 };
 
-export function DateInput({ name, defaultValue, className, required, min, max }: DateInputProps) {
+export function DateInput({ name, defaultValue, className, required, min, max, onValueChange }: DateInputProps) {
   const [selected, setSelected] = useState<Date | undefined>(() => parseDateValue(defaultValue));
   const minDate = useMemo(() => parseDateValue(min), [min]);
   const maxDate = useMemo(() => parseDateValue(max), [max]);
+
+  const handleSelect = (date: Date | undefined) => {
+    setSelected(date);
+    onValueChange?.(formatDateValue(date));
+  };
 
   return (
     <Popover.Root>
@@ -48,21 +54,21 @@ export function DateInput({ name, defaultValue, className, required, min, max }:
           <Calendar
             mode="single"
             month={selected}
-            onSelect={setSelected}
+            onSelect={handleSelect}
             selected={selected}
             disabled={(date) => (minDate ? date < minDate : false) || (maxDate ? date > maxDate : false)}
           />
           <div className="mt-4 flex items-center justify-between gap-2">
             <button
               className="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-              onClick={() => setSelected(undefined)}
+              onClick={() => handleSelect(undefined)}
               type="button"
             >
               Clear
             </button>
             <button
               className="rounded-xl bg-secondary px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/80"
-              onClick={() => setSelected(new Date())}
+              onClick={() => handleSelect(new Date())}
               type="button"
             >
               Today

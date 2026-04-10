@@ -140,6 +140,12 @@ do $$ begin
 end $$;
 
 do $$ begin
+  if not exists (select 1 from pg_type where typname = 'samagri_provider' and typnamespace = 'app'::regnamespace) then
+    create type app.samagri_provider as enum ('user', 'priest');
+  end if;
+end $$;
+
+do $$ begin
   if not exists (select 1 from pg_type where typname = 'document_side' and typnamespace = 'app'::regnamespace) then
     create type app.document_side as enum ('front', 'back', 'single');
   end if;
@@ -510,6 +516,42 @@ create table if not exists app.panjika_entries (
   check (shubha_muhurta_end is null or shubha_muhurta_start is null or shubha_muhurta_end >= shubha_muhurta_start)
 );
 
+create table if not exists app.master_panjika (
+  id uuid primary key default gen_random_uuid(),
+  culture_type app.culture_type not null,
+  ritual_id uuid not null references app.rituals (id) on delete cascade,
+  slot_date date not null,
+  start_time time not null,
+  end_time time not null,
+  tithi text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (end_time > start_time),
+  unique (culture_type, ritual_id, slot_date, start_time, end_time)
+);
+
+create index if not exists master_panjika_lookup_idx
+  on app.master_panjika (culture_type, ritual_id, slot_date, start_time);
+
+create table if not exists app.master_samagri_checklist (
+  id uuid primary key default gen_random_uuid(),
+  culture_type app.culture_type not null,
+  ritual_id uuid not null references app.rituals (id) on delete cascade,
+  item_name text not null,
+  default_quantity numeric(10,2) not null default 1,
+  unit text,
+  is_optional boolean not null default false,
+  sort_order int not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (default_quantity > 0),
+  unique (culture_type, ritual_id, item_name)
+);
+
+create index if not exists master_samagri_lookup_idx
+  on app.master_samagri_checklist (culture_type, ritual_id, is_active, sort_order);
+
 create index if not exists panjika_entries_lookup_idx
   on app.panjika_entries (culture_type, shubha_muhurta_start);
 
@@ -583,6 +625,8 @@ create table if not exists app.bookings (
   commission_policy_id uuid references app.commission_policies (id),
   policy_snapshot jsonb not null default '{}'::jsonb,
   pending_refund_amount numeric(10,2) not null default 0,
+  samagri_provider app.samagri_provider not null default 'user',
+  samagri_snapshot jsonb not null default '[]'::jsonb,
   contact_reveal_at timestamptz,
   contact_reveal_min_hours int not null,
   contact_reveal_max_hours int not null,
@@ -604,8 +648,15 @@ create table if not exists app.bookings (
   check (advance_payment_percent >= 0 and advance_payment_percent <= 100),
   check (contact_reveal_min_hours <= contact_reveal_max_hours),
   check (pending_refund_amount >= 0),
+  check (jsonb_typeof(samagri_snapshot) = 'array'),
   check (dakshina_amount >= 0 and samagri_add_ons >= 0 and zone_wise_travel_fee >= 0 and quoted_total_amount >= 0)
 );
+
+alter table app.bookings
+  add column if not exists samagri_provider app.samagri_provider not null default 'user';
+
+alter table app.bookings
+  add column if not exists samagri_snapshot jsonb not null default '[]'::jsonb;
 
 create index if not exists bookings_service_location_gix
   on app.bookings using gist (service_location);
@@ -923,14 +974,19 @@ create table if not exists app.wallet_transactions (
   status app.wallet_transaction_status not null default 'pending',
   direction text not null,
   amount numeric(10,2) not null,
+  samagri_cost numeric(10,2) not null default 0,
   description text,
   metadata jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   check (direction in ('credit', 'debit')),
   check (amount >= 0),
+  check (samagri_cost >= 0),
   check (jsonb_typeof(metadata) = 'object')
 );
+
+alter table app.wallet_transactions
+  add column if not exists samagri_cost numeric(10,2) not null default 0;
 
 create index if not exists wallet_transactions_user_idx
   on app.wallet_transactions (user_profile_id, created_at desc);

@@ -23,6 +23,7 @@ export type BookingRisk = "low" | "medium" | "high";
 export type AdvanceState = "pending" | "paid" | "failed" | "refunded";
 export type CompletionOtpStatus = "not_issued" | "issued" | "verified" | "expired" | "failed";
 export type RefundState = "not_requested" | "pending_manual" | "processed";
+export type SamagriProvider = "user" | "priest";
 
 export type BookingCase = {
   id: string;
@@ -50,6 +51,14 @@ export type BookingCase = {
   refundState: RefundState;
   pendingRefundAmount: number;
   refundReason: string;
+  samagriProvider: SamagriProvider;
+  samagriSnapshot: Array<{
+    itemName: string;
+    quantity: number;
+    unit: string;
+    isOptional: boolean;
+    selected: boolean;
+  }>;
   pricing: {
     dakshinaAmount: number;
     samagriAddOns: number;
@@ -137,6 +146,8 @@ const fallbackStore: BookingStore = {
       refundState: "not_requested",
       pendingRefundAmount: 0,
       refundReason: "",
+      samagriProvider: "user",
+      samagriSnapshot: [],
       pricing: { dakshinaAmount: 2200, samagriAddOns: 350, zoneWiseTravelFee: 150, peakMultiplier: 1, walletAdvanceApplied: 550 },
       governance: { minBookingGapHours: 3, maxBookingWindowDays: 60, forcedBookingOverride: false, whatsappConfirmationState: "sent" },
       policySnapshot: {
@@ -181,6 +192,8 @@ const fallbackStore: BookingStore = {
       refundState: "not_requested",
       pendingRefundAmount: 0,
       refundReason: "",
+      samagriProvider: "user",
+      samagriSnapshot: [],
       pricing: { dakshinaAmount: 8500, samagriAddOns: 2200, zoneWiseTravelFee: 300, peakMultiplier: 1.2, walletAdvanceApplied: 0 },
       governance: { minBookingGapHours: 3, maxBookingWindowDays: 60, forcedBookingOverride: false, whatsappConfirmationState: "not_sent" },
       policySnapshot: {
@@ -225,6 +238,12 @@ const fallbackStore: BookingStore = {
       refundState: "pending_manual",
       pendingRefundAmount: 1140,
       refundReason: "Priest cancellation after advance payment.",
+      samagriProvider: "priest",
+      samagriSnapshot: [
+        { itemName: "Marriage samagri", quantity: 1, unit: "set", isOptional: false, selected: true },
+        { itemName: "Hastagranthi thread", quantity: 1, unit: "pcs", isOptional: false, selected: true },
+        { itemName: "Flowers", quantity: 2, unit: "bundle", isOptional: true, selected: false }
+      ],
       pricing: { dakshinaAmount: 7600, samagriAddOns: 2100, zoneWiseTravelFee: 280, peakMultiplier: 1.1, walletAdvanceApplied: 0 },
       governance: { minBookingGapHours: 3, maxBookingWindowDays: 60, forcedBookingOverride: true, whatsappConfirmationState: "failed" },
       policySnapshot: {
@@ -266,6 +285,10 @@ export async function getBookingStore() {
         ...item,
         cultureType: item.cultureType ?? fallbackStore.cases[index % fallbackStore.cases.length].cultureType,
         scheduledWindow: item.scheduledWindow ?? fallbackStore.cases[index % fallbackStore.cases.length].scheduledWindow,
+        samagriProvider: (item as Partial<BookingCase>).samagriProvider ?? fallbackStore.cases[index % fallbackStore.cases.length].samagriProvider,
+        samagriSnapshot: Array.isArray((item as Partial<BookingCase>).samagriSnapshot)
+          ? (item as Partial<BookingCase>).samagriSnapshot!
+          : fallbackStore.cases[index % fallbackStore.cases.length].samagriSnapshot,
         pricing: {
           ...fallbackStore.cases[index % fallbackStore.cases.length].pricing,
           ...item.pricing
@@ -312,6 +335,25 @@ export async function addBookingCase(input: Omit<BookingCase, "id">) {
   const next: BookingStore = {
     ...current,
     cases: [{ id: nextId, ...input }, ...current.cases]
+  };
+  await writeStore(next);
+  return next;
+}
+
+export async function addBookingCases(inputs: Array<Omit<BookingCase, "id">>) {
+  if (!inputs.length) {
+    return getBookingStore();
+  }
+
+  const current = await getBookingStore();
+  const startIndex = current.cases.length + 1;
+  const nextCases = inputs.map((input, offset) => ({
+    id: `booking_${String(startIndex + offset).padStart(3, "0")}`,
+    ...input
+  }));
+  const next: BookingStore = {
+    ...current,
+    cases: [...nextCases.reverse(), ...current.cases]
   };
   await writeStore(next);
   return next;

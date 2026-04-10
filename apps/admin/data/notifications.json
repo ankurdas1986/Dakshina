@@ -1,6 +1,33 @@
 {
   "notifications": [
     {
+      "id": "notif_payout_1775570649253",
+      "type": "wallet",
+      "title": "Manual payout confirmed for DK-1042",
+      "detail": "UPI settlement recorded for Pandit Arindam Bhattacharya. Amount Rs 2500.",
+      "href": "/dashboard/payouts/payout_001",
+      "createdAt": "2026-04-07 14:04",
+      "read": false
+    },
+    {
+      "id": "notif_payout_1775569115582",
+      "type": "wallet",
+      "title": "Manual payout confirmed for DK-1042",
+      "detail": "UPI settlement recorded for Pandit Arindam Bhattacharya. Amount Rs 2500.",
+      "href": "/dashboard/payouts/payout_001",
+      "createdAt": "2026-04-07 13:38",
+      "read": false
+    },
+    {
+      "id": "notif_payout_1775569111805",
+      "type": "wallet",
+      "title": "Manual payout confirmed for DK-1042",
+      "detail": "UPI settlement recorded for Pandit Arindam Bhattacharya. Amount Rs 2500.",
+      "href": "/dashboard/payouts/payout_001",
+      "createdAt": "2026-04-07 13:38",
+      "read": false
+    },
+    {
       "id": "notif_001",
       "type": "priest_registration",
       "title": "New priest registration submitted",

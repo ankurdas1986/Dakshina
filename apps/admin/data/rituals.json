@@ -5,24 +5,172 @@
     "Users can view or download the checklist after booking confirmation."
   ],
   "tiers": [
-    { "id": "tier_1", "name": "Tier 1", "title": "Essential Home", "focus": "Recurring household rituals such as Lakshmi and Satyanarayan puja.", "status": "active", "pricingMode": "admin-guided" },
-    { "id": "tier_2", "name": "Tier 2", "title": "Grand Event", "focus": "Weddings, sacred thread, grihoprobesh, and milestone rituals.", "status": "active", "pricingMode": "hybrid" },
-    { "id": "tier_3", "name": "Tier 3", "title": "Barwari / Public", "focus": "Community Durga, Kali, and locality-level puja management.", "status": "active", "pricingMode": "admin-guided" },
-    { "id": "tier_4", "name": "Tier 4", "title": "Monthly Trustee", "focus": "Recurring temple, society, and complex priest scheduling.", "status": "planned", "pricingMode": "contract" }
+    {
+      "id": "tier_1",
+      "name": "Tier 1",
+      "title": "Essential Home",
+      "focus": "Recurring household rituals such as Lakshmi and Satyanarayan puja.",
+      "status": "active",
+      "pricingMode": "admin-guided"
+    },
+    {
+      "id": "tier_2",
+      "name": "Tier 2",
+      "title": "Grand Event",
+      "focus": "Weddings, sacred thread, grihoprobesh, and milestone rituals.",
+      "status": "active",
+      "pricingMode": "hybrid"
+    },
+    {
+      "id": "tier_3",
+      "name": "Tier 3",
+      "title": "Barwari / Public",
+      "focus": "Community Durga, Kali, and locality-level puja management.",
+      "status": "active",
+      "pricingMode": "admin-guided"
+    },
+    {
+      "id": "tier_4",
+      "name": "Tier 4",
+      "title": "Monthly Trustee",
+      "focus": "Recurring temple, society, and complex priest scheduling.",
+      "status": "planned",
+      "pricingMode": "contract"
+    }
   ],
   "categories": [
-    { "id": "cat_001", "parentId": null, "tierId": "tier_1", "cultureType": "Bengali", "nodeType": "tradition", "name": "Bengali", "slug": "bengali", "description": "Primary Bengali tradition tree.", "displayOrder": 1 },
-    { "id": "cat_002", "parentId": "cat_001", "tierId": "tier_1", "cultureType": "Bengali", "nodeType": "service_type", "name": "Home Puja", "slug": "bengali-home-puja", "description": "Bengali household pujas.", "displayOrder": 1 },
-    { "id": "cat_003", "parentId": "cat_002", "tierId": "tier_1", "cultureType": "Bengali", "nodeType": "sub_type", "name": "Prosperity Puja", "slug": "bengali-prosperity-puja", "description": "Lakshmi, Kojagari, and prosperity rituals.", "displayOrder": 1 },
-    { "id": "cat_004", "parentId": null, "tierId": "tier_2", "cultureType": "Bengali", "nodeType": "tradition", "name": "Bengali Marriage", "slug": "bengali-marriage", "description": "Bengali wedding and lifecycle rituals.", "displayOrder": 2 },
-    { "id": "cat_005", "parentId": "cat_004", "tierId": "tier_2", "cultureType": "Bengali", "nodeType": "service_type", "name": "Marriage", "slug": "bengali-marriage-service", "description": "Bengali marriage event blocks.", "displayOrder": 1 },
-    { "id": "cat_006", "parentId": "cat_005", "tierId": "tier_2", "cultureType": "Bengali", "nodeType": "sub_type", "name": "Wedding Rituals", "slug": "bengali-wedding-rituals", "description": "Gaye Holud, Bou Bhat, Sindoor Daan style Bengali flows.", "displayOrder": 1 },
-    { "id": "cat_007", "parentId": null, "tierId": "tier_2", "cultureType": "North_Indian", "nodeType": "tradition", "name": "North Indian", "slug": "north-indian", "description": "UP/Bihar rooted ritual tree.", "displayOrder": 1 },
-    { "id": "cat_008", "parentId": "cat_007", "tierId": "tier_2", "cultureType": "North_Indian", "nodeType": "service_type", "name": "Marriage", "slug": "north-indian-marriage", "description": "North Indian marriage services.", "displayOrder": 1 },
-    { "id": "cat_009", "parentId": "cat_008", "tierId": "tier_2", "cultureType": "North_Indian", "nodeType": "sub_type", "name": "Sindoor Daan", "slug": "north-indian-sindoor-daan", "description": "Marriage ritual specialization.", "displayOrder": 1 },
-    { "id": "cat_010", "parentId": null, "tierId": "tier_2", "cultureType": "Odia", "nodeType": "tradition", "name": "Odia", "slug": "odia", "description": "Odia ritual tree.", "displayOrder": 1 },
-    { "id": "cat_011", "parentId": "cat_010", "tierId": "tier_2", "cultureType": "Odia", "nodeType": "service_type", "name": "Marriage", "slug": "odia-marriage", "description": "Odia marriage service group.", "displayOrder": 1 },
-    { "id": "cat_012", "parentId": "cat_011", "tierId": "tier_2", "cultureType": "Odia", "nodeType": "sub_type", "name": "Hastagranthi", "slug": "odia-hastagranthi", "description": "Odia marriage ritual specialization.", "displayOrder": 1 }
+    {
+      "id": "cat_001",
+      "parentId": null,
+      "tierId": "tier_1",
+      "cultureType": "Bengali",
+      "nodeType": "tradition",
+      "name": "Bengali",
+      "slug": "bengali",
+      "description": "Primary Bengali tradition tree.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_002",
+      "parentId": "cat_001",
+      "tierId": "tier_1",
+      "cultureType": "Bengali",
+      "nodeType": "service_type",
+      "name": "Home Puja",
+      "slug": "bengali-home-puja",
+      "description": "Bengali household pujas.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_003",
+      "parentId": "cat_002",
+      "tierId": "tier_1",
+      "cultureType": "Bengali",
+      "nodeType": "sub_type",
+      "name": "Prosperity Puja",
+      "slug": "bengali-prosperity-puja",
+      "description": "Lakshmi, Kojagari, and prosperity rituals.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_004",
+      "parentId": null,
+      "tierId": "tier_2",
+      "cultureType": "Bengali",
+      "nodeType": "tradition",
+      "name": "Bengali Marriage",
+      "slug": "bengali-marriage",
+      "description": "Bengali wedding and lifecycle rituals.",
+      "displayOrder": 2
+    },
+    {
+      "id": "cat_005",
+      "parentId": "cat_004",
+      "tierId": "tier_2",
+      "cultureType": "Bengali",
+      "nodeType": "service_type",
+      "name": "Marriage",
+      "slug": "bengali-marriage-service",
+      "description": "Bengali marriage event blocks.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_006",
+      "parentId": "cat_005",
+      "tierId": "tier_2",
+      "cultureType": "Bengali",
+      "nodeType": "sub_type",
+      "name": "Wedding Rituals",
+      "slug": "bengali-wedding-rituals",
+      "description": "Gaye Holud, Bou Bhat, Sindoor Daan style Bengali flows.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_007",
+      "parentId": null,
+      "tierId": "tier_2",
+      "cultureType": "North_Indian",
+      "nodeType": "tradition",
+      "name": "North Indian",
+      "slug": "north-indian",
+      "description": "UP/Bihar rooted ritual tree.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_008",
+      "parentId": "cat_007",
+      "tierId": "tier_2",
+      "cultureType": "North_Indian",
+      "nodeType": "service_type",
+      "name": "Marriage",
+      "slug": "north-indian-marriage",
+      "description": "North Indian marriage services.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_009",
+      "parentId": "cat_008",
+      "tierId": "tier_2",
+      "cultureType": "North_Indian",
+      "nodeType": "sub_type",
+      "name": "Sindoor Daan",
+      "slug": "north-indian-sindoor-daan",
+      "description": "Marriage ritual specialization.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_010",
+      "parentId": null,
+      "tierId": "tier_2",
+      "cultureType": "Odia",
+      "nodeType": "tradition",
+      "name": "Odia",
+      "slug": "odia",
+      "description": "Odia ritual tree.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_011",
+      "parentId": "cat_010",
+      "tierId": "tier_2",
+      "cultureType": "Odia",
+      "nodeType": "service_type",
+      "name": "Marriage",
+      "slug": "odia-marriage",
+      "description": "Odia marriage service group.",
+      "displayOrder": 1
+    },
+    {
+      "id": "cat_012",
+      "parentId": "cat_011",
+      "tierId": "tier_2",
+      "cultureType": "Odia",
+      "nodeType": "sub_type",
+      "name": "Hastagranthi",
+      "slug": "odia-hastagranthi",
+      "description": "Odia marriage ritual specialization.",
+      "displayOrder": 1
+    }
   ],
   "rituals": [
     {
@@ -37,8 +185,28 @@
       "durationMinutes": 120,
       "homepageRank": 1,
       "demandLabel": "Top 8 Bengali launch ritual",
-      "pricing": { "dakshinaAmount": 2200, "samagriAddOns": 350, "zoneWiseTravelFee": 150, "peakMultiplier": 1.15 },
-      "fardTemplate": { "items": [{ "label": "Ghot", "quantity": "1" }, { "label": "Mango leaves", "quantity": "5" }, { "label": "Flowers", "quantity": "As required" }] }
+      "pricing": {
+        "dakshinaAmount": 2200,
+        "samagriAddOns": 350,
+        "zoneWiseTravelFee": 150,
+        "peakMultiplier": 1.15
+      },
+      "fardTemplate": {
+        "items": [
+          {
+            "label": "Ghot",
+            "quantity": "1"
+          },
+          {
+            "label": "Mango leaves",
+            "quantity": "5"
+          },
+          {
+            "label": "Flowers",
+            "quantity": "As required"
+          }
+        ]
+      }
     },
     {
       "id": "ritual_002",
@@ -52,8 +220,28 @@
       "durationMinutes": 180,
       "homepageRank": 2,
       "demandLabel": "Top 8 Bengali launch ritual",
-      "pricing": { "dakshinaAmount": 8500, "samagriAddOns": 2200, "zoneWiseTravelFee": 300, "peakMultiplier": 1.2 },
-      "fardTemplate": { "items": [{ "label": "Haldi tray", "quantity": "1" }, { "label": "Flowers", "quantity": "Bulk" }, { "label": "Mangal dravya", "quantity": "1 set" }] }
+      "pricing": {
+        "dakshinaAmount": 8500,
+        "samagriAddOns": 2200,
+        "zoneWiseTravelFee": 300,
+        "peakMultiplier": 1.2
+      },
+      "fardTemplate": {
+        "items": [
+          {
+            "label": "Haldi tray",
+            "quantity": "1"
+          },
+          {
+            "label": "Flowers",
+            "quantity": "Bulk"
+          },
+          {
+            "label": "Mangal dravya",
+            "quantity": "1 set"
+          }
+        ]
+      }
     },
     {
       "id": "ritual_003",
@@ -67,8 +255,28 @@
       "durationMinutes": 240,
       "homepageRank": 1,
       "demandLabel": "North Indian seeded ritual",
-      "pricing": { "dakshinaAmount": 3200, "samagriAddOns": 700, "zoneWiseTravelFee": 250, "peakMultiplier": 1.35 },
-      "fardTemplate": { "items": [{ "label": "Soop", "quantity": "2" }, { "label": "Fruits", "quantity": "Bulk" }, { "label": "Arghya setup", "quantity": "1" }] }
+      "pricing": {
+        "dakshinaAmount": 3200,
+        "samagriAddOns": 700,
+        "zoneWiseTravelFee": 250,
+        "peakMultiplier": 1.35
+      },
+      "fardTemplate": {
+        "items": [
+          {
+            "label": "Soop",
+            "quantity": "2"
+          },
+          {
+            "label": "Fruits",
+            "quantity": "Bulk"
+          },
+          {
+            "label": "Arghya setup",
+            "quantity": "1"
+          }
+        ]
+      }
     },
     {
       "id": "ritual_004",
@@ -82,15 +290,77 @@
       "durationMinutes": 180,
       "homepageRank": 1,
       "demandLabel": "Odia seeded ritual",
-      "pricing": { "dakshinaAmount": 7600, "samagriAddOns": 2100, "zoneWiseTravelFee": 280, "peakMultiplier": 1.1 },
-      "fardTemplate": { "items": [{ "label": "Marriage samagri", "quantity": "1 set" }, { "label": "Hastagranthi thread", "quantity": "1" }] }
+      "pricing": {
+        "dakshinaAmount": 7600,
+        "samagriAddOns": 2100,
+        "zoneWiseTravelFee": 280,
+        "peakMultiplier": 1.1
+      },
+      "fardTemplate": {
+        "items": [
+          {
+            "label": "Marriage samagri",
+            "quantity": "1 set"
+          },
+          {
+            "label": "Hastagranthi thread",
+            "quantity": "1"
+          }
+        ]
+      }
     }
   ],
   "panjikaResearch": [
-    { "cultureType": "Bengali", "sources": ["Gupta Press", "Bishuddha Siddhanta"], "adminInstruction": "Select Bengali before pasting raw Panjika text so tithi and shubha muhurta are parsed in Bengali tradition context.", "sampleRituals": ["Gaye Holud", "Bou Bhat", "Annaprashan"] },
-    { "cultureType": "North_Indian", "sources": ["Thakur Prasad", "Vikram Samvat"], "adminInstruction": "Use North Indian context for Panchang parsing before publishing muhurta guidance.", "sampleRituals": ["Chhath Puja", "Satyanarayan Katha", "Sindoor Daan"] },
-    { "cultureType": "Marwadi", "sources": ["Marwari Panchang"], "adminInstruction": "Use Marwadi Panchang context for event timing and marriage ritual naming.", "sampleRituals": ["Mayra", "Bhaat", "Phera Styles"] },
-    { "cultureType": "Odia", "sources": ["Kohinoor", "Bhagyadaya Panjika"], "adminInstruction": "Select Odia before parsing Kohinoor or Bhagyadaya text.", "sampleRituals": ["Boita Bandana", "Sankranti", "Hastagranthi"] },
-    { "cultureType": "Gujarati", "sources": ["Janmabhoomi", "Gujarati Panchang"], "adminInstruction": "Select Gujarati before parsing Janmabhoomi calendar text.", "sampleRituals": ["Vastu Shanti", "Mangal Phera", "Garba Pujan"] }
+    {
+      "cultureType": "Bengali",
+      "sources": [
+        "Gupta Press",
+        "Bishuddha Siddhanta"
+      ],
+      "adminInstruction": "Select Bengali before pasting raw Panjika text so tithi and shubha muhurta are parsed in Bengali tradition context.",
+      "sampleRituals": [
+        "Gaye Holud",
+        "Bou Bhat",
+        "Annaprashan"
+      ]
+    },
+    {
+      "cultureType": "North_Indian",
+      "sources": [
+        "Thakur Prasad",
+        "Vikram Samvat"
+      ],
+      "adminInstruction": "Use North Indian context for Panchang parsing before publishing muhurta guidance.",
+      "sampleRituals": [
+        "Chhath Puja",
+        "Satyanarayan Katha",
+        "Sindoor Daan"
+      ]
+    },
+    {
+      "cultureType": "Marwadi",
+      "sources": [
+        "Marwari Panchang"
+      ],
+      "adminInstruction": "Use Marwadi Panchang context for event timing and marriage ritual naming.",
+      "sampleRituals": [
+        "Mayra",
+        "Bhaat",
+        "Phera Styles"
+      ]
+    },
+    {
+      "cultureType": "Odia",
+      "sources": [
+        "Kohinoor",
+        "Bhagyadaya Panjika"
+      ],
+      "adminInstruction": "Select Odia before parsing Kohinoor or Bhagyadaya text.",
+      "sampleRituals": [
+        "Boita Bandana",
+        "Sankranti",
+        "Hastagranthi"
+      ]
+    }
   ]
 }

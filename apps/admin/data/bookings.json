@@ -23,6 +23,9 @@
     {
       "id": "booking_001",
       "bookingCode": "DK-1042",
+      "userId": "user_001",
+      "userName": "Sourav Banerjee",
+      "userPhone": "+91 98300 11001",
       "cultureType": "Bengali",
       "ritual": "Satyanarayan Puja",
       "district": "Howrah",
@@ -40,14 +43,57 @@
       "completionOtpVerifiedAt": "",
       "completionOtpAttempts": 0,
       "completionOtpLastEvent": "OTP issued after advance payment confirmation.",
-      "pricing": { "dakshinaAmount": 2200, "samagriAddOns": 350, "zoneWiseTravelFee": 150, "peakMultiplier": 1 },
-      "governance": { "minBookingGapHours": 3, "maxBookingWindowDays": 60, "forcedBookingOverride": false, "whatsappConfirmationState": "sent" },
+      "refundState": "not_requested",
+      "pendingRefundAmount": 0,
+      "refundReason": "",
+      "pricing": {
+        "dakshinaAmount": 2200,
+        "samagriAddOns": 350,
+        "zoneWiseTravelFee": 150,
+        "peakMultiplier": 1,
+        "walletAdvanceApplied": 550
+      },
+      "governance": {
+        "minBookingGapHours": 3,
+        "maxBookingWindowDays": 60,
+        "forcedBookingOverride": false,
+        "whatsappConfirmationState": "sent"
+      },
+      "policySnapshot": {
+        "capturedAt": "2026-04-02 17:45",
+        "refundRules": {
+          "moreThan72HoursPercent": 100,
+          "between24And72HoursPercent": 70,
+          "lessThan24HoursPercent": 25
+        },
+        "advancePaymentPercent": 20,
+        "manualRazorpayRefund": true
+      },
       "fardSnapshotLockedAt": "2026-04-02 17:45",
-      "fardSnapshot": { "deliveryMode": "ui_and_pdf", "items": [{ "label": "Ghot", "quantity": "1" }, { "label": "Mango leaves", "quantity": "5" }, { "label": "Flowers", "quantity": "As required" }] }
+      "fardSnapshot": {
+        "deliveryMode": "ui_and_pdf",
+        "items": [
+          {
+            "label": "Ghot",
+            "quantity": "1"
+          },
+          {
+            "label": "Mango leaves",
+            "quantity": "5"
+          },
+          {
+            "label": "Flowers",
+            "quantity": "As required"
+          }
+        ]
+      }
     },
     {
       "id": "booking_002",
       "bookingCode": "DK-1048",
+      "userId": "user_002",
+      "userName": "Ria Banerjee",
+      "userPhone": "+91 98300 11002",
       "cultureType": "Bengali",
       "ritual": "Gaye Holud",
       "district": "Hooghly",
@@ -65,14 +111,57 @@
       "completionOtpVerifiedAt": "",
       "completionOtpAttempts": 0,
       "completionOtpLastEvent": "OTP is blocked until advance payment is confirmed.",
-      "pricing": { "dakshinaAmount": 8500, "samagriAddOns": 2200, "zoneWiseTravelFee": 300, "peakMultiplier": 1.2 },
-      "governance": { "minBookingGapHours": 3, "maxBookingWindowDays": 60, "forcedBookingOverride": false, "whatsappConfirmationState": "not_sent" },
+      "refundState": "not_requested",
+      "pendingRefundAmount": 0,
+      "refundReason": "",
+      "pricing": {
+        "dakshinaAmount": 8500,
+        "samagriAddOns": 2200,
+        "zoneWiseTravelFee": 300,
+        "peakMultiplier": 1.2,
+        "walletAdvanceApplied": 0
+      },
+      "governance": {
+        "minBookingGapHours": 3,
+        "maxBookingWindowDays": 60,
+        "forcedBookingOverride": false,
+        "whatsappConfirmationState": "not_sent"
+      },
+      "policySnapshot": {
+        "capturedAt": "",
+        "refundRules": {
+          "moreThan72HoursPercent": 100,
+          "between24And72HoursPercent": 70,
+          "lessThan24HoursPercent": 25
+        },
+        "advancePaymentPercent": 20,
+        "manualRazorpayRefund": true
+      },
       "fardSnapshotLockedAt": "",
-      "fardSnapshot": { "deliveryMode": "ui_and_pdf", "items": [{ "label": "Haldi tray", "quantity": "1" }, { "label": "Flowers", "quantity": "Bulk" }, { "label": "Mangal dravya", "quantity": "1 set" }] }
+      "fardSnapshot": {
+        "deliveryMode": "ui_and_pdf",
+        "items": [
+          {
+            "label": "Haldi tray",
+            "quantity": "1"
+          },
+          {
+            "label": "Flowers",
+            "quantity": "Bulk"
+          },
+          {
+            "label": "Mangal dravya",
+            "quantity": "1 set"
+          }
+        ]
+      }
     },
     {
       "id": "booking_003",
       "bookingCode": "DK-1051",
+      "userId": "user_003",
+      "userName": "Smruti Mohanty",
+      "userPhone": "+91 98300 11003",
       "cultureType": "Odia",
       "ritual": "Hastagranthi",
       "district": "North 24 Parganas",
@@ -90,10 +179,46 @@
       "completionOtpVerifiedAt": "",
       "completionOtpAttempts": 2,
       "completionOtpLastEvent": "Original priest cancellation invalidated the previous completion flow.",
-      "pricing": { "dakshinaAmount": 7600, "samagriAddOns": 2100, "zoneWiseTravelFee": 280, "peakMultiplier": 1.1 },
-      "governance": { "minBookingGapHours": 3, "maxBookingWindowDays": 60, "forcedBookingOverride": true, "whatsappConfirmationState": "failed" },
+      "refundState": "pending_manual",
+      "pendingRefundAmount": 1140,
+      "refundReason": "Priest cancellation after advance payment.",
+      "pricing": {
+        "dakshinaAmount": 7600,
+        "samagriAddOns": 2100,
+        "zoneWiseTravelFee": 280,
+        "peakMultiplier": 1.1,
+        "walletAdvanceApplied": 0
+      },
+      "governance": {
+        "minBookingGapHours": 3,
+        "maxBookingWindowDays": 60,
+        "forcedBookingOverride": true,
+        "whatsappConfirmationState": "sent"
+      },
+      "policySnapshot": {
+        "capturedAt": "2026-04-01 14:30",
+        "refundRules": {
+          "moreThan72HoursPercent": 100,
+          "between24And72HoursPercent": 70,
+          "lessThan24HoursPercent": 25
+        },
+        "advancePaymentPercent": 20,
+        "manualRazorpayRefund": true
+      },
       "fardSnapshotLockedAt": "2026-04-01 14:30",
-      "fardSnapshot": { "deliveryMode": "ui_only", "items": [{ "label": "Marriage samagri", "quantity": "1 set" }, { "label": "Hastagranthi thread", "quantity": "1" }] }
+      "fardSnapshot": {
+        "deliveryMode": "ui_only",
+        "items": [
+          {
+            "label": "Marriage samagri",
+            "quantity": "1 set"
+          },
+          {
+            "label": "Hastagranthi thread",
+            "quantity": "1"
+          }
+        ]
+      }
     }
   ]
 }

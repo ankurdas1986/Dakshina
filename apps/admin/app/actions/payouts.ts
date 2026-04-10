@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getPayoutStore, type PayoutStatus, updatePayoutEntry } from "../../lib/payout-store";
+import { getBookingStore } from "../../lib/booking-store";
 import { getPriestStore, updatePriestReview } from "../../lib/priest-store";
 import { appendWalletTransaction } from "../../lib/wallet-store";
 import { appendAdminNotification } from "../../lib/notification-store";
@@ -96,6 +97,10 @@ export async function confirmManualPayout(formData: FormData) {
     });
   }
 
+  const bookingStore = await getBookingStore();
+  const booking = bookingStore.cases.find((entry) => entry.id === payout.bookingId);
+  const samagriCost = booking && booking.samagriProvider === "priest" ? booking.pricing.samagriAddOns : 0;
+
   await appendWalletTransaction({
     id: `wallet_${Date.now()}`,
     priestId: payout.priestId,
@@ -105,6 +110,7 @@ export async function confirmManualPayout(formData: FormData) {
     status: "completed",
     direction: "credit",
     amount: payout.payoutAmount,
+    samagriCost,
     description: `Manual payout confirmed for ${payout.bookingCode}.`,
     createdAt: new Date().toISOString().slice(0, 16).replace("T", " ")
   });

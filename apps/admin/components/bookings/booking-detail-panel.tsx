@@ -119,6 +119,81 @@ export function BookingDetailPanel({ booking, statuses, returnTo }: BookingDetai
         <NumberField defaultValue={booking.pricing.peakMultiplier} label="Peak multiplier" name="peakMultiplier" min={1} step="0.01" />
       </div>
 
+      <div className="rounded-[24px] border border-border bg-white p-4">
+        <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Samagri procurement</p>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              Choose whether the user provides items or the priest provides them. When the priest provides samagri, the checklist is snapshotted per booking.
+            </p>
+          </div>
+          <Badge variant={booking.samagriProvider === "priest" ? "secondary" : "outline"}>
+            {booking.samagriProvider === "priest" ? "priest provides" : "user provides"}
+          </Badge>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <SelectField
+            defaultValue={booking.samagriProvider}
+            label="Samagri provider"
+            name="samagriProvider"
+            options={[
+              { value: "user", label: "user" },
+              { value: "priest", label: "priest" }
+            ]}
+          />
+          <div className="rounded-[20px] border border-border bg-secondary/20 p-4 text-sm text-muted-foreground">
+            <p className="font-semibold text-foreground">Snapshot rule</p>
+            <p className="mt-2 leading-6">Once confirmed, booking-level samagri should not be overwritten by later master list changes.</p>
+          </div>
+        </div>
+
+        {booking.samagriProvider === "priest" ? (
+          <div className="mt-4 rounded-[20px] border border-border bg-secondary/10 p-4">
+            <p className="text-sm font-semibold text-foreground">Booking samagri checklist</p>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">Adjust quantities and deselect optional items as needed.</p>
+            {booking.samagriSnapshot.length ? (
+              <div className="mt-4 grid gap-3">
+                {booking.samagriSnapshot.map((item) => (
+                  <div className="grid gap-3 rounded-[18px] border border-border bg-white p-3 md:grid-cols-[auto_minmax(0,1fr)_120px] md:items-center" key={item.itemName}>
+                    <input type="hidden" name="samagriItemName" value={item.itemName} />
+                    <input type="hidden" name="samagriUnit" value={item.unit} />
+                    <input type="hidden" name="samagriIsOptional" value={item.isOptional ? "1" : "0"} />
+                    <label className="flex items-start gap-3">
+                      <input
+                        className={checkboxClassName}
+                        defaultChecked={item.selected}
+                        name="samagriSelected"
+                        type="checkbox"
+                        value={item.itemName}
+                      />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold text-foreground">{item.itemName}</span>
+                        <span className="block text-sm text-muted-foreground">
+                          {item.isOptional ? "Optional" : "Required"} {item.unit ? `- ${item.unit}` : ""}
+                        </span>
+                      </span>
+                    </label>
+                    <Input
+                      className="h-11 rounded-lg"
+                      defaultValue={item.quantity}
+                      min={0.01}
+                      name="samagriQuantity"
+                      step="0.01"
+                      type="number"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-4 rounded-[18px] border border-border bg-white px-4 py-6 text-sm text-muted-foreground">
+                No booking samagri snapshot is stored yet for this case.
+              </div>
+            )}
+          </div>
+        ) : null}
+      </div>
+
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         <NumberField defaultValue={booking.governance.minBookingGapHours} label="Min booking gap (hours)" name="minBookingGapHours" />
         <NumberField defaultValue={booking.governance.maxBookingWindowDays} label="Max booking window (days)" name="maxBookingWindowDays" />

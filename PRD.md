@@ -80,6 +80,42 @@ These remain out of scope unless explicitly pulled forward:
 
 This update is additive. It does not replace the existing multicultural hierarchy, booking governance, delayed contact reveal logic, or priest availability model.
 
+### F. Master Panjika Engine (Smart Scheduling)
+
+- The platform must support a master auspicious-slot calendar per culture and ritual.
+- Admin must be able to bulk upload annual auspicious slot data via CSV in the super admin.
+- The consumer booking experience must be able to show the top 3 recommended auspicious slots for a selected date (premium cards) with a manual date picker fallback.
+
+### G. Dynamic Samagri Ecosystem (Priest-Interactive)
+
+- Admin manages a master samagri checklist indexed by culture and ritual.
+- On checkout, user chooses `samagri_provider`:
+  - user provides samagri, or
+  - priest provides samagri.
+- For each booking where priest provides samagri, the priest must be able to adjust the checklist items and quantities per booking, derived from the master list.
+
+### H. Institutional Subscription Module (Auto Pre-Blocking)
+
+- Institutional subscriptions must auto-generate future booking entries to pre-block priest calendars for the entire contract duration.
+- Generated booking entries must be visible in admin as operational pre-blocks.
+
+### I. Admin God-Mode (Advanced Search and Control)
+
+- User Management must support advanced search filters:
+  - name
+  - phone
+  - area / location
+  - tradition preference
+- Admin must have direct lifecycle control:
+  - view/edit profile
+  - view full booking and transaction history
+  - block / deactivate / reactivate with one click
+
+### J. Financial Ledger (Samagri and Settlement)
+
+- Wallet transactions must support samagri cost tracking as a distinct line item when priest provides samagri.
+- Admin must be able to confirm manual payout and settle priest earnings and samagri cost in the ledger after UPI payment.
+
 ### A. Policy Snapshotting and Refund Intelligence
 
 - Every booking must persist a `policy_snapshot` JSON contract at the moment the booking is confirmed.
