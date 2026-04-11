@@ -10,6 +10,7 @@ export type MasterSamagriItem = {
   ritualLabel: string;
   ritualId?: string;
   itemName: string;
+  localName: string;
   defaultQuantity: number;
   unit: string;
   isOptional: boolean;
@@ -32,6 +33,7 @@ const fallback: MasterSamagriStore = {
       ritualLabel: "Satyanarayan Puja",
       ritualId: "ritual_001",
       itemName: "Ghot",
+      localName: "ঘট",
       defaultQuantity: 1,
       unit: "pcs",
       isOptional: false,
@@ -45,9 +47,150 @@ const fallback: MasterSamagriStore = {
       ritualLabel: "Satyanarayan Puja",
       ritualId: "ritual_001",
       itemName: "Flowers",
+      localName: "ফুল",
       defaultQuantity: 1,
       unit: "bundle",
       isOptional: true,
+      sortOrder: 2,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_003",
+      cultureType: "Bengali",
+      ritualLabel: "Satyanarayan Puja",
+      ritualId: "ritual_001",
+      itemName: "Mango Leaves",
+      localName: "আমপাতা",
+      defaultQuantity: 5,
+      unit: "pcs",
+      isOptional: false,
+      sortOrder: 3,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_004",
+      cultureType: "Bengali",
+      ritualLabel: "Satyanarayan Puja",
+      ritualId: "ritual_001",
+      itemName: "Sindoor",
+      localName: "সিঁদুর",
+      defaultQuantity: 1,
+      unit: "pkt",
+      isOptional: false,
+      sortOrder: 4,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_005",
+      cultureType: "Bengali",
+      ritualLabel: "Lakshmi Puja",
+      ritualId: "ritual_001",
+      itemName: "Ghot",
+      localName: "ঘট",
+      defaultQuantity: 1,
+      unit: "pcs",
+      isOptional: false,
+      sortOrder: 1,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_006",
+      cultureType: "Bengali",
+      ritualLabel: "Lakshmi Puja",
+      ritualId: "ritual_001",
+      itemName: "Alpona Powder",
+      localName: "আলপনা গুঁড়ো",
+      defaultQuantity: 1,
+      unit: "pkt",
+      isOptional: false,
+      sortOrder: 2,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_007",
+      cultureType: "Bengali",
+      ritualLabel: "Lakshmi Puja",
+      ritualId: "ritual_001",
+      itemName: "Dhup",
+      localName: "ধূপ",
+      defaultQuantity: 1,
+      unit: "pkt",
+      isOptional: false,
+      sortOrder: 3,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_008",
+      cultureType: "North_Indian",
+      ritualLabel: "Chhath Puja",
+      ritualId: "ritual_003",
+      itemName: "Soop",
+      localName: "सूप",
+      defaultQuantity: 2,
+      unit: "pcs",
+      isOptional: false,
+      sortOrder: 1,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_009",
+      cultureType: "North_Indian",
+      ritualLabel: "Chhath Puja",
+      ritualId: "ritual_003",
+      itemName: "Fruits",
+      localName: "फल",
+      defaultQuantity: 1,
+      unit: "basket",
+      isOptional: false,
+      sortOrder: 2,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_010",
+      cultureType: "North_Indian",
+      ritualLabel: "Chhath Puja",
+      ritualId: "ritual_003",
+      itemName: "Arghya Setup",
+      localName: "अर्घ्य",
+      defaultQuantity: 1,
+      unit: "set",
+      isOptional: false,
+      sortOrder: 3,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_011",
+      cultureType: "Odia",
+      ritualLabel: "Hastagranthi",
+      ritualId: "ritual_004",
+      itemName: "Marriage Samagri",
+      localName: "ବିବାହ ସାମଗ୍ରୀ",
+      defaultQuantity: 1,
+      unit: "set",
+      isOptional: false,
+      sortOrder: 1,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ms_012",
+      cultureType: "Odia",
+      ritualLabel: "Hastagranthi",
+      ritualId: "ritual_004",
+      itemName: "Hastagranthi Thread",
+      localName: "ହସ୍ତଗ୍ରନ୍ଥି ସୂତା",
+      defaultQuantity: 1,
+      unit: "pcs",
+      isOptional: false,
       sortOrder: 2,
       isActive: true,
       createdAt: new Date().toISOString()
@@ -64,10 +207,18 @@ async function writeStore(store: MasterSamagriStore) {
   await writeFile(storePath, `${JSON.stringify(store, null, 2)}\n`, "utf8");
 }
 
+function migrateItem(item: MasterSamagriItem): MasterSamagriItem {
+  if (!item.localName) {
+    return { ...item, localName: "" };
+  }
+  return item;
+}
+
 export async function getMasterSamagriStore(): Promise<MasterSamagriStore> {
   try {
     const raw = await readFile(storePath, "utf8");
-    return JSON.parse(raw) as MasterSamagriStore;
+    const parsed = JSON.parse(raw) as MasterSamagriStore;
+    return { items: parsed.items.map(migrateItem) };
   } catch {
     await writeStore(fallback);
     return fallback;
@@ -99,6 +250,12 @@ export async function removeMasterSamagriItem(id: string) {
   const store: MasterSamagriStore = { items: current.items.filter((item) => item.id !== id) };
   await writeStore(store);
   return store;
+}
+
+export async function getMasterSamagriById(id: string): Promise<MasterSamagriItem | undefined> {
+  const store = await getMasterSamagriStore();
+  const item = store.items.find((i) => i.id === id);
+  return item ? migrateItem(item) : undefined;
 }
 
 export async function getMasterSamagriForBooking(params: { cultureType: CultureType; ritualLabel: string }) {

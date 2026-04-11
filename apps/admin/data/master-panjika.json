@@ -1,0 +1,16 @@
+{
+  "slots": [
+    {
+      "id": "mp_001",
+      "cultureType": "Bengali",
+      "ritualLabel": "Annaprashan",
+      "ritualId": "ritual_001",
+      "slotDate": "2026-04-15",
+      "startTime": "09:30",
+      "endTime": "11:00",
+      "tithi": "Shukla Paksha Tritiya",
+      "sourceNote": "Sample seed slot",
+      "createdAt": "2026-04-10T15:11:00.234Z"
+    }
+  ]
+}

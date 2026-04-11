@@ -13,6 +13,7 @@ export async function createMasterSamagriItem(formData: FormData) {
   const cultureType = String(formData.get("cultureType") ?? "").trim() as CultureType;
   const ritualLabel = String(formData.get("ritualLabel") ?? "").trim();
   const itemName = String(formData.get("itemName") ?? "").trim();
+  const localName = String(formData.get("localName") ?? "").trim();
   const unit = String(formData.get("unit") ?? "pcs").trim();
   const defaultQuantity = Number(formData.get("defaultQuantity") ?? 1);
   const sortOrder = Number(formData.get("sortOrder") ?? 0);
@@ -20,13 +21,14 @@ export async function createMasterSamagriItem(formData: FormData) {
   const isActive = formData.get("isActive") === null ? true : Boolean(formData.get("isActive"));
 
   if (!cultureType || !ritualLabel || !itemName) {
-    redirect(`/dashboard/rituals/samagri?error=${encodeURIComponent("missing_fields")}` as never);
+    redirect(`/dashboard/rituals/samagri/create?error=${encodeURIComponent("missing_fields")}` as never);
   }
 
   await addMasterSamagriItem({
     cultureType,
     ritualLabel,
     itemName,
+    localName,
     unit,
     defaultQuantity: Number.isFinite(defaultQuantity) && defaultQuantity > 0 ? defaultQuantity : 1,
     isOptional,
@@ -43,6 +45,7 @@ export async function saveMasterSamagriItem(formData: FormData) {
   const cultureType = String(formData.get("cultureType") ?? "").trim() as CultureType;
   const ritualLabel = String(formData.get("ritualLabel") ?? "").trim();
   const itemName = String(formData.get("itemName") ?? "").trim();
+  const localName = String(formData.get("localName") ?? "").trim();
   const unit = String(formData.get("unit") ?? "pcs").trim();
   const defaultQuantity = Number(formData.get("defaultQuantity") ?? 1);
   const sortOrder = Number(formData.get("sortOrder") ?? 0);
@@ -59,6 +62,7 @@ export async function saveMasterSamagriItem(formData: FormData) {
     cultureType,
     ritualLabel,
     itemName,
+    localName,
     unit,
     defaultQuantity: Number.isFinite(defaultQuantity) && defaultQuantity > 0 ? defaultQuantity : 1,
     isOptional,

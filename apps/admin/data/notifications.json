@@ -1,6 +1,15 @@
 {
   "notifications": [
     {
+      "id": "notif_subscription_1775834610717",
+      "type": "subscription",
+      "title": "Subscription active",
+      "detail": "Bally Kali Mandir contract updated. 94 generated bookings are visible (created 91 new blocks).",
+      "href": "/dashboard/subscriptions/sub_001",
+      "createdAt": "2026-04-10 15:23",
+      "read": false
+    },
+    {
       "id": "notif_payout_1775570649253",
       "type": "wallet",
       "title": "Manual payout confirmed for DK-1042",
